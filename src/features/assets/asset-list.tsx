@@ -39,6 +39,7 @@ import {
 import { useEffect, useState } from "react";
 import { AssetForm } from "./asset-form";
 import AssetListItem from "./asset-list-item";
+import EmptyAssetList from "./empty-asset-list";
 
 export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
   const { data: session } = useSession();
@@ -231,6 +232,7 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
         </Button>
       </div>
       <div className="grid grid-cols-1 gap-4">
+        {filteredAssets.length === 0 && <EmptyAssetList />}
         {filteredAssets
           .toSorted(
             (a, b) =>

@@ -10,7 +10,7 @@ else
 fi
 
 # Setup infra
-docker compose up --build --wait
+docker-compose up --build -d && sleep 60
 
 # Setup db
 pnpm prisma:generate
@@ -31,4 +31,4 @@ echo "NEXTAUTH_URL=http://${IP_ADDR}:3000" >> .env
 # Setup app
 pnpm install
 pnpm build
-HOST=0.0.0.0 pnpm start
+pnpm start
