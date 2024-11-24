@@ -21,10 +21,11 @@ node -v # should print `v22.11.0`
 apt install npm -y
 npm -v # should print `10.9.0`
 
+npm install -g ts-node typescript pnpm prisma
+
 ### Setup
 git clone https://github.com/ralf-boltshauser/knight-42.git
 cd knight-42
-npm install -g pnpm
 pnpm install
 
 bash start.sh
