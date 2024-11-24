@@ -10,5 +10,10 @@
 ## Agents
 ### Linux Agent
 ```bash
+./generate-info.sh -h 192.168.0.113
+```
+### Windows Agent
+```powershell
+.\Generate-ServerInfo.ps1 -TargetIP 192.168.0.113
 
 ```
