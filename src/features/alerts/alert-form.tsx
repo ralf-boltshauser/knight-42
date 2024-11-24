@@ -40,7 +40,7 @@ export function AlertForm() {
       endDateTime: null,
       assets: [],
       detectionSource: "OTHER",
-      categoryId: "",
+      categoryId: undefined,
       status: "INITIAL_INVESTIGATION",
       description: "",
       relatedIOCs: [],

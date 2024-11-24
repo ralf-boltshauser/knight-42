@@ -15,7 +15,7 @@ docker-compose up --build -d && sleep 60
 # Setup db
 pnpm prisma:generate
 pnpm prisma:push
-# pnpm prisma:seed
+pnpm prisma:seed
 
 # Remove existing NEXTAUTH_URL from .env if it exists
 sed -i '' '/^NEXTAUTH_URL=/d' .env

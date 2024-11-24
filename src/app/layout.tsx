@@ -20,6 +20,29 @@ const geistMono = localFont({
 export const metadata: Metadata = {
   title: "KNIGHT 42",
   description: "Knowledge Network for Incident Gathering, Hosts, and Tracking",
+  manifest: "/site.webmanifest",
+  icons: {
+    icon: [
+      {
+        url: "/favicon-96x96.png",
+        type: "image/png",
+        sizes: "96x96",
+      },
+      {
+        url: "/favicon.svg",
+        type: "image/svg+xml",
+      },
+      {
+        url: "/favicon.ico",
+        type: "image/x-icon",
+      },
+      {
+        url: "/apple-touch-icon.png",
+        sizes: "180x180",
+        type: "image/png",
+      },
+    ],
+  },
 };
 
 export default async function RootLayout({

@@ -1,22 +1,8 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import { toast } from "sonner";
-import { useCopyToClipboard } from "usehooks-ts";
 
 function EmptyAssetList() {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [copiedText, copy] = useCopyToClipboard();
-
-  const handleCopy = (text: string) => {
-    copy(text)
-      .then(() => {
-        toast.success("Copied to clipboard");
-      })
-      .catch((error) => {
-        console.error("Failed to copy!", error);
-      });
-  };
   return (
     <div className="flex flex-col items-center justify-center space-y-4 p-8 border-2 border-dashed rounded-lg">
       <div className="text-lg font-medium text-muted-foreground">
