@@ -42,7 +42,12 @@ export default async function AttackChainDetail({
           .map((alert, index, array) => (
             <div key={alert.id} className="flex flex-col gap-2">
               <div className="bg-white p-4 rounded-lg shadow-md border">
-                <h3 className="font-semibold text-lg">{alert.name}</h3>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold">
+                    {index + 1}
+                  </div>
+                  <h3 className="font-semibold text-lg">{alert.name}</h3>
+                </div>
                 <p className="text-gray-600 mt-1">{alert.description}</p>
 
                 <div className="mt-3">

@@ -1,6 +1,8 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
+import "react-quill/dist/quill.snow.css";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -20,7 +22,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { getTeamMembers } from "@/features/team/team-actions";
 import { PopulatedAlert } from "@/types/alert";
 import { AlertStatus, AlertType, User } from "@prisma/client";
@@ -36,6 +37,7 @@ import {
   Save,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import ReactQuill from "react-quill";
 import { updateAlert } from "../alert-actions";
 import IOCDialog from "./ioc-form";
 import ResponseActionForm from "./response-action-form";
@@ -240,55 +242,27 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
           <CardContent>
             <div className="space-y-4">
               <div>
-                <Label>Description</Label>
                 {isEditing ? (
-                  <Textarea
-                    name="description"
+                  <ReactQuill
+                    modules={{
+                      toolbar: [
+                        [{ list: "ordered" }, { list: "bullet" }],
+                        ["bold", "italic", "underline"],
+                      ],
+                    }}
                     value={editedAlert.description}
-                    onChange={handleInputChange}
-                    className="mt-1"
+                    onChange={(value) =>
+                      setEditedAlert({ ...editedAlert, description: value })
+                    }
                   />
                 ) : (
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {editedAlert.description}
-                  </p>
+                  <div
+                    className="prose"
+                    dangerouslySetInnerHTML={{
+                      __html: editedAlert.description,
+                    }}
+                  />
                 )}
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label className="text-sm font-medium">Start Time</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {format(
-                      new Date(editedAlert.startDateTime),
-                      "MMM d, yyyy HH:mm"
-                    )}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">End Time</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {editedAlert.endDateTime
-                      ? format(
-                          new Date(editedAlert.endDateTime),
-                          "MMM d, yyyy HH:mm"
-                        )
-                      : "Ongoing"}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">
-                    Detection Source
-                  </Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {editedAlert.detectionSource}
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium">Category</Label>
-                  <p className="mt-1 text-sm font-medium">
-                    {editedAlert.category.name}
-                  </p>
-                </div>
               </div>
             </div>
           </CardContent>
@@ -300,7 +274,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
               Assigned Investigator
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="flex flex-col gap-4">
             {isEditing ? (
               <Select
                 onValueChange={(value) => {
@@ -364,6 +338,48 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 </div>
               </div>
             )}
+            <div className="grid grid-cols-2 gap-6">
+              <div className="flex flex-col space-y-1.5 p-4 bg-secondary/20 rounded-lg">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Start Time
+                </Label>
+                <p className="text-sm font-semibold">
+                  {format(
+                    new Date(editedAlert.startDateTime),
+                    "MMM d, yyyy HH:mm"
+                  )}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-1.5 p-4 bg-secondary/20 rounded-lg">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                  End Time
+                </Label>
+                <p className="text-sm font-semibold">
+                  {editedAlert.endDateTime
+                    ? format(
+                        new Date(editedAlert.endDateTime),
+                        "MMM d, yyyy HH:mm"
+                      )
+                    : "Ongoing"}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-1.5 p-4 bg-secondary/20 rounded-lg">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Detection Source
+                </Label>
+                <p className="text-sm font-semibold">
+                  {editedAlert.detectionSource}
+                </p>
+              </div>
+              <div className="flex flex-col space-y-1.5 p-4 bg-secondary/20 rounded-lg">
+                <Label className="text-xs uppercase tracking-wider text-muted-foreground">
+                  Category
+                </Label>
+                <p className="text-sm font-semibold">
+                  {editedAlert.category.name}
+                </p>
+              </div>
+            </div>
           </CardContent>
         </Card>
 

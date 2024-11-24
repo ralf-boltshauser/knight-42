@@ -1,4 +1,4 @@
-import { ResponseActionStatus } from "@prisma/client";
+import { AlertStatus, ResponseActionStatus } from "@prisma/client";
 import { AlertCircle, AlertTriangle, CheckCircle, Clock } from "lucide-react";
 
 export const getStatusIcon = (status: string) => {
@@ -35,5 +35,18 @@ export const getActionStatusColor = (status: ResponseActionStatus) => {
       return "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300";
     default:
       return "bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-300";
+  }
+};
+
+export const getAlertStatusColor = (status: AlertStatus) => {
+  switch (status) {
+    case AlertStatus.INITIAL_INVESTIGATION:
+      return "orange";
+    case AlertStatus.ESCALATED:
+      return "red";
+    case AlertStatus.RESOLVED:
+      return "green";
+    default:
+      return "gray";
   }
 };

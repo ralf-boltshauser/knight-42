@@ -171,6 +171,7 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
           <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="timeline" className="mt-6">
+          {timelineEvents.length === 0 && <p className="">No events found</p>}
           <div className="relative">
             <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-800"></div>
             <div className="space-y-8">
@@ -246,33 +247,28 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
         </TabsContent>
         <TabsContent value="details">
           <div>
-            <CardHeader>
-              <CardTitle>Asset Details</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Type
-                    </h4>
-                    <p className="text-sm">{assetDetail.type}</p>
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                      Visibility
-                    </h4>
-                    <p className="text-sm">{assetDetail.visibility}</p>
-                  </div>
+            <div className="grid gap-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                    Type
+                  </h4>
+                  <p className="text-sm">{assetDetail.type}</p>
                 </div>
                 <div>
                   <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                    Notes
+                    Visibility
                   </h4>
-                  <p className="text-sm">{assetDetail.notes}</p>
+                  <p className="text-sm">{assetDetail.visibility}</p>
                 </div>
               </div>
-            </CardContent>
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                  Notes
+                </h4>
+                <p className="text-sm">{assetDetail.notes}</p>
+              </div>
+            </div>
           </div>
         </TabsContent>
         <TabsContent value="settings">
