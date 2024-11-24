@@ -48,7 +48,7 @@ enum AssetVisibility {
 model Asset {
   id                   String           @id @default(cuid())
   name                 String
-  identifier           String
+  identifier           String           @unique
   visibility           AssetVisibility
   metadata             Json?
   criticality          AssetCriticality
@@ -91,6 +91,7 @@ enum AlertStatus {
 model Alert {
   id                     String           @id @default(cuid())
   name                   String
+  description            String           @default("")
   type                   AlertType // Alert or Incident
   startDateTime          DateTime         @default(now())
   endDateTime            DateTime?
@@ -99,7 +100,6 @@ model Alert {
   categoryId             String
   category               AlertCategory    @relation(fields: [categoryId], references: [id])
   status                 AlertStatus
-  description            String           @default("")
   relatedIOCs            IOC[]            @relation("AlertIOCs")
   attackChainId          String?
   attackChain            AttackChain?     @relation(fields: [attackChainId], references: [id])
@@ -177,7 +177,7 @@ model ResponseAction {
   affectedAsset        Asset?               @relation(fields: [affectedAssetId], references: [id])
   relatedIOCId         String?
   relatedIOC           IOC?                 @relation(fields: [relatedIOCId], references: [id])
-  description          String
+  description          String               @default("")
   assignedTeamMemberId String?
   assignedTeamMember   User?                @relation(fields: [assignedTeamMemberId], references: [id])
   createdAt            DateTime             @default(now())

@@ -21,6 +21,7 @@ import {
   Clock,
   XCircle,
 } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 // Mock data based on the Prisma schema
@@ -173,63 +174,73 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
           <div className="relative">
             <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-800"></div>
             <div className="space-y-8">
-              {timelineEvents.map((event) => (
-                <div key={event.id} className="relative pl-8">
-                  <div className="absolute left-0 w-8 h-8 flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-primary"></div>
-                  </div>
-                  <Card>
-                    <CardHeader className="pb-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          {event.type === "ALERT" ? (
-                            <AlertTriangle className="h-4 w-4 text-orange-500" />
-                          ) : (
-                            <Activity className="h-4 w-4 text-blue-500" />
-                          )}
-                          <CardTitle className="text-lg font-semibold">
-                            {event.name}
-                          </CardTitle>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                          {getStatusIcon(event.status)}
-                          <span className="text-sm text-muted-foreground">
-                            {format(
-                              new Date(event.datetime),
-                              "MMM d, yyyy HH:mm"
+              {timelineEvents
+                .toSorted(
+                  (a, b) =>
+                    new Date(b.datetime).getTime() -
+                    new Date(a.datetime).getTime()
+                )
+                .map((event) => (
+                  <Link
+                    href={event.type === "ALERT" ? `/alerts/${event.id}` : ""}
+                    key={event.id}
+                    className="relative pl-8 block"
+                  >
+                    <div className="absolute left-0 w-8 h-8 flex items-center justify-center">
+                      <div className="w-2 h-2 rounded-full bg-primary"></div>
+                    </div>
+                    <Card>
+                      <CardHeader className="pb-2">
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            {event.type === "ALERT" ? (
+                              <AlertTriangle className="h-4 w-4 text-orange-500" />
+                            ) : (
+                              <Activity className="h-4 w-4 text-blue-500" />
                             )}
-                          </span>
+                            <CardTitle className="text-lg font-semibold">
+                              {event.name}
+                            </CardTitle>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            {getStatusIcon(event.status)}
+                            <span className="text-sm text-muted-foreground">
+                              {format(
+                                new Date(event.datetime),
+                                "MMM d, yyyy HH:mm"
+                              )}
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        {event.description}
-                      </p>
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                          <Badge variant="outline">
-                            {event.type === "ALERT"
-                              ? event.category
-                              : event.actionType}
-                          </Badge>
-                          <Badge variant="outline">{event.status}</Badge>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground mb-4">
+                          {event.description}
+                        </p>
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <Badge variant="outline">
+                              {event.type === "ALERT"
+                                ? event.category
+                                : event.actionType}
+                            </Badge>
+                            <Badge variant="outline">{event.status}</Badge>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <Avatar className="h-6 w-6">
+                              <AvatarFallback>
+                                {event.assignedTo?.name[0]}
+                              </AvatarFallback>
+                            </Avatar>
+                            <span className="text-sm text-muted-foreground">
+                              {event.assignedTo?.name}
+                            </span>
+                          </div>
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <Avatar className="h-6 w-6">
-                            <AvatarFallback>
-                              {event.assignedTo?.name[0]}
-                            </AvatarFallback>
-                          </Avatar>
-                          <span className="text-sm text-muted-foreground">
-                            {event.assignedTo?.name}
-                          </span>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
+                      </CardContent>
+                    </Card>
+                  </Link>
+                ))}
             </div>
           </div>
         </TabsContent>
