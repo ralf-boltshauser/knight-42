@@ -21,3 +21,7 @@ export type PopulatedAlert = Alert & {
 export type PopulatedResponseAction = ResponseAction & {
   assignedTeamMember: User;
 };
+
+export type AttackChainAlert = Alert & {
+  assets: Asset[];
+};
