@@ -10,7 +10,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Usage
 
-One shot setup script for empty containers
+One shot setup script for empty containers running on a fresh Ubuntu 22.04 server
 ```bash
 apt update && apt install -y curl && curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/setup.sh | bash
 ```
