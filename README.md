@@ -1,4 +1,5 @@
 # Knight 42
+Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
 - [ ] add attack chains
