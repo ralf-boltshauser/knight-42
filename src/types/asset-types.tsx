@@ -1,13 +1,6 @@
 import { Badge } from "@/components/ui/badge";
 import { AssetCriticality, AssetType, AssetVisibility } from "@prisma/client";
-import {
-  AlertCircle,
-  CircleHelp,
-  Eye,
-  EyeOff,
-  Server,
-  User,
-} from "lucide-react";
+import { CircleHelp, Eye, EyeOff, Server, User } from "lucide-react";
 export async function AssetTypeToIcon(type: AssetType) {
   if (type === AssetType.HOST) {
     return <Server />;
@@ -37,7 +30,7 @@ export const getVisibilityIcon = (visibility: AssetVisibility) => {
     case AssetVisibility.NONE:
       return <EyeOff className="h-4 w-4" />;
     case AssetVisibility.ALERTS:
-      return <AlertCircle className="h-4 w-4" />;
+      return <Eye className="h-4 w-4" />;
     case AssetVisibility.FULL:
       return <Eye className="h-4 w-4" />;
   }

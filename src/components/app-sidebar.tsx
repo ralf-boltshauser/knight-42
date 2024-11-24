@@ -46,7 +46,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <div className="text-lg px-2 py-1 font-bold">Knight-42</div>
+          <div className="text-lg px-2 py-1 font-bold">KNIGHT 42</div>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>

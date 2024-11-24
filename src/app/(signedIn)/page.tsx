@@ -10,28 +10,18 @@ export default async function DashboardPage() {
     redirect("/auth/sign-in");
   }
   const myAlerts = await prisma.alert.findMany({
-    where: {
-      assignedInvestigatorId: session.user.dbId,
-    },
-  });
-
-  const myAssets = await prisma.asset.findMany({
-    where: {
-      assignedTeamMemberId: session.user.dbId,
+    include: {
+      assignedInvestigator: true,
     },
   });
 
   const myResponseActions = await prisma.responseAction.findMany({
-    where: {
-      assignedTeamMemberId: session.user.dbId,
+    include: {
+      assignedTeamMember: true,
     },
   });
 
   return (
-    <Dashboard
-      myAlerts={myAlerts}
-      myAssets={myAssets}
-      myResponseActions={myResponseActions}
-    />
+    <Dashboard myAlerts={myAlerts} myResponseActions={myResponseActions} />
   );
 }

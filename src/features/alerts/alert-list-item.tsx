@@ -27,6 +27,7 @@ import { toast } from "sonner";
 import { useCopyToClipboard } from "usehooks-ts";
 
 export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [copy, copyText] = useCopyToClipboard();
   const handleCopy = (text: string) => {
     copyText(text);
@@ -56,7 +57,10 @@ export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
         </CollapsibleTrigger>
         <CollapsibleContent>
           <CardDescription className="px-6">
-            {alert.description}
+            <div
+              className="prose"
+              dangerouslySetInnerHTML={{ __html: alert.description }}
+            ></div>
           </CardDescription>
           <CardContent>
             <div className="grid grid-cols-2 gap-4 mb-4">

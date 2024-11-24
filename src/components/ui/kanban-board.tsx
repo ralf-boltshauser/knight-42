@@ -15,6 +15,7 @@ export type Column = {
 export type Card = {
   id: string;
   title: string;
+  tailText: string;
   link: string;
 };
 
@@ -91,9 +92,12 @@ export default function KanbanBoard({
                   onDragEnd={onDragEnd}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="p-2 bg-white border rounded shadow cursor-grab"
+                  className="p-2 bg-white border rounded shadow cursor-grab flex flex-col gap-2 xl:flex-row justify-between"
                 >
-                  {card.title}
+                  <span className="">{card.title}</span>
+                  <div className="text-xs mt-0 xl:mt-1 text-gray-500">
+                    {card.tailText}
+                  </div>
                 </motion.div>
               </Link>
             ))}

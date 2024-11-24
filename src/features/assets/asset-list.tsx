@@ -10,10 +10,26 @@ import {
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { PopulatedAsset } from "@/types/asset";
-import { AlertStatus, AlertType, AssetType } from "@prisma/client";
-import { Plus, Server, Shield, User } from "lucide-react";
+import {
+  AlertStatus,
+  AlertType,
+  AssetCriticality,
+  AssetType,
+  AssetVisibility,
+} from "@prisma/client";
+import {
+  Circle,
+  Eye,
+  EyeOff,
+  Plus,
+  RotateCw,
+  Server,
+  Shield,
+  User,
+} from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useState } from "react";
+import { parseAsBoolean, parseAsStringEnum, useQueryState } from "nuqs";
+import { useEffect, useState } from "react";
 import { AssetForm } from "./asset-form";
 import AssetListItem from "./asset-list-item";
 
@@ -21,8 +37,45 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
   const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<AssetType | null>(null);
-  const [onlyMine, setOnlyMine] = useState(false);
-  const [onlyUnderAttack, setOnlyUnderAttack] = useState(false);
+  const [reload, setReload] = useQueryState(
+    "reload",
+    parseAsBoolean.withDefault(false)
+  );
+  const [onlyMine, setOnlyMine] = useQueryState(
+    "onlyMine",
+    parseAsBoolean.withDefault(false)
+  );
+  const [onlyUnderAttack, setOnlyUnderAttack] = useQueryState(
+    "onlyUnderAttack",
+    parseAsBoolean.withDefault(false)
+  );
+  const [criticalityFilter, setCriticalityFilter] = useQueryState(
+    "criticalityFilter",
+    parseAsStringEnum([...Object.values(AssetCriticality), ""]).withDefault("")
+  );
+  const [visibilityFilter, setVisibilityFilter] = useQueryState(
+    "visibilityFilter",
+    parseAsStringEnum([...Object.values(AssetVisibility), ""]).withDefault("")
+  );
+
+  const reloadInterval = 30;
+  const [reloadCounter, setReloadCounter] = useState(reloadInterval);
+
+  useEffect(() => {
+    let interval: NodeJS.Timeout;
+    if (reload) {
+      interval = setInterval(() => {
+        setReloadCounter((prev) => prev - 1);
+      }, 1000);
+
+      if (reloadCounter <= 0) {
+        window.location.reload();
+        setReloadCounter(reloadInterval);
+      }
+    }
+
+    return () => clearInterval(interval);
+  }, [reload, reloadCounter]);
 
   if (!session) return null;
   const filteredAssets = assets.filter(
@@ -37,13 +90,15 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
           (alert) =>
             alert.status !== AlertStatus.RESOLVED &&
             alert.type == AlertType.INCIDENT
-        ))
+        )) &&
+      (criticalityFilter === "" || asset.criticality === criticalityFilter) &&
+      (visibilityFilter === "" || asset.visibility === visibilityFilter)
   );
 
   return (
     <div className="w-full flex flex-col gap-4">
-      <div className="flex flex-row justify-between items-center">
-        <div className="flex flex-col sm:flex-row justify-start gap-8 items-center">
+      <div className="hidden md:flex flex-row justify-between items-center">
+        <div className="flex flex-col xl:flex-row justify-start gap-8 items-center">
           <div className="relative w-[500px] sm:w-64">
             <Input
               placeholder="Search assets..."
@@ -74,25 +129,8 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
               Users
             </Button>
           </div>
-          <div>
-            <ToggleGroup
-              type="multiple"
-              onValueChange={(value) => {
-                setOnlyMine(value.includes("mine"));
-                setOnlyUnderAttack(value.includes("under-attack"));
-              }}
-            >
-              <ToggleGroupItem value="mine">
-                <User className="mr-2 h-4 w-4" />
-                Mine
-              </ToggleGroupItem>
-              <ToggleGroupItem value="under-attack">
-                <Shield className="mr-2 h-4 w-4" />
-                Under Attack
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
         </div>
+
         <Dialog>
           <DialogTrigger asChild>
             <Button>
@@ -108,10 +146,86 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
           </DialogContent>
         </Dialog>
       </div>
-      <div className="grid grid-cols-1  xl:grid-cols-2 gap-4">
-        {filteredAssets.map((asset) => (
-          <AssetListItem key={asset.id} asset={asset} />
-        ))}
+      <div className="hidden md:flex flex-row gap-16 justify-start items-center">
+        <ToggleGroup
+          type="multiple"
+          onValueChange={(value) => {
+            setOnlyMine(value.includes("mine"));
+            setOnlyUnderAttack(value.includes("under-attack"));
+          }}
+        >
+          <ToggleGroupItem value="mine">
+            <User className="mr-2 h-4 w-4" />
+            Mine
+          </ToggleGroupItem>
+          <ToggleGroupItem value="under-attack">
+            <Shield className="mr-2 h-4 w-4" />
+            Under Attack
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <ToggleGroup
+          type="single"
+          onValueChange={(value) => {
+            setCriticalityFilter(value as AssetCriticality | "");
+          }}
+        >
+          <ToggleGroupItem value={AssetCriticality.LOW}>
+            <Circle className="mr-2 h-4 w-4" />
+            Low
+          </ToggleGroupItem>
+          <ToggleGroupItem value={AssetCriticality.MEDIUM}>
+            <Circle className="mr-2 h-4 w-4" />
+            Medium
+          </ToggleGroupItem>
+          <ToggleGroupItem value={AssetCriticality.HIGH}>
+            <Circle className="mr-2 h-4 w-4" />
+            High
+          </ToggleGroupItem>
+          <ToggleGroupItem value={AssetCriticality.CRITICAL}>
+            <Circle className="mr-2 h-4 w-4" />
+            Critical
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <ToggleGroup
+          type="single"
+          onValueChange={(value) => {
+            setVisibilityFilter(value as AssetVisibility | "");
+          }}
+        >
+          <ToggleGroupItem value={AssetVisibility.NONE}>
+            <EyeOff className="mr-2 h-4 w-4" />
+            None
+          </ToggleGroupItem>
+          <ToggleGroupItem value={AssetVisibility.ALERTS}>
+            <Eye className="mr-2 h-4 w-4" />
+            Alerts
+          </ToggleGroupItem>
+          <ToggleGroupItem value={AssetVisibility.FULL}>
+            <Eye className="mr-2 h-4 w-4" />
+            Full
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <Button
+          variant="outline"
+          onClick={() => setReload((prev) => !prev)}
+          className="flex items-center"
+        >
+          <RotateCw className="mr-2 h-4 w-4" />
+          {reload
+            ? `Stop Reload (${reloadCounter}s)`
+            : `Auto Reload (${reloadInterval}s)`}
+        </Button>
+      </div>
+      <div className="grid grid-cols-1 gap-4">
+        {filteredAssets
+          .toSorted(
+            (a, b) =>
+              Object.values(AssetCriticality).indexOf(b.criticality) -
+              Object.values(AssetCriticality).indexOf(a.criticality)
+          )
+          .map((asset) => (
+            <AssetListItem key={asset.id} asset={asset} />
+          ))}
       </div>
     </div>
   );

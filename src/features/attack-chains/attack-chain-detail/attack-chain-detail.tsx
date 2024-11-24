@@ -39,7 +39,7 @@ export default async function AttackChainDetail({
           .toSorted(
             (a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()
           )
-          .map((alert, index, array) => (
+          .map((alert, index) => (
             <div key={alert.id} className="flex flex-col gap-2">
               <div className="bg-white p-4 rounded-lg shadow-md border">
                 <div className="flex items-center gap-3">
@@ -48,7 +48,12 @@ export default async function AttackChainDetail({
                   </div>
                   <h3 className="font-semibold text-lg">{alert.name}</h3>
                 </div>
-                <p className="text-gray-600 mt-1">{alert.description}</p>
+                <div
+                  className="text-gray-600 mt-1 prose max-w-none"
+                  dangerouslySetInnerHTML={{
+                    __html: alert.description,
+                  }}
+                />
 
                 <div className="mt-3">
                   <h4 className="font-medium text-sm text-gray-700">

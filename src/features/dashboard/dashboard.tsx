@@ -2,25 +2,36 @@
 
 import KanbanBoard from "@/components/ui/kanban-board";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getAlertStatusColor } from "@/types/alert-types";
-import { Alert, AlertStatus, Asset, ResponseAction } from "@prisma/client";
-import { updateAlertStatus } from "./dashboard-actions";
+import { getActionStatusColor, getAlertStatusColor } from "@/types/alert-types";
+import {
+  Alert,
+  AlertStatus,
+  ResponseAction,
+  ResponseActionStatus,
+  User,
+} from "@prisma/client";
+import { useQueryState } from "nuqs";
+
+import {
+  updateAlertStatus,
+  updateResponseActionStatus,
+} from "./dashboard-actions";
 
 export default function Dashboard({
   myAlerts,
-  myAssets,
   myResponseActions,
 }: {
-  myAlerts: Alert[];
-  myAssets: Asset[];
-  myResponseActions: ResponseAction[];
+  myAlerts: (Alert & { assignedInvestigator: User })[];
+  myResponseActions: (ResponseAction & { assignedTeamMember: User })[];
 }) {
+  const [tab, setTab] = useQueryState("tab", {
+    defaultValue: "alerts",
+  });
   return (
     <div>
-      <Tabs defaultValue="alerts">
+      <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
-          <TabsTrigger value="assets">Assets</TabsTrigger>
           <TabsTrigger value="response-actions">Response Actions</TabsTrigger>
         </TabsList>
         <TabsContent value="alerts">
@@ -38,31 +49,33 @@ export default function Dashboard({
                   id: alert.id,
                   link: `/alerts/${alert.id}`,
                   title: alert.name,
+                  tailText: alert.assignedInvestigator?.name,
                 })),
             }))}
           />
         </TabsContent>
-        <TabsContent value="assets">
-          {myAssets.length > 0 ? (
-            <div>
-              {myAssets.map((asset) => (
-                <div key={asset.id}>{asset.name}</div>
-              ))}
-            </div>
-          ) : (
-            <div>No assets found</div>
-          )}
-        </TabsContent>
         <TabsContent value="response-actions">
-          {myResponseActions.length > 0 ? (
-            <div>
-              {myResponseActions.map((responseAction) => (
-                <div key={responseAction.id}>{responseAction.name}</div>
-              ))}
-            </div>
-          ) : (
-            <div>No response actions found</div>
-          )}
+          <KanbanBoard
+            onUpdate={(columnId, cardId) => {
+              updateResponseActionStatus(
+                cardId,
+                columnId as ResponseActionStatus
+              );
+            }}
+            columns={Object.values(ResponseActionStatus).map((status) => ({
+              id: status,
+              title: status,
+              color: getActionStatusColor(status),
+              cards: myResponseActions
+                .filter((responseAction) => responseAction.status === status)
+                .map((responseAction) => ({
+                  id: responseAction.id,
+                  link: `/response-actions/${responseAction.id}`,
+                  title: responseAction.name,
+                  tailText: responseAction.assignedTeamMember?.name,
+                })),
+            }))}
+          />
         </TabsContent>
       </Tabs>
     </div>

@@ -1,3 +1,4 @@
+import typography from "@tailwindcss/typography";
 import type { Config } from "tailwindcss";
 import tailwindcssAnimate from "tailwindcss-animate";
 
@@ -71,6 +72,6 @@ const config: Config = {
     },
   },
   safelist: [{ pattern: /bg-/ }, { pattern: /text-/ }, { pattern: /border-/ }],
-  plugins: [tailwindcssAnimate],
+  plugins: [tailwindcssAnimate, typography],
 };
 export default config;
