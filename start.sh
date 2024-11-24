@@ -9,13 +9,14 @@ else
   echo "Network '${NETWORK_NAME}' already exists."
 fi
 
+# Setup infra
 docker compose up --build --wait
 
-
-
+# Setup db
 pnpm prisma:generate
 pnpm prisma:push
 pnpm prisma:seed
 
+# Setup app
 pnpm build
 pnpm start

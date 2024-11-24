@@ -1,0 +1,286 @@
+"use client";
+
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { PopulatedAsset } from "@/types/asset";
+import { format } from "date-fns";
+import {
+  Activity,
+  AlertCircle,
+  AlertTriangle,
+  CheckCircle2,
+  Clock,
+  XCircle,
+} from "lucide-react";
+import { useState } from "react";
+
+// Mock data based on the Prisma schema
+type AssetDetail = {
+  id: string;
+  name: string;
+  identifier: string;
+  type: string;
+  criticality: string;
+  visibility: string;
+  assignedTeamMember: {
+    name: string;
+    email: string;
+  };
+  notes: string;
+};
+
+type TimelineEventType = "ALERT" | "ACTION";
+
+type TimelineEvent = {
+  id: string;
+  type: TimelineEventType;
+  category?: string;
+  actionType?: string;
+  description?: string;
+  assignedTo?: {
+    name: string;
+  };
+  name: string;
+  datetime: string;
+  status: string;
+};
+
+export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
+  const [activeTab, setActiveTab] = useState("timeline");
+
+  const assetDetail: AssetDetail = {
+    id: asset.id,
+    name: asset.name,
+    identifier: asset.identifier,
+    type: asset.type,
+    criticality: asset.criticality,
+    visibility: asset.visibility,
+    assignedTeamMember: {
+      name: asset.assignedTeamMember?.name ?? "Unknown",
+      email: asset.assignedTeamMember?.email ?? "Unknown",
+    },
+    notes: asset.notes ?? "",
+  };
+
+  // build timeline events based on alerts and response actions
+  const timelineEvents: TimelineEvent[] = [
+    ...asset.alerts.map((alert) => ({
+      id: alert.id,
+      type: "ALERT" as TimelineEventType,
+      name: alert.name,
+      datetime: alert.createdAt.toISOString(),
+      status: alert.status,
+      category: alert.category.name,
+      description: alert.description,
+      assignedTo: {
+        name: alert.assignedInvestigator.name ?? "Unknown",
+      },
+    })),
+    ...asset.responseActions.map((action) => ({
+      id: action.id,
+      type: "ACTION" as TimelineEventType,
+      name: action.name,
+      datetime: action.createdAt.toISOString(),
+      status: action.status,
+      actionType: action.actionType,
+      description: action.description,
+      assignedTo: {
+        name: action.assignedTeamMember.name ?? "Unknown",
+      },
+    })),
+  ].sort(
+    (a, b) => new Date(a.datetime).getTime() - new Date(b.datetime).getTime()
+  );
+
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "COMPLETED":
+      case "RESOLVED":
+        return <CheckCircle2 className="h-4 w-4 text-green-500" />;
+      case "INITIAL_INVESTIGATION":
+        return <Clock className="h-4 w-4 text-yellow-500" />;
+      case "CANCELLED":
+        return <XCircle className="h-4 w-4 text-red-500" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-gray-500" />;
+    }
+  };
+
+  const getCriticalityColor = (criticality: string) => {
+    switch (criticality) {
+      case "LOW":
+        return "bg-green-500";
+      case "MEDIUM":
+        return "bg-yellow-500";
+      case "HIGH":
+        return "bg-orange-500";
+      case "CRITICAL":
+        return "bg-red-500";
+      default:
+        return "bg-gray-500";
+    }
+  };
+
+  return (
+    <div className="">
+      <div className="flex items-center justify-between">
+        <div>
+          <CardTitle className="text-2xl font-bold">
+            {assetDetail.name}
+          </CardTitle>
+          <CardDescription>{assetDetail.identifier}</CardDescription>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Badge
+            variant="outline"
+            className={`${getCriticalityColor(
+              assetDetail.criticality
+            )} text-white`}
+          >
+            {assetDetail.criticality}
+          </Badge>
+          <div className="flex items-center space-x-2">
+            <Avatar>
+              <AvatarFallback>
+                {assetDetail.assignedTeamMember.name[0]}
+              </AvatarFallback>
+            </Avatar>
+            <div className="text-sm">
+              <p className="font-medium">
+                {assetDetail.assignedTeamMember.name}
+              </p>
+              <p className="text-muted-foreground">Owner</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+          <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="details">Details</TabsTrigger>
+          <TabsTrigger value="settings">Settings</TabsTrigger>
+        </TabsList>
+        <TabsContent value="timeline" className="mt-6">
+          <div className="relative">
+            <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-800"></div>
+            <div className="space-y-8">
+              {timelineEvents.map((event) => (
+                <div key={event.id} className="relative pl-8">
+                  <div className="absolute left-0 w-8 h-8 flex items-center justify-center">
+                    <div className="w-2 h-2 rounded-full bg-primary"></div>
+                  </div>
+                  <Card>
+                    <CardHeader className="pb-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          {event.type === "ALERT" ? (
+                            <AlertTriangle className="h-4 w-4 text-orange-500" />
+                          ) : (
+                            <Activity className="h-4 w-4 text-blue-500" />
+                          )}
+                          <CardTitle className="text-lg font-semibold">
+                            {event.name}
+                          </CardTitle>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          {getStatusIcon(event.status)}
+                          <span className="text-sm text-muted-foreground">
+                            {format(
+                              new Date(event.datetime),
+                              "MMM d, yyyy HH:mm"
+                            )}
+                          </span>
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        {event.description}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-2">
+                          <Badge variant="outline">
+                            {event.type === "ALERT"
+                              ? event.category
+                              : event.actionType}
+                          </Badge>
+                          <Badge variant="outline">{event.status}</Badge>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <Avatar className="h-6 w-6">
+                            <AvatarFallback>
+                              {event.assignedTo?.name[0]}
+                            </AvatarFallback>
+                          </Avatar>
+                          <span className="text-sm text-muted-foreground">
+                            {event.assignedTo?.name}
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+              ))}
+            </div>
+          </div>
+        </TabsContent>
+        <TabsContent value="details">
+          <div>
+            <CardHeader>
+              <CardTitle>Asset Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Type
+                    </h4>
+                    <p className="text-sm">{assetDetail.type}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                      Visibility
+                    </h4>
+                    <p className="text-sm">{assetDetail.visibility}</p>
+                  </div>
+                </div>
+                <div>
+                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
+                    Notes
+                  </h4>
+                  <p className="text-sm">{assetDetail.notes}</p>
+                </div>
+              </div>
+            </CardContent>
+          </div>
+        </TabsContent>
+        <TabsContent value="settings">
+          <div>
+            <CardHeader>
+              <CardTitle>Settings</CardTitle>
+              <CardDescription>
+                Manage your asset settings and preferences.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline">Cancel</Button>
+                <Button>Save Changes</Button>
+              </div>
+            </CardContent>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+}

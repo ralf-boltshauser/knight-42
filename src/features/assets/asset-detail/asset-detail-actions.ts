@@ -1,9 +1,11 @@
-import AssetList from "@/features/assets/asset-list";
+"use server";
 import { prisma } from "@/lib/client";
-import { PopulatedAsset } from "@/types/asset";
 
-export default async function AssetsPage() {
-  const assetList = await prisma.asset.findMany({
+export async function getAssetById(assetId: string) {
+  return await prisma.asset.findUnique({
+    where: {
+      id: assetId,
+    },
     include: {
       assignedTeamMember: true,
       alerts: {
@@ -19,5 +21,4 @@ export default async function AssetsPage() {
       },
     },
   });
-  return <AssetList assets={assetList as PopulatedAsset[]} />;
 }

@@ -39,12 +39,20 @@ enum AssetCriticality {
   CRITICAL
 }
 
+enum AssetVisibility {
+  NONE
+  ALERTS
+  FULL
+}
+
 model Asset {
   id                   String           @id @default(cuid())
   name                 String
   identifier           String
+  visibility           AssetVisibility
   metadata             Json?
   criticality          AssetCriticality
+  type                 AssetType
   assignedTeamMemberId String?
   assignedTeamMember   User?            @relation(fields: [assignedTeamMemberId], references: [id])
   notes                String? // Optional
