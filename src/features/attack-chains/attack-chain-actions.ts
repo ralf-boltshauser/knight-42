@@ -38,8 +38,10 @@ export async function getAttackChain(attackChainId: string) {
   return await prisma.attackChain.findUnique({
     where: { id: attackChainId },
     include: {
+      relatedThreatActor: true,
       alerts: {
         include: {
+          category: true,
           assets: true,
           assignedInvestigator: true,
           responseActions: {

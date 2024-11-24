@@ -49,7 +49,7 @@ export default function ResponseActionForm({
       dateTime: new Date(),
       description: "",
       affectedAssetId: "",
-      relatedIOCId: "",
+      relatedIOCId: undefined,
     },
   });
 

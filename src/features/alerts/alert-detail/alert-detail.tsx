@@ -257,7 +257,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                   />
                 ) : (
                   <div
-                    className="prose"
+                    className="prose max-w-full"
                     dangerouslySetInnerHTML={{
                       __html: editedAlert.description,
                     }}
@@ -360,7 +360,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                         new Date(editedAlert.endDateTime),
                         "MMM d, yyyy HH:mm"
                       )
-                    : "Ongoing"}
+                    : "N/A"}
                 </p>
               </div>
               <div className="flex flex-col space-y-1.5 p-4 bg-secondary/20 rounded-lg">
@@ -399,13 +399,11 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 <div className="space-y-4">
                   {editedAlert.relatedIOCs.map((ioc) => (
                     <Card key={ioc.id}>
-                      <CardHeader>
-                        <CardTitle className="text-sm font-medium">
-                          {ioc.type.name}
-                        </CardTitle>
-                        <CardDescription>{ioc.value}</CardDescription>
-                      </CardHeader>
-                      <CardContent>
+                      <CardHeader className="flex flex-row items-center justify-between">
+                        <div className="flex flex-row items-center gap-2">
+                          <CardDescription>{ioc.type.name}</CardDescription>
+                          <Badge variant={"outline"}> {ioc.value}</Badge>
+                        </div>
                         <p className="text-sm text-muted-foreground">
                           First observed:{" "}
                           {format(
@@ -413,7 +411,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                             "MMM d, yyyy HH:mm"
                           )}
                         </p>
-                      </CardContent>
+                      </CardHeader>
                     </Card>
                   ))}
                   <IOCDialog alert={editedAlert} />

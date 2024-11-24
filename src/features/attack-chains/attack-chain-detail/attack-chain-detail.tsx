@@ -10,6 +10,7 @@ import {
 import { prisma } from "@/lib/client";
 import { PopulatedAttackChain } from "@/types/attack-chain";
 import { revalidatePath } from "next/cache";
+import Link from "next/link";
 import { getAlerts } from "../attack-chain-actions";
 
 export default async function AttackChainDetail({
@@ -40,7 +41,11 @@ export default async function AttackChainDetail({
             (a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()
           )
           .map((alert, index) => (
-            <div key={alert.id} className="flex flex-col gap-2">
+            <Link
+              key={alert.id}
+              href={`/alerts/${alert.id}`}
+              className="flex flex-col gap-2"
+            >
               <div className="bg-white p-4 rounded-lg shadow-md border">
                 <div className="flex items-center gap-3">
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold">
@@ -87,7 +92,7 @@ export default async function AttackChainDetail({
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         {availableAlerts && availableAlerts.length > 0 && (
           <Card className="mt-4">

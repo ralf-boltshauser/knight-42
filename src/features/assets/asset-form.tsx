@@ -28,13 +28,18 @@ import { z } from "zod";
 import { DialogClose } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { getTeamMembers } from "../team/team-actions";
-import { createAsset } from "./asset-actions";
+import { createAsset, updateAsset } from "./asset-actions";
 import { AssetSchema } from "./asset-schema";
 
-export function AssetForm() {
+export function AssetForm({
+  defaultValues,
+}: {
+  defaultValues?: z.infer<typeof AssetSchema>;
+}) {
   const form = useForm<z.infer<typeof AssetSchema>>({
+    mode: "onChange",
     resolver: zodResolver(AssetSchema),
-    defaultValues: {
+    defaultValues: defaultValues ?? {
       name: "",
       identifier: "",
       visibility: "NONE",
@@ -49,14 +54,16 @@ export function AssetForm() {
     queryFn: () => getTeamMembers(),
   });
 
-  console.log("teammembers", teamMembers);
-
   function onSubmit(values: z.infer<typeof AssetSchema>) {
-    console.log(values);
-    toast.success("Asset created successfully");
-
-    createAsset(values);
-    form.reset();
+    if (defaultValues) {
+      console.log("updating asset", values);
+      updateAsset(values);
+      toast.success("Asset updated successfully");
+    } else {
+      toast.success("Asset created successfully");
+      createAsset(values);
+      form.reset();
+    }
   }
 
   return (
@@ -227,9 +234,13 @@ export function AssetForm() {
           )}
         />
 
-        <DialogClose asChild>
-          <Button type="submit">Submit</Button>
-        </DialogClose>
+        {!defaultValues ? (
+          <DialogClose asChild>
+            <Button type="submit">Submit</Button>
+          </DialogClose>
+        ) : (
+          <Button type="submit">Update</Button>
+        )}
       </form>
     </Form>
   );

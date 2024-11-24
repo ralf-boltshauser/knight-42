@@ -8,11 +8,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { PopulatedAlert } from "@/types/alert";
+import { AssetCriticality } from "@prisma/client";
 import { Filter } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { toast } from "sonner";
-import { useCopyToClipboard } from "usehooks-ts";
 import AlertListItem from "./alert-list-item";
 
 // Mock data based on the Prisma schema
@@ -21,13 +20,6 @@ export default function AlertList({ alerts }: { alerts: PopulatedAlert[] }) {
   const [alertStatusFilter, setAlertStatusFilter] = useState("ALL");
 
   const populatedAlerts = alerts;
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, copy] = useCopyToClipboard();
-
-  const handleCopy = (text: string) => {
-    copy(text);
-    toast.success("Copied to clipboard");
-  };
 
   const filteredAlerts = populatedAlerts.filter(
     (alert) =>
@@ -71,11 +63,32 @@ export default function AlertList({ alerts }: { alerts: PopulatedAlert[] }) {
         </Link>
       </div>
       <div className="grid gap-6">
+        {filteredAlerts.length === 0 && (
+          <div className="text-center py-8">
+            <p className="text-lg font-medium text-muted-foreground">
+              All clear! No alerts to review right now.
+            </p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Great work keeping things under control! Why not grab a coffee and
+              take a well-deserved break? ☕️
+            </p>
+          </div>
+        )}
         {filteredAlerts
           .toSorted((a, b) => {
             return (
-              new Date(b.startDateTime).getTime() -
-              new Date(a.startDateTime).getTime()
+              b.assets.reduce(
+                (acc, asset) =>
+                  acc +
+                  Object.values(AssetCriticality).indexOf(asset.criticality),
+                0
+              ) -
+              a.assets.reduce(
+                (acc, asset) =>
+                  acc +
+                  Object.values(AssetCriticality).indexOf(asset.criticality),
+                0
+              )
             );
           })
           .map((alert) => {

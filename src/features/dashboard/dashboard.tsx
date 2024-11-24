@@ -21,8 +21,8 @@ export default function Dashboard({
   myAlerts,
   myResponseActions,
 }: {
-  myAlerts: (Alert & { assignedInvestigator: User })[];
-  myResponseActions: (ResponseAction & { assignedTeamMember: User })[];
+  myAlerts: (Alert & { assignedInvestigator: User | null })[];
+  myResponseActions: (ResponseAction & { assignedTeamMember: User | null })[];
 }) {
   const [tab, setTab] = useQueryState("tab", {
     defaultValue: "alerts",
@@ -49,7 +49,7 @@ export default function Dashboard({
                   id: alert.id,
                   link: `/alerts/${alert.id}`,
                   title: alert.name,
-                  tailText: alert.assignedInvestigator?.name,
+                  tailText: alert.assignedInvestigator?.name ?? "",
                 })),
             }))}
           />
@@ -72,7 +72,7 @@ export default function Dashboard({
                   id: responseAction.id,
                   link: `/response-actions/${responseAction.id}`,
                   title: responseAction.name,
-                  tailText: responseAction.assignedTeamMember?.name,
+                  tailText: responseAction.assignedTeamMember?.name ?? "",
                 })),
             }))}
           />

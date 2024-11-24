@@ -37,7 +37,7 @@ export default function AttackChainForm() {
     ) {
       setRemainingAlerts(alerts);
     }
-  }, [isSuccess, alerts, remainingAlerts.length]);
+  }, [isSuccess, alerts, remainingAlerts.length, attackChainAlerts.length]);
 
   const onDragStart = (
     item: AttackChainAlert,

@@ -49,10 +49,10 @@ model Asset {
   id                   String           @id @default(cuid())
   name                 String
   identifier           String           @unique
-  visibility           AssetVisibility
+  visibility           AssetVisibility  @default(NONE)
   metadata             Json?
-  criticality          AssetCriticality
-  type                 AssetType
+  criticality          AssetCriticality @default(LOW)
+  type                 AssetType        @default(HOST)
   assignedTeamMemberId String?
   assignedTeamMember   User?            @relation(fields: [assignedTeamMemberId], references: [id])
   notes                String? // Optional

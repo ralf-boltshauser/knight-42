@@ -18,17 +18,24 @@ import {
   AssetVisibility,
 } from "@prisma/client";
 import {
-  Circle,
+  AlertCircle,
+  CheckCircle,
   Eye,
   EyeOff,
   Plus,
   RotateCw,
   Server,
   Shield,
+  ShieldAlert,
   User,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { parseAsBoolean, parseAsStringEnum, useQueryState } from "nuqs";
+import {
+  parseAsArrayOf,
+  parseAsBoolean,
+  parseAsStringEnum,
+  useQueryState,
+} from "nuqs";
 import { useEffect, useState } from "react";
 import { AssetForm } from "./asset-form";
 import AssetListItem from "./asset-list-item";
@@ -51,11 +58,15 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
   );
   const [criticalityFilter, setCriticalityFilter] = useQueryState(
     "criticalityFilter",
-    parseAsStringEnum([...Object.values(AssetCriticality), ""]).withDefault("")
+    parseAsArrayOf(
+      parseAsStringEnum(Object.values(AssetCriticality))
+    ).withDefault([])
   );
   const [visibilityFilter, setVisibilityFilter] = useQueryState(
     "visibilityFilter",
-    parseAsStringEnum([...Object.values(AssetVisibility), ""]).withDefault("")
+    parseAsArrayOf(
+      parseAsStringEnum(Object.values(AssetVisibility))
+    ).withDefault([])
   );
 
   const reloadInterval = 30;
@@ -89,10 +100,12 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
         asset.alerts.some(
           (alert) =>
             alert.status !== AlertStatus.RESOLVED &&
-            alert.type == AlertType.INCIDENT
+            alert.type != AlertType.HARMLESS
         )) &&
-      (criticalityFilter === "" || asset.criticality === criticalityFilter) &&
-      (visibilityFilter === "" || asset.visibility === visibilityFilter)
+      (criticalityFilter.length === 0 ||
+        criticalityFilter.includes(asset.criticality)) &&
+      (visibilityFilter.length === 0 ||
+        visibilityFilter.includes(asset.visibility))
   );
 
   return (
@@ -164,32 +177,33 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
           </ToggleGroupItem>
         </ToggleGroup>
         <ToggleGroup
-          type="single"
+          type="multiple"
           onValueChange={(value) => {
-            setCriticalityFilter(value as AssetCriticality | "");
+            setCriticalityFilter(value as AssetCriticality[]);
           }}
         >
           <ToggleGroupItem value={AssetCriticality.LOW}>
-            <Circle className="mr-2 h-4 w-4" />
+            <CheckCircle className="mr-2 h-4 w-4" />
             Low
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetCriticality.MEDIUM}>
-            <Circle className="mr-2 h-4 w-4" />
+            <AlertCircle className="mr-2 h-4 w-4" />
             Medium
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetCriticality.HIGH}>
-            <Circle className="mr-2 h-4 w-4" />
+            <AlertCircle className="mr-2 h-4 w-4" />
             High
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetCriticality.CRITICAL}>
-            <Circle className="mr-2 h-4 w-4" />
+            <ShieldAlert className="mr-2 h-4 w-4" />
             Critical
           </ToggleGroupItem>
         </ToggleGroup>
+
         <ToggleGroup
-          type="single"
+          type="multiple"
           onValueChange={(value) => {
-            setVisibilityFilter(value as AssetVisibility | "");
+            setVisibilityFilter(value as AssetVisibility[]);
           }}
         >
           <ToggleGroupItem value={AssetVisibility.NONE}>

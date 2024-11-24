@@ -2,7 +2,6 @@
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -23,15 +22,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { AssetForm } from "../asset-form";
 
 // Mock data based on the Prisma schema
-type AssetDetail = {
+type AssetDetailType = {
   id: string;
   name: string;
   identifier: string;
   type: string;
   criticality: string;
-  visibility: string;
+  visibility: "NONE" | "ALERTS" | "FULL";
   assignedTeamMember: {
     name: string;
     email: string;
@@ -58,7 +58,7 @@ type TimelineEvent = {
 export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
   const [activeTab, setActiveTab] = useState("timeline");
 
-  const assetDetail: AssetDetail = {
+  const assetDetail: AssetDetailType = {
     id: asset.id,
     name: asset.name,
     identifier: asset.identifier,
@@ -165,10 +165,9 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
         </div>
       </div>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-3 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="settings">Settings</TabsTrigger>
         </TabsList>
         <TabsContent value="timeline" className="mt-6">
           {timelineEvents.length === 0 && <p className="">No events found</p>}
@@ -215,9 +214,12 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
                         </div>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-muted-foreground mb-4">
-                          {event.description}
-                        </p>
+                        <div
+                          className="text-gray-600 my-3 prose max-w-none"
+                          dangerouslySetInnerHTML={{
+                            __html: event.description ?? "",
+                          }}
+                        />
                         <div className="flex items-center justify-between">
                           <div className="flex items-center space-x-2">
                             <Badge variant="outline">
@@ -246,46 +248,12 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
           </div>
         </TabsContent>
         <TabsContent value="details">
-          <div>
-            <div className="grid gap-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                    Type
-                  </h4>
-                  <p className="text-sm">{assetDetail.type}</p>
-                </div>
-                <div>
-                  <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                    Visibility
-                  </h4>
-                  <p className="text-sm">{assetDetail.visibility}</p>
-                </div>
-              </div>
-              <div>
-                <h4 className="text-sm font-medium text-muted-foreground mb-1">
-                  Notes
-                </h4>
-                <p className="text-sm">{assetDetail.notes}</p>
-              </div>
-            </div>
-          </div>
-        </TabsContent>
-        <TabsContent value="settings">
-          <div>
-            <CardHeader>
-              <CardTitle>Settings</CardTitle>
-              <CardDescription>
-                Manage your asset settings and preferences.
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex justify-end space-x-2">
-                <Button variant="outline">Cancel</Button>
-                <Button>Save Changes</Button>
-              </div>
-            </CardContent>
-          </div>
+          <AssetForm
+            defaultValues={{
+              ...asset,
+              notes: assetDetail.notes ?? "",
+            }}
+          />
         </TabsContent>
       </Tabs>
     </div>

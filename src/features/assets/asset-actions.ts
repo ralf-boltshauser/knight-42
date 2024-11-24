@@ -34,10 +34,12 @@ export async function deleteAsset(formData: FormData) {
 }
 
 export async function updateAsset(asset: z.infer<typeof AssetSchema>) {
+  console.log("Updating asset", asset);
   await prisma.asset.update({
     where: { id: asset.id },
     data: asset,
   });
 
   revalidatePath("/assets");
+  revalidatePath(`/assets/${asset.id}`);
 }

@@ -20,6 +20,7 @@ import {
   getAlertTypeColor,
   getStatusIcon,
 } from "@/types/alert-types";
+import { getCriticalityColor } from "@/types/asset-types";
 import { format } from "date-fns";
 import { ChevronRight } from "lucide-react";
 import Link from "next/link";
@@ -45,6 +46,16 @@ export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
               <div className="flex items-center space-x-3">
                 {getStatusIcon(alert.status)}
                 <CardTitle className="text-xl">{alert.name}</CardTitle>
+                {alert.assets.map((asset) => (
+                  <Link href={`/assets/${asset.id}`} key={asset.id}>
+                    <Badge
+                      variant={"outline"}
+                      className={getCriticalityColor(asset.criticality)}
+                    >
+                      {asset.name}
+                    </Badge>
+                  </Link>
+                ))}
               </div>
               <Badge
                 variant="secondary"
@@ -58,7 +69,7 @@ export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
         <CollapsibleContent>
           <CardDescription className="px-6">
             <div
-              className="prose"
+              className="prose max-w-full"
               dangerouslySetInnerHTML={{ __html: alert.description }}
             ></div>
           </CardDescription>
@@ -79,7 +90,7 @@ export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
                 <p className="font-medium">
                   {alert.endDateTime
                     ? format(new Date(alert.endDateTime), "MMM d, yyyy HH:mm")
-                    : "Ongoing"}
+                    : "N/A"}
                 </p>
               </div>
               <div>

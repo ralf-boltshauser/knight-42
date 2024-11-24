@@ -15,8 +15,20 @@ docker compose up --build --wait
 # Setup db
 pnpm prisma:generate
 pnpm prisma:push
-pnpm prisma:seed
+# pnpm prisma:seed
+
+# Remove existing NEXTAUTH_URL from .env if it exists
+sed -i '' '/^NEXTAUTH_URL=/d' .env
+
+
+# Get IP address (works on Linux, macOS)
+IP_ADDR=$(ip route get 1 | awk '{print $7;exit}' 2>/dev/null || ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | head -n1)
+
+# Add new NEXTAUTH_URL with IP to .env
+echo "NEXTAUTH_URL=http://${IP_ADDR}:3000" >> .env
+
 
 # Setup app
+pnpm install
 pnpm build
-pnpm start
+HOST=0.0.0.0 pnpm start

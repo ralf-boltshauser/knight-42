@@ -1,6 +1,6 @@
 import { getAttackChain } from "@/features/attack-chains/attack-chain-actions";
 import AttackChainDetail from "@/features/attack-chains/attack-chain-detail/attack-chain-detail";
-import { PopulatedAttackChain } from "@/types/attack-chain";
+import { notFound } from "next/navigation";
 
 export default async function AttackChainDetailPage({
   params: { attackChainId },
@@ -8,7 +8,8 @@ export default async function AttackChainDetailPage({
   params: { attackChainId: string };
 }) {
   const attackChain = await getAttackChain(attackChainId);
-  return (
-    <AttackChainDetail attackChain={attackChain as PopulatedAttackChain} />
-  );
+  if (!attackChain) {
+    notFound();
+  }
+  return <AttackChainDetail attackChain={attackChain} />;
 }

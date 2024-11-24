@@ -20,6 +20,7 @@ async function main() {
     { name: "Privilege Escalation" },
     { name: "Denial of Service" },
     { name: "Exploited Vulnerability" },
+    { name: "Persistence Mechanism" },
   ];
 
   // check if alert categories count == 0
@@ -34,6 +35,7 @@ async function main() {
     { name: "IP Address" },
     { name: "Domain" },
     { name: "File Hash" },
+    { name: "File Path" },
     { name: "URL" },
     { name: "Email Address" },
     { name: "Registry Key" },

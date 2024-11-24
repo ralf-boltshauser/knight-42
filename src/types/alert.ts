@@ -11,7 +11,7 @@ import { User } from "next-auth";
 export type PopulatedAlert = Alert & {
   assets: Asset[];
   category: AlertCategory;
-  assignedInvestigator: User;
+  assignedInvestigator: User | null;
   responseActions: PopulatedResponseAction[];
   relatedIOCs: (IOC & {
     type: IOCType;
@@ -19,7 +19,7 @@ export type PopulatedAlert = Alert & {
 };
 
 export type PopulatedResponseAction = ResponseAction & {
-  assignedTeamMember: User;
+  assignedTeamMember: User | null;
 };
 
 export type AttackChainAlert = Alert & {

@@ -92,6 +92,7 @@ export async function createResponseAction(
   affectedAssetId: string | undefined,
   assignedTeamMemberId: string | undefined
 ) {
+  console.log(responseAction);
   await prisma.responseAction.create({
     data: {
       ...responseAction,

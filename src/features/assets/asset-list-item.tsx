@@ -22,6 +22,12 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
     (alert) =>
       alert.status !== AlertStatus.RESOLVED && alert.type == AlertType.INCIDENT
   );
+
+  const potentiallyUnderAttack = asset.alerts.some(
+    (alert) =>
+      alert.status !== AlertStatus.RESOLVED && alert.type == AlertType.ALERT
+  );
+
   return (
     <Card key={asset.id} className={`hover:bg-accent transition-colors `}>
       <CardContent className="pt-6">
@@ -44,6 +50,9 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
                     <span>{asset.name}</span>
                     {underAttack && (
                       <Badge variant="destructive">Under Attack</Badge>
+                    )}
+                    {potentiallyUnderAttack && (
+                      <Badge variant="orange">Potentially Under Attack</Badge>
                     )}
                   </h3>
                   <p className="text-sm text-muted-foreground">
