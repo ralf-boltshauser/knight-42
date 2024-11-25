@@ -11,6 +11,9 @@ $OS = (Get-WmiObject -Class Win32_OperatingSystem).Caption
 # Fetch primary IP address
 $IP = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp).IPAddress
 
+# Get username
+$Username = (Get-WmiObject -Class Win32_UserAccount -Filter "LocalAccount = True").Name
+
 # Fetch location using an API
 $LocationResponse = Invoke-RestMethod -Uri "http://ip-api.com/json/"
 $Location = $LocationResponse.city
@@ -22,6 +25,7 @@ $Json = @{
         OS       = $OS
         IP       = $IP
         location = $Location
+        username = $Username
     }
 } | ConvertTo-Json -Depth 2
 
