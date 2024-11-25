@@ -2,12 +2,16 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
+### UX
 - [ ] add response-actions/id page
 - [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] consider adding timeline as a model
 - [ ] a network map
 - [ ] open nextauth_url after start
 - [ ] add proper loading states
+
+### Testing
+- [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
 
 ## Usage
 
@@ -67,6 +71,7 @@ curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/head
 ```
 ### Windows Agent
 ```powershell
+Set-ExecutionPolicy Bypass
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/agents/windows-agent.ps1 -OutFile windows-agent.ps1; .\windows-agent.ps1 -TargetIP 192.168.0.113
 ```
 

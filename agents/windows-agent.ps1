@@ -31,8 +31,8 @@ Write-Host $Json
 
 # If TargetIP is provided, make a POST request
 if ($TargetIP) {
-    Write-Host "Making POST request to http://$TargetIP:3000/api/assets..."
-    $Response = Invoke-RestMethod -Method Post -Uri "http://$TargetIP:3000/api/assets" -Body $Json -ContentType "application/json"
+    Write-Host "Making POST request to http://$($TargetIP):3000/api/assets..."
+    $Response = Invoke-RestMethod -Method Post -Uri "http://$($TargetIP):3000/api/assets" -Body $Json -ContentType "application/json"
     Write-Host "Response from server:"
     Write-Host $Response
 }
