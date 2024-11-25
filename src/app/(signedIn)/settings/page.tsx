@@ -1,3 +1,5 @@
+import SSHConfig from "@/features/settings/ssh-config";
+
 export default function SettingsPage() {
-  return <div>SettingsPage</div>;
+  return <SSHConfig />;
 }

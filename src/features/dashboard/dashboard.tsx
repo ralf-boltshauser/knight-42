@@ -103,7 +103,7 @@ export default function Dashboard({
                 .filter((responseAction) => responseAction.status === status)
                 .map((responseAction) => ({
                   id: responseAction.id,
-                  link: `/response-actions/${responseAction.id}`,
+                  link: `/alerts/${responseAction.relatedIncidentId}?tab=actions`,
                   title: responseAction.name,
                   tailText: responseAction.assignedTeamMember?.name ?? "",
                 })),
