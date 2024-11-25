@@ -163,6 +163,12 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
       <div className="hidden md:flex flex-row gap-16 justify-start items-center">
         <ToggleGroup
           type="multiple"
+          value={
+            [
+              onlyMine ? "mine" : undefined,
+              onlyUnderAttack ? "under-attack" : undefined,
+            ].filter(Boolean) as string[]
+          }
           onValueChange={(value) => {
             setOnlyMine(value.includes("mine"));
             setOnlyUnderAttack(value.includes("under-attack"));
@@ -179,6 +185,7 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
         </ToggleGroup>
         <ToggleGroup
           type="multiple"
+          value={criticalityFilter}
           onValueChange={(value) => {
             setCriticalityFilter(value as AssetCriticality[]);
           }}
@@ -203,6 +210,7 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
 
         <ToggleGroup
           type="multiple"
+          value={visibilityFilter}
           onValueChange={(value) => {
             setVisibilityFilter(value as AssetVisibility[]);
           }}
