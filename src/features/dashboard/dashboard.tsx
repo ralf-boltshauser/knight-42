@@ -12,6 +12,7 @@ import {
 } from "@prisma/client";
 import { useQueryState } from "nuqs";
 
+import { useSession } from "next-auth/react";
 import {
   updateAlertStatus,
   updateResponseActionStatus,
@@ -24,15 +25,23 @@ export default function Dashboard({
   myAlerts: (Alert & { assignedInvestigator: User | null })[];
   myResponseActions: (ResponseAction & { assignedTeamMember: User | null })[];
 }) {
+  const { data: session } = useSession();
   const [tab, setTab] = useQueryState("tab", {
     defaultValue: "alerts",
   });
 
   const activeAlerts = myAlerts.filter(
-    (alert) => alert.status !== AlertStatus.RESOLVED
+    (alert) =>
+      alert.status !== AlertStatus.RESOLVED &&
+      (alert.assignedInvestigator?.id === session?.user.dbId ||
+        !alert.assignedInvestigator)
   );
   const activeResponseActions = myResponseActions.filter(
-    (responseAction) => responseAction.status == ResponseActionStatus.PENDING
+    (responseAction) =>
+      (responseAction.status == ResponseActionStatus.PENDING ||
+        responseAction.status == ResponseActionStatus.OUTSTANDING) &&
+      (responseAction.assignedTeamMember?.id === session?.user.dbId ||
+        !responseAction.assignedTeamMember)
   );
   return (
     <div>

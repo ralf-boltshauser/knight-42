@@ -28,7 +28,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { PopulatedAlert } from "@/types/alert";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ResponseActionType } from "@prisma/client";
+import { ResponseActionStatus, ResponseActionType } from "@prisma/client";
 import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -45,7 +45,7 @@ export default function ResponseActionForm({
     defaultValues: {
       name: "",
       actionType: "OTHER",
-      status: "PENDING",
+      status: ResponseActionStatus.OUTSTANDING,
       dateTime: new Date(),
       description: "",
       affectedAssetId: "",

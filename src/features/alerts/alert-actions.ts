@@ -113,7 +113,6 @@ export async function createResponseAction(
   affectedAssetId: string | undefined,
   assignedTeamMemberId: string | undefined
 ) {
-  console.log(responseAction);
   await prisma.responseAction.create({
     data: {
       ...responseAction,
@@ -122,8 +121,6 @@ export async function createResponseAction(
       assignedTeamMemberId: assignedTeamMemberId,
     },
   });
-
-  console.log("Response action created");
 
   revalidatePath(`/alerts/${alertId}`);
 }

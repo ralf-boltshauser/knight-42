@@ -3,6 +3,7 @@ import { authOptions } from "@/lib/auth/auth";
 import { prisma } from "@/lib/client";
 import { AlertType } from "@prisma/client";
 import { getServerSession } from "next-auth";
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function getAlerts() {
@@ -61,4 +62,20 @@ export async function getAttackChain(attackChainId: string) {
       analyst: true,
     },
   });
+}
+
+export async function addAlertToAttackChain(formData: FormData) {
+  const alertId = formData.get("alertId") as string;
+  const attackChainId = formData.get("attackChainId") as string;
+  if (!alertId || !attackChainId) return;
+
+  await prisma.attackChain.update({
+    where: { id: attackChainId },
+    data: {
+      alerts: {
+        connect: { id: alertId },
+      },
+    },
+  });
+  revalidatePath(`/attack-chains/${attackChainId}`);
 }

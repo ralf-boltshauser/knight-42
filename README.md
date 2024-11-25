@@ -7,6 +7,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] consider adding timeline as a model
 - [ ] a network map
 - [ ] open nextauth_url after start
+- [ ] add proper loading states
 
 ## Usage
 

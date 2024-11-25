@@ -28,6 +28,10 @@ IP_ADDR=$(ip route get 1 | awk '{print $7;exit}' 2>/dev/null || ifconfig | grep 
 echo "NEXTAUTH_URL=http://${IP_ADDR}:3000" >> .env
 
 
+# Display live URL
+echo "Will be available at: http://${IP_ADDR}:3000" 
+sleep 10
+
 # Setup app
 pnpm install
 pnpm build

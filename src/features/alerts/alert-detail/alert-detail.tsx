@@ -35,6 +35,7 @@ import {
   Edit2,
   Save,
 } from "lucide-react";
+import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import { updateAlert } from "../alert-actions";
@@ -71,6 +72,8 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editedAlert, setEditedAlert] = useState(alertData);
+
+  const [tab, setTab] = useQueryState("tab", { defaultValue: "assets" });
 
   const { data: teamMembers } = useQuery({
     queryKey: ["teamMembers"],
@@ -388,7 +391,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
             <CardTitle className="">Alert Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="assets">
+            <Tabs value={tab} onValueChange={(v) => setTab(v)}>
               <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="assets">Related Assets</TabsTrigger>
                 <TabsTrigger value="iocs">IOCs</TabsTrigger>

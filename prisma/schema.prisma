@@ -160,6 +160,7 @@ enum ResponseActionType {
 }
 
 enum ResponseActionStatus {
+  OUTSTANDING
   PENDING
   COMPLETED
   CANCELLED
@@ -169,7 +170,7 @@ model ResponseAction {
   id                   String               @id @default(cuid())
   name                 String
   actionType           ResponseActionType
-  status               ResponseActionStatus
+  status               ResponseActionStatus @default(OUTSTANDING)
   dateTime             DateTime             @default(now())
   relatedIncidentId    String?
   relatedIncident      Alert?               @relation(fields: [relatedIncidentId], references: [id])

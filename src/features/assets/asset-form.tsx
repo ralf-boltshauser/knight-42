@@ -53,7 +53,7 @@ export function AssetForm({
           type: "HOST",
           criticality: "LOW",
           assignedTeamMemberId: null,
-          metadata: JSON.stringify({}),
+          metadata: JSON.stringify({ IP: "", OS: "" }),
         },
   });
 

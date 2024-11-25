@@ -1,5 +1,8 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { exportComponentAsPNG } from "react-component-export-image";
+
 import {
   Select,
   SelectContent,
@@ -7,35 +10,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { prisma } from "@/lib/client";
 import { PopulatedAttackChain } from "@/types/attack-chain";
-import { revalidatePath } from "next/cache";
+import { Alert, Asset } from "@prisma/client";
 import Link from "next/link";
-import { getAlerts } from "../attack-chain-actions";
+import { useRef } from "react";
+import { addAlertToAttackChain } from "../attack-chain-actions";
 
-export default async function AttackChainDetail({
+export default function AttackChainDetail({
   attackChain,
+  alerts,
 }: {
   attackChain: PopulatedAttackChain;
+  alerts: (Alert & { assets: Asset[] })[];
 }) {
-  const alerts = await getAlerts();
+  const componentRef = useRef<HTMLDivElement>(null);
+
   const availableAlerts = alerts?.filter(
     (alert) => !attackChain.alerts.find((a) => a.id === alert.id)
   );
   return (
     <div className="">
-      <h1 className="text-2xl font-bold mb-6">{attackChain.name}</h1>
-      {attackChain.relatedThreatActor && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Threat Actor</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p>{attackChain.relatedThreatActor?.name}</p>
-          </CardContent>
-        </Card>
-      )}
-      <div className="flex flex-col gap-8">
+      <div className="flex flex-col gap-8" ref={componentRef}>
+        <h1 className="text-2xl font-bold">{attackChain.name}</h1>
+        {attackChain.relatedThreatActor && (
+          <Card>
+            <CardHeader>
+              <CardTitle>Threat Actor</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p>{attackChain.relatedThreatActor?.name}</p>
+            </CardContent>
+          </Card>
+        )}
         {attackChain.alerts && attackChain.alerts.length > 0 ? (
           attackChain.alerts
             .toSorted(
@@ -101,49 +107,45 @@ export default async function AttackChainDetail({
         ) : (
           <p>No alerts found</p>
         )}
-        {availableAlerts && availableAlerts.length > 0 && (
-          <Card className="mt-4">
-            <CardHeader>
-              <CardTitle>Add Alert to Chain</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form
-                action={async (formData: FormData) => {
-                  "use server";
-                  const alertId = formData.get("alertId") as string;
-                  if (!alertId) return;
-
-                  await prisma.attackChain.update({
-                    where: { id: attackChain.id },
-                    data: {
-                      alerts: {
-                        connect: { id: alertId },
-                      },
-                    },
-                  });
-                  revalidatePath(`/attack-chains/${attackChain.id}`);
-                }}
-              >
-                <div className="flex gap-2">
-                  <Select name="alertId">
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select an alert" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {availableAlerts?.map((alert) => (
-                        <SelectItem key={alert.id} value={alert.id}>
-                          {alert.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button type="submit">Add Alert</Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        )}
       </div>
+      {availableAlerts && availableAlerts.length > 0 && (
+        <Card className="mt-4">
+          <CardHeader>
+            <CardTitle>Add Alert to Chain</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <form action={addAlertToAttackChain}>
+              <input
+                type="hidden"
+                name="attackChainId"
+                value={attackChain.id}
+              />
+              <div className="flex gap-2">
+                <Select name="alertId">
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an alert" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {availableAlerts?.map((alert) => (
+                      <SelectItem key={alert.id} value={alert.id}>
+                        {alert.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Button type="submit">Add Alert</Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      )}
+
+      <Button
+        onClick={() => exportComponentAsPNG(componentRef)}
+        className="mt-5"
+      >
+        Export as Image
+      </Button>
     </div>
   );
 }
