@@ -7,6 +7,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] consider adding timeline as a model
 - [ ] asset edit
+- [ ] in attack chain also show which assets were involved
+- [ ] a network map
 
 ## Usage
 

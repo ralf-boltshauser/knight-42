@@ -41,18 +41,17 @@ export default async function AttackChainDetail({
             (a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()
           )
           .map((alert, index) => (
-            <Link
-              key={alert.id}
-              href={`/alerts/${alert.id}`}
-              className="flex flex-col gap-2"
-            >
+            <div key={alert.id} className="flex flex-col gap-2">
               <div className="bg-white p-4 rounded-lg shadow-md border">
-                <div className="flex items-center gap-3">
+                <Link
+                  href={`/alerts/${alert.id}`}
+                  className="flex items-center gap-3"
+                >
                   <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold">
                     {index + 1}
                   </div>
                   <h3 className="font-semibold text-lg">{alert.name}</h3>
-                </div>
+                </Link>
                 <div
                   className="text-gray-600 mt-1 prose max-w-none"
                   dangerouslySetInnerHTML={{
@@ -66,12 +65,14 @@ export default async function AttackChainDetail({
                   </h4>
                   <div className="flex flex-wrap gap-2 mt-1">
                     {alert.assets.map((asset) => (
-                      <span
+                      <Link
                         key={asset.id}
+                        href={`/assets/${asset.id}`}
                         className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
                       >
+                        <span className="font-medium">{asset.identifier}</span>-{" "}
                         {asset.name}
-                      </span>
+                      </Link>
                     ))}
                   </div>
                 </div>
@@ -92,7 +93,7 @@ export default async function AttackChainDetail({
                   </div>
                 </div>
               </div>
-            </Link>
+            </div>
           ))}
         {availableAlerts && availableAlerts.length > 0 && (
           <Card className="mt-4">

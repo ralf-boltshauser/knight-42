@@ -33,12 +33,12 @@ import {
   CheckCircle,
   Clock,
   Edit2,
-  Plus,
   Save,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import { updateAlert } from "../alert-actions";
+import AddRelatedAssetDialog from "./add-related-asset-dialog";
 import IOCDialog from "./ioc-form";
 import ResponseActionForm from "./response-action-form";
 import ResponseActionItem from "./response-action-item";
@@ -388,11 +388,11 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
             <CardTitle className="">Alert Details</CardTitle>
           </CardHeader>
           <CardContent>
-            <Tabs defaultValue="iocs">
+            <Tabs defaultValue="assets">
               <TabsList className="grid w-full grid-cols-4">
+                <TabsTrigger value="assets">Related Assets</TabsTrigger>
                 <TabsTrigger value="iocs">IOCs</TabsTrigger>
                 <TabsTrigger value="actions">Response Actions</TabsTrigger>
-                <TabsTrigger value="assets">Related Assets</TabsTrigger>
                 <TabsTrigger value="timeline">Timeline</TabsTrigger>
               </TabsList>
               <TabsContent value="iocs">
@@ -439,9 +439,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                       </CardHeader>
                     </Card>
                   ))}
-                  <Button className="w-full">
-                    <Plus className="mr-2 h-4 w-4" /> Add Related Asset
-                  </Button>
+                  <AddRelatedAssetDialog alert={editedAlert} />
                 </div>
               </TabsContent>
               <TabsContent value="timeline">

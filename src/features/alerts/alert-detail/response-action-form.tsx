@@ -58,7 +58,7 @@ export default function ResponseActionForm({
     createResponseAction(
       values,
       alert.id,
-      alert.assets[0].id,
+      values.affectedAssetId || alert.assets[0].id,
       alert.assignedInvestigator?.id
     );
     form.reset();
@@ -147,6 +147,37 @@ export default function ResponseActionForm({
                 </FormItem>
               )}
             />
+
+            {alert.assets.length > 1 && (
+              <FormField
+                control={form.control}
+                name="affectedAssetId"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Affected Asset</FormLabel>
+                    <FormControl>
+                      <Select
+                        onValueChange={field.onChange}
+                        defaultValue={field.value}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select affected asset" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {alert.assets.map((asset) => (
+                            <SelectItem key={asset.id} value={asset.id}>
+                              {asset.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
+
             <FormField
               control={form.control}
               name="description"

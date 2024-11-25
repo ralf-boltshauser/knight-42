@@ -94,7 +94,10 @@ export default function ResponseActionItem({
           </div>
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-row items-center justify-between">
+        <Badge variant={"outline"}>
+          {responseActionItem.affectedAsset?.name || "N/A"}
+        </Badge>
         <p className="text-sm text-muted-foreground">
           Timestamp:{" "}
           {format(new Date(responseActionItem.createdAt), "MMM d, yyyy HH:mm")}

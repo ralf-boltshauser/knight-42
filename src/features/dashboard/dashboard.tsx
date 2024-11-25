@@ -27,12 +27,36 @@ export default function Dashboard({
   const [tab, setTab] = useQueryState("tab", {
     defaultValue: "alerts",
   });
+
+  const activeAlerts = myAlerts.filter(
+    (alert) => alert.status !== AlertStatus.RESOLVED
+  );
+  const activeResponseActions = myResponseActions.filter(
+    (responseAction) => responseAction.status == ResponseActionStatus.PENDING
+  );
   return (
     <div>
       <Tabs value={tab} onValueChange={setTab}>
         <TabsList>
-          <TabsTrigger value="alerts">Alerts</TabsTrigger>
-          <TabsTrigger value="response-actions">Response Actions</TabsTrigger>
+          <TabsTrigger value="alerts" className="flex items-center gap-2">
+            Alerts
+            {activeAlerts.length > 0 && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                {activeAlerts.length}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger
+            value="response-actions"
+            className="flex items-center gap-2"
+          >
+            Response Actions
+            {activeResponseActions.length > 0 && (
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
+                {activeResponseActions.length}
+              </span>
+            )}
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="alerts">
           <KanbanBoard

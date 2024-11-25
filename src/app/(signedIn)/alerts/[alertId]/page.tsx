@@ -16,6 +16,7 @@ export default async function AlertDetailPage({
       responseActions: {
         include: {
           assignedTeamMember: true,
+          affectedAsset: true,
         },
       },
       relatedIOCs: {

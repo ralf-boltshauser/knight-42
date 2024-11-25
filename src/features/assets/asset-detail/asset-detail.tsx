@@ -2,6 +2,7 @@
 
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -246,6 +247,11 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
                 ))}
             </div>
           </div>
+          <Button asChild>
+            <Link href={`/alerts/create?assetId=${asset.id}`} className="mt-5">
+              Add Alert
+            </Link>
+          </Button>
         </TabsContent>
         <TabsContent value="details">
           <AssetForm

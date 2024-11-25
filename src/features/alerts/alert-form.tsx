@@ -18,19 +18,35 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertStatus, AlertType, DetectionSource } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
+import "react-quill/dist/quill.snow.css";
 import { z } from "zod";
 
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { useSession } from "next-auth/react";
+import { useSearchParams } from "next/navigation";
+import { useEffect } from "react";
+import ReactQuill from "react-quill";
 import { toast } from "sonner";
 import { getTeamMembers } from "../team/team-actions";
 import { createAlert, getAlertCategories, getAssets } from "./alert-actions";
 import { AlertSchema } from "./alert-schema";
 
 export function AlertForm() {
+  const { data: session } = useSession();
+  const queryParams = useSearchParams();
+  const assetId = queryParams.get("assetId");
   const form = useForm<z.infer<typeof AlertSchema>>({
     resolver: zodResolver(AlertSchema),
     defaultValues: {
@@ -38,7 +54,7 @@ export function AlertForm() {
       type: "ALERT",
       startDateTime: new Date(),
       endDateTime: null,
-      assets: [],
+      assets: assetId ? [assetId] : [],
       detectionSource: "OTHER",
       categoryId: undefined,
       status: "INITIAL_INVESTIGATION",
@@ -46,7 +62,7 @@ export function AlertForm() {
       relatedIOCs: [],
       attackChainId: null,
       responseActions: [],
-      assignedInvestigatorId: null,
+      assignedInvestigatorId: session?.user.dbId,
     },
   });
 
@@ -64,6 +80,22 @@ export function AlertForm() {
     queryKey: ["assets"],
     queryFn: () => getAssets(),
   });
+  useEffect(() => {
+    if (
+      form.getValues("assets")?.length == 0 ||
+      form.getValues("categoryId") == null ||
+      form.getValues("name").length > 0
+    ) {
+      return;
+    }
+
+    form.setValue(
+      "name",
+      `${
+        categories?.find((c) => c.id === form.getValues().categoryId)?.name
+      } - ${assets?.find((a) => a.id === form.getValues("assets")?.[0])?.name}`
+    );
+  }, [form.getValues(), assets, categories]);
 
   function onSubmit(values: z.infer<typeof AlertSchema>) {
     console.log(values);
@@ -75,6 +107,63 @@ export function AlertForm() {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Assets */}
+        <FormField
+          control={form.control}
+          name="assets"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Assets</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={(value) => field.onChange([value])}
+                  defaultValue={field.value?.[0]}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select affected assets" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {assets?.map((asset) => (
+                      <SelectItem key={asset.id} value={asset.id}>
+                        {asset.type} - {asset.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Category */}
+        <FormField
+          control={form.control}
+          name="categoryId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Category</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories?.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        {category.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {/* Name */}
         <FormField
           control={form.control}
@@ -87,6 +176,72 @@ export function AlertForm() {
               </FormControl>
               <FormDescription>
                 Give this alert a descriptive name
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Start Date */}
+        <FormField
+          control={form.control}
+          name="startDateTime"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormLabel>Start Date & Time</FormLabel>
+              <div className="flex gap-2">
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={cn(
+                          "pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
+                      >
+                        {field.value ? (
+                          format(field.value, "PPP")
+                        ) : (
+                          <span>Pick a date</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
+                    </FormControl>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={field.value}
+                      onSelect={(date) => {
+                        const currentTime = field.value || new Date();
+                        date?.setHours(currentTime.getHours());
+                        date?.setMinutes(currentTime.getMinutes());
+                        field.onChange(date);
+                      }}
+                      disabled={(date: Date) =>
+                        date > new Date() || date < new Date("1900-01-01")
+                      }
+                      initialFocus
+                    />
+                  </PopoverContent>
+                </Popover>
+
+                <Input
+                  type="time"
+                  onChange={(e) => {
+                    const [hours, minutes] = e.target.value.split(":");
+                    const newDate = new Date(field.value || new Date());
+                    newDate.setHours(parseInt(hours));
+                    newDate.setMinutes(parseInt(minutes));
+                    field.onChange(newDate);
+                  }}
+                  value={field.value ? format(field.value, "HH:mm") : ""}
+                  className="w-[150px]"
+                />
+              </div>
+              <FormDescription>
+                Select when this alert was first detected
               </FormDescription>
               <FormMessage />
             </FormItem>
@@ -188,7 +343,17 @@ export function AlertForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder="Describe the alert..." {...field} />
+                <ReactQuill
+                  modules={{
+                    toolbar: [
+                      [{ list: "ordered" }, { list: "bullet" }],
+                      ["bold", "italic", "underline"],
+                    ],
+                  }}
+                  theme="snow"
+                  value={field.value}
+                  onChange={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -214,64 +379,6 @@ export function AlertForm() {
                     {teamMembers?.map((member) => (
                       <SelectItem key={member.id} value={member.id}>
                         {member.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Assets */}
-        <FormField
-          control={form.control}
-          name="assets"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Assets</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={(value) => field.onChange([value])}
-                  defaultValue={field.value?.[0]}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select affected assets" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {assets?.map((asset) => (
-                      <SelectItem key={asset.id} value={asset.id}>
-                        {asset.type} - {asset.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Category */}
-        <FormField
-          control={form.control}
-          name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <FormControl>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories?.map((category) => (
-                      <SelectItem key={category.id} value={category.id}>
-                        {category.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

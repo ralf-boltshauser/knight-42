@@ -1,6 +1,6 @@
 "use server";
 import { prisma } from "@/lib/client";
-import { AlertStatus, AlertType, DetectionSource } from "@prisma/client";
+import { Alert, AlertStatus, AlertType, DetectionSource } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -10,6 +10,27 @@ import { AlertSchema } from "./alert-schema";
 
 export async function getAssets() {
   return await prisma.asset.findMany();
+}
+
+export async function getOutstandingAssets(alert: Alert) {
+  return await prisma.asset.findMany({
+    where: {
+      alerts: {
+        none: {
+          id: alert.id,
+        },
+      },
+    },
+  });
+}
+
+export async function addAssetsToAlert(alertId: string, assetIds: string[]) {
+  await prisma.alert.update({
+    where: { id: alertId },
+    data: { assets: { connect: assetIds.map((id) => ({ id })) } },
+  });
+
+  revalidatePath(`/alerts`);
 }
 
 export async function getAlertCategories() {
