@@ -9,6 +9,8 @@ docker-compose --version
 # installs nvm (Node Version Manager)
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | bash
 
+sleep 10
+
 source ~/.bashrc
 
 # download and install Node.js (you may need to restart the terminal)
