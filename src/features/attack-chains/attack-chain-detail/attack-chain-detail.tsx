@@ -36,65 +36,71 @@ export default async function AttackChainDetail({
         </Card>
       )}
       <div className="flex flex-col gap-8">
-        {attackChain.alerts
-          .toSorted(
-            (a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()
-          )
-          .map((alert, index) => (
-            <div key={alert.id} className="flex flex-col gap-2">
-              <div className="bg-white p-4 rounded-lg shadow-md border">
-                <Link
-                  href={`/alerts/${alert.id}`}
-                  className="flex items-center gap-3"
-                >
-                  <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold">
-                    {index + 1}
-                  </div>
-                  <h3 className="font-semibold text-lg">{alert.name}</h3>
-                </Link>
-                <div
-                  className="text-gray-600 mt-1 prose max-w-none"
-                  dangerouslySetInnerHTML={{
-                    __html: alert.description,
-                  }}
-                />
+        {attackChain.alerts && attackChain.alerts.length > 0 ? (
+          attackChain.alerts
+            .toSorted(
+              (a, b) => a.startDateTime.getTime() - b.startDateTime.getTime()
+            )
+            .map((alert, index) => (
+              <div key={alert.id} className="flex flex-col gap-2">
+                <div className="bg-white p-4 rounded-lg shadow-md border">
+                  <Link
+                    href={`/alerts/${alert.id}`}
+                    className="flex items-center gap-3"
+                  >
+                    <div className="flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 text-blue-800 font-semibold">
+                      {index + 1}
+                    </div>
+                    <h3 className="font-semibold text-lg">{alert.name}</h3>
+                  </Link>
+                  <div
+                    className="text-gray-600 mt-1 prose max-w-none"
+                    dangerouslySetInnerHTML={{
+                      __html: alert.description,
+                    }}
+                  />
 
-                <div className="mt-3">
-                  <h4 className="font-medium text-sm text-gray-700">
-                    Affected Assets:
-                  </h4>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {alert.assets.map((asset) => (
-                      <Link
-                        key={asset.id}
-                        href={`/assets/${asset.id}`}
-                        className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
-                      >
-                        <span className="font-medium">{asset.identifier}</span>-{" "}
-                        {asset.name}
-                      </Link>
-                    ))}
+                  <div className="mt-3">
+                    <h4 className="font-medium text-sm text-gray-700">
+                      Affected Assets:
+                    </h4>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {alert.assets.map((asset) => (
+                        <Link
+                          key={asset.id}
+                          href={`/assets/${asset.id}`}
+                          className="px-2 py-1 bg-blue-100 text-blue-800 rounded text-sm"
+                        >
+                          <span className="font-medium">
+                            {asset.identifier}
+                          </span>
+                          - {asset.name}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
 
-                <div className="mt-3">
-                  <h4 className="font-medium text-sm text-gray-700">
-                    Related IOCs:
-                  </h4>
-                  <div className="flex flex-wrap gap-2 mt-1">
-                    {alert.relatedIOCs.map((ioc) => (
-                      <span
-                        key={ioc.id}
-                        className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-sm"
-                      >
-                        {ioc.type.name}: {ioc.value}
-                      </span>
-                    ))}
+                  <div className="mt-3">
+                    <h4 className="font-medium text-sm text-gray-700">
+                      Related IOCs:
+                    </h4>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {alert.relatedIOCs.map((ioc) => (
+                        <span
+                          key={ioc.id}
+                          className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-sm"
+                        >
+                          {ioc.type.name}: {ioc.value}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+        ) : (
+          <p>No alerts found</p>
+        )}
         {availableAlerts && availableAlerts.length > 0 && (
           <Card className="mt-4">
             <CardHeader>
