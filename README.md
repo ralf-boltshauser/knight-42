@@ -6,6 +6,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] consider adding timeline as a model
 - [ ] a network map
+- [ ] open nextauth_url after start
 
 ## Usage
 

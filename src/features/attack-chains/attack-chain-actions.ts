@@ -22,6 +22,7 @@ export async function createAttackChain(name: string, alertIds: string[]) {
   if (!session?.user.dbId) {
     throw new Error("User not found");
   }
+  console.log("session", session.user.dbId);
 
   const attackChain = await prisma.attackChain.create({
     data: {

@@ -84,7 +84,7 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
       category: alert.category.name,
       description: alert.description,
       assignedTo: {
-        name: alert.assignedInvestigator.name ?? "Unknown",
+        name: alert.assignedInvestigator?.name ?? "Unknown",
       },
     })),
     ...asset.responseActions.map((action) => ({
