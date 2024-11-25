@@ -2,12 +2,9 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
-- [ ] add attack chains
-- [ ] create a dashboard for an analyst showing all my machines, alerts, and response actions
+- [ ] add response-actions/id page
 - [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] consider adding timeline as a model
-- [ ] asset edit
-- [ ] in attack chain also show which assets were involved
 - [ ] a network map
 
 ## Usage
@@ -69,4 +66,21 @@ curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/head
 ### Windows Agent
 ```powershell
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/agents/windows-agent.ps1 -OutFile windows-agent.ps1; .\windows-agent.ps1 -TargetIP 192.168.0.113
+```
+
+### Network Scan
+
+Setup
+```bash
+cd network-scan
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+Usage
+-t -> target subnet
+-s -> server IP address
+```bash
+python3 network-scan.py -t 192.168.0.1/24 -s 192.168.0.113
 ```

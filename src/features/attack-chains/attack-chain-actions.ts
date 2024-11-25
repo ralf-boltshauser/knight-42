@@ -47,6 +47,7 @@ export async function getAttackChain(attackChainId: string) {
           responseActions: {
             include: {
               assignedTeamMember: true,
+              affectedAsset: true,
             },
           },
           relatedIOCs: {

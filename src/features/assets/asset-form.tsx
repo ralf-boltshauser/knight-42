@@ -1,5 +1,7 @@
 "use client";
 
+import { JsonInput } from "@mantine/core";
+
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -39,14 +41,20 @@ export function AssetForm({
   const form = useForm<z.infer<typeof AssetSchema>>({
     mode: "onChange",
     resolver: zodResolver(AssetSchema),
-    defaultValues: defaultValues ?? {
-      name: "",
-      identifier: "",
-      visibility: "NONE",
-      type: "HOST",
-      criticality: "LOW",
-      assignedTeamMemberId: null,
-    },
+    defaultValues: defaultValues
+      ? {
+          ...defaultValues,
+          metadata: JSON.stringify(defaultValues.metadata),
+        }
+      : {
+          name: "",
+          identifier: "",
+          visibility: "NONE",
+          type: "HOST",
+          criticality: "LOW",
+          assignedTeamMemberId: null,
+          metadata: {},
+        },
   });
 
   const { data: teamMembers } = useQuery({
@@ -55,14 +63,20 @@ export function AssetForm({
   });
 
   function onSubmit(values: z.infer<typeof AssetSchema>) {
-    if (defaultValues) {
-      console.log("updating asset", values);
-      updateAsset(values);
-      toast.success("Asset updated successfully");
-    } else {
-      toast.success("Asset created successfully");
-      createAsset(values);
-      form.reset();
+    try {
+      values.metadata = JSON.parse(values.metadata);
+      if (defaultValues) {
+        console.log("updating asset", values);
+        updateAsset(values);
+        toast.success("Asset updated successfully");
+      } else {
+        toast.success("Asset created successfully");
+        createAsset(values);
+        form.reset();
+      }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      toast.error(error.message);
     }
   }
 
@@ -227,6 +241,32 @@ export function AssetForm({
                 <Textarea
                   placeholder="Additional information about the asset..."
                   {...field}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Metadata */}
+        <FormField
+          control={form.control}
+          name="metadata"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Metadata</FormLabel>
+              <FormControl>
+                <JsonInput
+                  label="Your JSON"
+                  placeholder="Enter JSON here"
+                  validationError="Invalid JSON"
+                  formatOnBlur
+                  value={field.value}
+                  className="w-full"
+                  onChange={field.onChange}
+                  autosize
+                  minRows={4}
+                  classNames={{ input: "w-full" }} // Apply Tailwind's w-full class to the input element
                 />
               </FormControl>
               <FormMessage />
