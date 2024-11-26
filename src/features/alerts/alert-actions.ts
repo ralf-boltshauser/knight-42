@@ -66,6 +66,7 @@ export async function updateAlert(alert: {
   type: AlertType;
   assignedInvestigatorId: string | undefined;
   status: AlertStatus;
+  techniqueId: string | undefined;
   description: string;
   endDateTime: Date | undefined;
   detectionSource: DetectionSource;
@@ -78,6 +79,7 @@ export async function updateAlert(alert: {
       type: alert.type,
       assignedInvestigatorId: alert.assignedInvestigatorId,
       status: alert.status,
+      techniqueId: alert.techniqueId,
       description: alert.description,
       endDateTime: alert.endDateTime,
       detectionSource: alert.detectionSource,
@@ -134,4 +136,8 @@ export async function updateResponseAction(
       ...responseAction,
     },
   });
+}
+
+export async function getTechniques() {
+  return await prisma.technique.findMany();
 }

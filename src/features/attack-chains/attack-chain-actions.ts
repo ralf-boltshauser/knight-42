@@ -42,6 +42,11 @@ export async function getAttackChain(attackChainId: string) {
       relatedThreatActor: true,
       alerts: {
         include: {
+          technique: {
+            include: {
+              childrenTechniques: true,
+            },
+          },
           category: true,
           assets: true,
           assignedInvestigator: true,

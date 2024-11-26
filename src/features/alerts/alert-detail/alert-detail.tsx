@@ -11,8 +11,21 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
@@ -23,6 +36,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getTeamMembers } from "@/features/team/team-actions";
+import { cn } from "@/lib/utils";
 import { PopulatedAlert } from "@/types/alert";
 import { AlertStatus, AlertType, User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -30,7 +44,9 @@ import { format } from "date-fns";
 import {
   AlertCircle,
   AlertTriangle,
+  Check,
   CheckCircle,
+  ChevronsUpDown,
   Clock,
   Edit2,
   Save,
@@ -38,7 +54,7 @@ import {
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
-import { updateAlert } from "../alert-actions";
+import { getTechniques, updateAlert } from "../alert-actions";
 import AddRelatedAssetDialog from "./add-related-asset-dialog";
 import IOCDialog from "./ioc-form";
 import ResponseActionForm from "./response-action-form";
@@ -72,6 +88,10 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editedAlert, setEditedAlert] = useState(alertData);
+  const { data: techniques } = useQuery({
+    queryKey: ["techniques"],
+    queryFn: () => getTechniques(),
+  });
 
   const [tab, setTab] = useQueryState("tab", { defaultValue: "assets" });
 
@@ -148,6 +168,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
       type: editedAlert.type,
       assignedInvestigatorId: editedAlert.assignedInvestigatorId || undefined,
       status: editedAlert.status,
+      techniqueId: editedAlert.techniqueId || undefined,
       description: editedAlert.description,
       endDateTime: editedAlert.endDateTime || undefined,
       detectionSource: editedAlert.detectionSource,
@@ -217,26 +238,100 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 </Badge>
               )}
             </div>
-            <div className="flex items-center space-x-2">
-              {getStatusIcon(editedAlert.status)}
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                {getStatusIcon(editedAlert.status)}
+                {isEditing ? (
+                  <Select
+                    onValueChange={handleStatusChange}
+                    defaultValue={editedAlert.status}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {Object.values(AlertStatus).map((status) => (
+                        <SelectItem key={status} value={status}>
+                          {status}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <span>{editedAlert.status}</span>
+                )}
+              </div>
               {isEditing ? (
-                <Select
-                  onValueChange={handleStatusChange}
-                  defaultValue={editedAlert.status}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.values(AlertStatus).map((status) => (
-                      <SelectItem key={status} value={status}>
-                        {status}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="justify-between"
+                    >
+                      {editedAlert.techniqueId
+                        ? techniques?.find(
+                            (technique) =>
+                              technique.id === editedAlert.techniqueId
+                          )?.name
+                        : "Select technique..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="p-0">
+                    <Command>
+                      <CommandInput placeholder="Search technique..." />
+                      <CommandList>
+                        <CommandEmpty>No technique found.</CommandEmpty>
+                        <CommandGroup>
+                          {techniques?.map((technique) => {
+                            const value =
+                              technique.ttpIdentifier + " - " + technique.name;
+                            return (
+                              <CommandItem
+                                key={technique.id}
+                                value={value}
+                                onSelect={() => {
+                                  setEditedAlert({
+                                    ...editedAlert,
+                                    techniqueId: technique.id,
+                                  });
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    editedAlert.techniqueId === technique.id
+                                      ? "opacity-100"
+                                      : "opacity-0"
+                                  )}
+                                />
+                                {value}
+                              </CommandItem>
+                            );
+                          })}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               ) : (
-                <span>{editedAlert.status}</span>
+                <span>
+                  {editedAlert.techniqueId ? (
+                    <span>
+                      {(() => {
+                        const technique = techniques?.find(
+                          (t) => t.id === editedAlert.techniqueId
+                        );
+                        return technique
+                          ? `${technique.ttpIdentifier} - ${technique.name}`
+                          : null;
+                      })()}
+                    </span>
+                  ) : (
+                    "No technique assigned"
+                  )}
+                </span>
               )}
             </div>
           </CardHeader>

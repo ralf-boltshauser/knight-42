@@ -6,7 +6,7 @@ import {
 import AttackChainAlerts from "@/features/attack-chains/attack-chain-detail/attack-chain-alerts";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
 import { prisma } from "@/lib/client";
-import { Tactic } from "@prisma/client";
+import { PopulatedTechnique } from "@/types/technique";
 import { notFound } from "next/navigation";
 
 export default async function AttackChainDetailPage({
@@ -25,20 +25,16 @@ export default async function AttackChainDetailPage({
     },
   });
 
-  const ttps = await prisma.technique.findMany({
-    where: {
-      tactic: Tactic.INITIAL_ACCESS,
-      parentTechniqueId: null,
-    },
-    include: {
-      childrenTechniques: true,
-    },
-  });
-
   const alerts = await getAlerts();
   if (!attackChain || !alerts) {
     notFound();
   }
+
+  const ttps = attackChain.alerts
+    .map((alert) => alert.technique)
+    .filter((technique): technique is PopulatedTechnique => technique !== null);
+
+  console.log("ttps", ttps);
 
   return (
     <div>

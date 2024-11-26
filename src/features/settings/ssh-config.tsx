@@ -15,7 +15,12 @@ export default async function SSHConfig() {
         identityFile: "~/.ssh/common_identity_file",
       };
     })
-    .filter((c) => c !== null);
+    .filter((c) => c !== null) as {
+    identifier: string;
+    host: string;
+    user: string;
+    identityFile: string;
+  }[];
 
   return (
     <div>

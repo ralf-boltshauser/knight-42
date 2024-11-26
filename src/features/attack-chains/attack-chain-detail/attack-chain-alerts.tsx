@@ -90,6 +90,17 @@ export default function AttackChainAlerts({
                       ))}
                     </div>
                   </div>
+                  {alert.technique && (
+                    <div className="mt-3">
+                      <h4 className="font-medium text-sm text-gray-700">
+                        Technique:
+                      </h4>
+                      <p>
+                        {alert.technique?.ttpIdentifier} -{" "}
+                        {alert.technique?.name}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
             ))
