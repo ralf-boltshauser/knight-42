@@ -9,6 +9,7 @@ import {
 import { PopulatedTechnique } from "@/types/technique";
 import { Tactic, Technique } from "@prisma/client";
 import { ChevronDown } from "lucide-react";
+import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { useRef } from "react";
 import { exportComponentAsPNG } from "react-component-export-image";
 
@@ -19,11 +20,18 @@ type TechniqueItemProps = {
 export default function MittreAttackFramework({
   allTtps,
   ttps,
+  onUpdate,
 }: {
   allTtps: PopulatedTechnique[];
   ttps: PopulatedTechnique[];
+  onUpdate: (ttpId: string) => void;
 }) {
+  const [openTechniques, setOpenTechniques] = useQueryState(
+    "openTechniques",
+    parseAsArrayOf(parseAsString).withDefault([])
+  );
   const componentRef = useRef<HTMLDivElement>(null);
+
   function TechniqueItem({ technique }: { technique: Technique }) {
     const baseClasses = "rounded-lg border";
     const isSelected = ttps.some((t) => t.id === technique.id);
@@ -32,7 +40,10 @@ export default function MittreAttackFramework({
       : "border-gray-200 hover:border-gray-300";
 
     return (
-      <div className={`${baseClasses} ${selectedClasses} p-3`}>
+      <div
+        className={`${baseClasses} ${selectedClasses} p-3`}
+        onDoubleClick={() => onUpdate(technique.id)}
+      >
         <div className="flex items-center gap-2">
           <span className="text-sm">{technique.name}</span>
           {isSelected && <span className="text-red-500">✓</span>}
@@ -57,7 +68,16 @@ export default function MittreAttackFramework({
       : "border-gray-200 hover:border-gray-300";
 
     return (
-      <Collapsible>
+      <Collapsible
+        onOpenChange={(open) => {
+          setOpenTechniques(
+            open
+              ? [...openTechniques, technique.id]
+              : openTechniques.filter((id) => id !== technique.id)
+          );
+        }}
+        open={openTechniques.includes(technique.id)}
+      >
         <div>
           <CollapsibleTrigger
             className={`${baseClasses} ${selectedClasses}`}

@@ -3,6 +3,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
 ## bugs
+- [ ] can't remove ttps form thread actors
+- [ ] deleting threat actors
 
 ### UX
 - [ ] a history / log would be great

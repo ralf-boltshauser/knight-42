@@ -1,15 +1,19 @@
+"use client";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
-import { getAllTtps } from "@/features/techniques/technique-actions";
-import { getThreatActor } from "../threat-actor-actions";
+import { PopulatedTechnique } from "@/types/technique";
+import {
+  getThreatActor,
+  updateThreatActorTechniques,
+} from "../threat-actor-actions";
 
-export default async function ThreatActorDetail({
+export default function ThreatActorDetail({
   threatActor,
+  allTtps,
 }: {
+  allTtps: PopulatedTechnique[];
   threatActor: Awaited<ReturnType<typeof getThreatActor>>;
 }) {
   if (!threatActor) return null;
-
-  const allTtps = await getAllTtps();
 
   return (
     <div>
@@ -29,6 +33,9 @@ export default async function ThreatActorDetail({
             <MittreAttackFramework
               allTtps={allTtps}
               ttps={threatActor.techniques}
+              onUpdate={async (ttpId) => {
+                await updateThreatActorTechniques(threatActor.id, ttpId);
+              }}
             />
           </div>
         </div>
