@@ -73,6 +73,7 @@ enum AlertType {
 enum DetectionSource {
   VELOCIRAPTOR
   WAZUH
+  NATO
   OTHER
 }
 
@@ -148,10 +149,9 @@ model AttackChain {
 model ThreatActor {
   id                 String        @id @default(cuid())
   name               String
-  type               String // APT, Cybercriminal, Insider, etc.
   linkedAttackChains AttackChain[]
   techniques         Technique[]   @relation("ThreatActorTechniques")
-  notes              String?
+  notes              String        @default("")
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
 }

@@ -39,7 +39,15 @@ export async function getAttackChain(attackChainId: string) {
   return await prisma.attackChain.findUnique({
     where: { id: attackChainId },
     include: {
-      relatedThreatActor: true,
+      relatedThreatActor: {
+        include: {
+          techniques: {
+            include: {
+              childrenTechniques: true,
+            },
+          },
+        },
+      },
       alerts: {
         include: {
           technique: {
@@ -80,6 +88,17 @@ export async function addAlertToAttackChain(formData: FormData) {
         connect: { id: alertId },
       },
     },
+  });
+  revalidatePath(`/attack-chains/${attackChainId}`);
+}
+
+export async function linkThreatActorToAttackChain(
+  attackChainId: string,
+  threatActorId: string
+) {
+  await prisma.attackChain.update({
+    where: { id: attackChainId },
+    data: { relatedThreatActorId: threatActorId },
   });
   revalidatePath(`/attack-chains/${attackChainId}`);
 }

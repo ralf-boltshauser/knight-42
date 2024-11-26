@@ -1,4 +1,4 @@
-import { Bell, Box, Home, Settings, Swords } from "lucide-react";
+import { Bell, Box, Home, Settings, Skull, Swords } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -28,6 +28,11 @@ export const navItems = [
     title: "Alerts",
     url: "/alerts",
     icon: Bell,
+  },
+  {
+    title: "Threat Actors",
+    url: "/threat-actors",
+    icon: Skull,
   },
   {
     title: "Attack Chains",

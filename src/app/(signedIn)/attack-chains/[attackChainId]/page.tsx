@@ -4,7 +4,10 @@ import {
   getAttackChain,
 } from "@/features/attack-chains/attack-chain-actions";
 import AttackChainAlerts from "@/features/attack-chains/attack-chain-detail/attack-chain-alerts";
+import LinkThreatActor from "@/features/attack-chains/attack-chain-detail/link-threat-actor";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
+import { getAllTtps } from "@/features/techniques/technique-actions";
+import ThreatActorDetail from "@/features/threat-actors/threat-actor-detail/threat-actor-detail";
 import { prisma } from "@/lib/client";
 import { PopulatedTechnique } from "@/types/technique";
 import { notFound } from "next/navigation";
@@ -16,14 +19,7 @@ export default async function AttackChainDetailPage({
 }) {
   const attackChain = await getAttackChain(attackChainId);
 
-  const allTtps = await prisma.technique.findMany({
-    where: {
-      parentTechniqueId: null,
-    },
-    include: {
-      childrenTechniques: true,
-    },
-  });
+  const allTtps = await getAllTtps();
 
   const alerts = await getAlerts();
   if (!attackChain || !alerts) {
@@ -33,6 +29,7 @@ export default async function AttackChainDetailPage({
   const ttps = attackChain.alerts
     .map((alert) => alert.technique)
     .filter((technique): technique is PopulatedTechnique => technique !== null);
+  const threatActors = await prisma.threatActor.findMany();
 
   console.log("ttps", ttps);
 
@@ -49,7 +46,14 @@ export default async function AttackChainDetailPage({
           <AttackChainAlerts attackChain={attackChain} alerts={alerts} />
         </TabsContent>
         <TabsContent value="threat-actor">
-          <div>Threat Actor</div>
+          {attackChain.relatedThreatActor ? (
+            <ThreatActorDetail threatActor={attackChain.relatedThreatActor} />
+          ) : (
+            <LinkThreatActor
+              threatActors={threatActors}
+              attackChainId={attackChainId}
+            />
+          )}
         </TabsContent>
         <TabsContent value="framework">
           <MittreAttackFramework allTtps={allTtps} ttps={ttps} />

@@ -24,6 +24,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] attackers have clear ip ranges
 - [ ] utc timeline
 - [ ] consider adding timeline as a model
+- [ ] automatically create misp entry based on alert and link to it
+- [ ] wazuh integration
 
 ## Usage
 
