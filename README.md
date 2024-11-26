@@ -3,6 +3,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
 ## bugs
+- [ ] ttps to match threat actor
 
 ### UX
 - [ ] cmd k
@@ -22,7 +23,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 ### Bigger Changes
 - [ ] mark alerts as reported
   - [ ] and put it into timeline of alert
-- [ ] a network map
+- [x] a network map
+  - [ ] timeline of the network map
   - [ ] uptime agents
 - [ ] consider adding timeline as a model
 - [ ] automatically create misp entry based on alert and link to it

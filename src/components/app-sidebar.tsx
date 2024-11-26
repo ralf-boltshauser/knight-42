@@ -1,4 +1,5 @@
-import { Bell, Box, Home, Settings, Skull, Swords } from "lucide-react";
+"use client";
+import { Bell, Box, Home, Map, Settings, Skull, Swords } from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -10,6 +11,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 
 // Menu items.
@@ -40,6 +42,11 @@ export const navItems = [
     icon: Swords,
   },
   {
+    title: "Network map",
+    url: "/network-map",
+    icon: Map,
+  },
+  {
     title: "Settings",
     url: "/settings",
     icon: Settings,
@@ -47,6 +54,7 @@ export const navItems = [
 ];
 
 export function AppSidebar() {
+  const mySidebar = useSidebar();
   return (
     <Sidebar>
       <SidebarContent>
@@ -58,7 +66,14 @@ export function AppSidebar() {
               {navItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <Link href={item.url}>
+                    <Link
+                      href={item.url}
+                      onClick={() => {
+                        if (item.title === "Network map") {
+                          mySidebar.setOpen(false);
+                        }
+                      }}
+                    >
                       <item.icon />
                       <span>{item.title}</span>
                     </Link>

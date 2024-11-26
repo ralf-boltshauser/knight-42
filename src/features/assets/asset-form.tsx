@@ -29,6 +29,8 @@ import { z } from "zod";
 
 import { DialogClose } from "@/components/ui/dialog";
 import { toast } from "sonner";
+import IdentifierSelectorDialog from "../network-map/identifier-selector";
+import { getNetworks } from "../network-map/network-actions";
 import { getTeamMembers } from "../team/team-actions";
 import { createAsset, updateAsset } from "./asset-actions";
 import { AssetSchema } from "./asset-schema";
@@ -50,9 +52,10 @@ export function AssetForm({
           name: "",
           identifier: "",
           visibility: "NONE",
-          type: "HOST",
+          type: "WINDOWS_WORKSTATION",
           criticality: "LOW",
           assignedTeamMemberId: null,
+          networkId: null,
           metadata: JSON.stringify({ IP: "", OS: "" }),
         },
   });
@@ -60,6 +63,11 @@ export function AssetForm({
   const { data: teamMembers } = useQuery({
     queryKey: ["teamMembers"],
     queryFn: () => getTeamMembers(),
+  });
+
+  const { data: networks } = useQuery({
+    queryKey: ["networks"],
+    queryFn: () => getNetworks(),
   });
 
   function onSubmit(values: z.infer<typeof AssetSchema>) {
@@ -106,7 +114,10 @@ export function AssetForm({
             <FormItem>
               <FormLabel>Identifier</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., ASSET-123" {...field} />
+                <IdentifierSelectorDialog
+                  identifier={field.value || undefined}
+                  setIdentifier={field.onChange}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -190,6 +201,35 @@ export function AssetForm({
                     {Object.entries(AssetType).map(([key, value]) => (
                       <SelectItem key={key} value={key}>
                         {value}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        {/* Network */}
+        <FormField
+          control={form.control}
+          name="networkId"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Network</FormLabel>
+              <FormControl>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value || undefined}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a network" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {networks?.map((network) => (
+                      <SelectItem key={network.id} value={network.id}>
+                        {network.name}
                       </SelectItem>
                     ))}
                   </SelectContent>

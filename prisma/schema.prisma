@@ -28,8 +28,15 @@ model User {
 }
 
 enum AssetType {
-  HOST // Servers, workstations, proxies, etc.
-  USER // Individual accounts or groups
+  WINDOWS_WORKSTATION
+  WINDOWS_SERVER
+  LINUX_WORKSTATION
+  LINUX_SERVER
+  SERVER
+  CONTAINER
+  FIREWALL
+  ROUTER
+  DNS
 }
 
 enum AssetCriticality {
@@ -45,6 +52,32 @@ enum AssetVisibility {
   FULL
 }
 
+enum NetworkColor {
+  RED
+  GREEN
+  BLUE
+  YELLOW
+  PURPLE
+  ORANGE
+  PINK
+  BROWN
+  GRAY
+}
+
+model Network {
+  id              String       @id @default(cuid())
+  name            String
+  ipRange         String
+  fieldFrom       String
+  fieldTo         String
+  fieldLegend     String
+  networkColor    NetworkColor @default(GRAY)
+  assets          Asset[]
+  parentNetworkId String?
+  parentNetwork   Network?     @relation("SubNetworks", fields: [parentNetworkId], references: [id])
+  subNetworks     Network[]    @relation("SubNetworks")
+}
+
 model Asset {
   id                   String           @id @default(cuid())
   name                 String
@@ -52,7 +85,9 @@ model Asset {
   visibility           AssetVisibility  @default(NONE)
   metadata             Json?
   criticality          AssetCriticality @default(LOW)
-  type                 AssetType        @default(HOST)
+  type                 AssetType        @default(WINDOWS_WORKSTATION)
+  network              Network?         @relation(fields: [networkId], references: [id])
+  networkId            String?
   assignedTeamMemberId String?
   assignedTeamMember   User?            @relation(fields: [assignedTeamMemberId], references: [id])
   notes                String? // Optional
