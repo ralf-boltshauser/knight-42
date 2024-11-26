@@ -160,10 +160,20 @@ export default function ThreatActorForm() {
                             value={`${technique.ttpIdentifier}-${technique.name}`}
                             key={`${technique.ttpIdentifier}-${technique.name}`}
                             onSelect={() => {
-                              form.setValue("techniques", [
-                                ...(field.value || []),
-                                technique.id,
-                              ]);
+                              const existingValue = field.value || [];
+                              if (!existingValue.includes(technique.id)) {
+                                form.setValue("techniques", [
+                                  ...existingValue,
+                                  technique.id,
+                                ]);
+                              } else {
+                                form.setValue(
+                                  "techniques",
+                                  existingValue.filter(
+                                    (id) => id !== technique.id
+                                  )
+                                );
+                              }
                             }}
                           >
                             {technique.ttpIdentifier} - {technique.name}
@@ -236,10 +246,18 @@ export default function ThreatActorForm() {
                             value={chain.name}
                             key={chain.id}
                             onSelect={() => {
-                              form.setValue("linkedAttackChains", [
-                                ...(field.value || []),
-                                chain.id,
-                              ]);
+                              const existingValue = field.value || [];
+                              if (!existingValue.includes(chain.id)) {
+                                form.setValue("linkedAttackChains", [
+                                  ...existingValue,
+                                  chain.id,
+                                ]);
+                              } else {
+                                form.setValue(
+                                  "linkedAttackChains",
+                                  existingValue.filter((id) => id !== chain.id)
+                                );
+                              }
                             }}
                           >
                             {chain.name}

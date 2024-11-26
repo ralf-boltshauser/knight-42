@@ -20,12 +20,6 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] agents won't be working in exercise net
 
 ### Bigger Changes
-- [ ] threat actors should have
-  - [ ] iocs
-    - [ ] ip ranges
-    - [ ] domains 
-  - [ ] attackers have clear ip ranges -> automatic recommendations of threat actors
-- [ ] link iocs from alerts instead of creating new ones, only when no exists
 - [ ] mark alerts as reported
   - [ ] and put it into timeline of alert
 - [ ] a network map

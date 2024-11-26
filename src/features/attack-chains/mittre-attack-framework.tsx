@@ -45,10 +45,10 @@ export default function MittreAttackFramework({
         onDoubleClick={() => onUpdate?.(technique.id)}
       >
         <div className="flex items-center gap-2">
-          <span className="text-sm">{technique.name}</span>
+          <span className="text-xs">{technique.name}</span>
           {isSelected && <span className="text-red-500">✓</span>}
         </div>
-        <div className="text-xs text-gray-500 mt-1">
+        <div className="text-[8px] text-gray-500 mt-1">
           {technique.ttpIdentifier}
         </div>
       </div>
@@ -86,12 +86,12 @@ export default function MittreAttackFramework({
             <div>
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-sm">{technique.name}</span>
+                  <span className="text-xs">{technique.name}</span>
                   {isSelected && <span className="text-red-500">✓</span>}
                 </div>
                 <ChevronDown className="w-4 h-4" />
               </div>
-              <div className="text-xs text-start text-gray-500 mt-1">
+              <div className="text-[8px] text-start text-gray-500 mt-1">
                 {technique.ttpIdentifier}
               </div>
             </div>

@@ -5,6 +5,7 @@ import {
 } from "@/features/attack-chains/attack-chain-actions";
 import AttackChainAlerts from "@/features/attack-chains/attack-chain-detail/attack-chain-alerts";
 import LinkThreatActor from "@/features/attack-chains/attack-chain-detail/link-threat-actor";
+import RecommendedThreatActors from "@/features/attack-chains/attack-chain-detail/recommended-threat-actors";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
 import { getAllTtps } from "@/features/techniques/technique-actions";
 import ThreatActorDetail from "@/features/threat-actors/threat-actor-detail/threat-actor-detail";
@@ -52,10 +53,13 @@ export default async function AttackChainDetailPage({
               threatActor={attackChain.relatedThreatActor}
             />
           ) : (
-            <LinkThreatActor
-              threatActors={threatActors}
-              attackChainId={attackChainId}
-            />
+            <div className="space-y-6">
+              <RecommendedThreatActors attackChain={attackChain} />
+              <LinkThreatActor
+                threatActors={threatActors}
+                attackChainId={attackChainId}
+              />
+            </div>
           )}
         </TabsContent>
         <TabsContent value="framework">

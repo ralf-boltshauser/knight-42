@@ -81,6 +81,7 @@ export function AlertForm() {
     queryFn: () => getAssets(),
   });
   useEffect(() => {
+    console.log(form.getValues());
     if (
       form.getValues("assets")?.length == 0 ||
       form.getValues("categoryId") == null ||
@@ -95,7 +96,7 @@ export function AlertForm() {
         categories?.find((c) => c.id === form.getValues().categoryId)?.name
       } - ${assets?.find((a) => a.id === form.getValues("assets")?.[0])?.name}`
     );
-  }, [form, assets, categories]);
+  }, [form, form.getValues(), assets, categories]);
 
   function onSubmit(values: z.infer<typeof AlertSchema>) {
     toast.success("Alert created successfully");

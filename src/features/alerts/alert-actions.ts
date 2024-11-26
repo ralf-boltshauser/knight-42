@@ -38,7 +38,7 @@ export async function getAlertCategories() {
 }
 
 export async function createAlert(alert: z.infer<typeof AlertSchema>) {
-  await prisma.alert.create({
+  const newAlert = await prisma.alert.create({
     data: {
       name: alert.name,
       description: alert.description,
@@ -56,7 +56,7 @@ export async function createAlert(alert: z.infer<typeof AlertSchema>) {
     },
   });
 
-  redirect(`/alerts`);
+  redirect(`/alerts/${newAlert.id}`);
 }
 
 export async function updateAlert(alert: {
