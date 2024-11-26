@@ -2,6 +2,7 @@
 
 import { fieldAxis } from "@/types/field";
 import { Network } from "@prisma/client";
+import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
 import { getNetworkMapAssets } from "./network-actions";
 import NetworkAsset from "./network-asset";
@@ -21,8 +22,18 @@ export default function NetworkMap({
   useEffect(() => {
     const updateCellSize = () => {
       if (cellRef.current) {
-        setCellWidth(cellRef.current.clientWidth + 1); // Add 2px for border width
-        setCellHeight(cellRef.current.clientHeight + 1); // Add 2px for border width
+        const computedStyle = window.getComputedStyle(cellRef.current);
+        const borderLeftWidth = parseFloat(computedStyle.borderLeftWidth);
+        const borderRightWidth = parseFloat(computedStyle.borderRightWidth);
+        const borderTopWidth = parseFloat(computedStyle.borderTopWidth);
+        const borderBottomWidth = parseFloat(computedStyle.borderBottomWidth);
+
+        setCellWidth(
+          cellRef.current.clientWidth + borderLeftWidth + borderRightWidth
+        );
+        setCellHeight(
+          cellRef.current.clientHeight + borderTopWidth + borderBottomWidth
+        );
       }
     };
 
@@ -42,7 +53,11 @@ export default function NetworkMap({
   console.log(cellWidth, cellHeight);
 
   return (
-    <div>
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex flex-row">
         <div className="flex-grow h-screen relative max-w-[95dvw]">
           <div className="flex flex-row h-full -z-10 justify-start">
@@ -79,24 +94,28 @@ export default function NetworkMap({
               }
             )}
           </div>
-          {networks.map((network) => (
-            <NetworkMapNetwork
-              key={network.id}
-              network={network}
-              cellWidth={cellWidth}
-              cellHeight={cellHeight}
-            />
-          ))}
-          {assets.map((asset) => (
-            <NetworkAsset
-              key={asset.id}
-              asset={asset}
-              cellWidth={cellWidth}
-              cellHeight={cellHeight}
-            />
-          ))}
+          <div>
+            {networks.map((network) => (
+              <NetworkMapNetwork
+                key={network.id}
+                network={network}
+                cellWidth={cellWidth}
+                cellHeight={cellHeight}
+              />
+            ))}
+          </div>
+          <div>
+            {assets.map((asset) => (
+              <NetworkAsset
+                key={asset.id}
+                asset={asset}
+                cellWidth={cellWidth}
+                cellHeight={cellHeight}
+              />
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }

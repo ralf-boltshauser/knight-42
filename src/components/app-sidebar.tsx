@@ -13,6 +13,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { usePathname } from "next/navigation";
 
 // Menu items.
 export const navItems = [
@@ -55,6 +56,11 @@ export const navItems = [
 
 export function AppSidebar() {
   const mySidebar = useSidebar();
+  const pathname = usePathname();
+  if (pathname === "/network-map") {
+    mySidebar.setOpen(false);
+  }
+
   return (
     <Sidebar>
       <SidebarContent>

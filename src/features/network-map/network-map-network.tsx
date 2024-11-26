@@ -2,6 +2,7 @@
 
 import { fieldAxis } from "@/types/field";
 import { Network } from "@prisma/client";
+import { motion } from "framer-motion";
 import useFitText from "use-fit-text";
 
 export default function NetworkMapNetwork({
@@ -32,9 +33,12 @@ export default function NetworkMapNetwork({
 
   return (
     <>
-      <div
-        key={network.id}
-        className={`absolute bg-${network.networkColor.toLowerCase()}-500 opacity-30 z-10 border rounded-lg border-dashed`}
+      <motion.div
+        key={network.id + "network"}
+        className={`absolute bg-${network.networkColor.toLowerCase()}-500 hover:animate-pulse opacity-30 z-10 border rounded-lg border-dashed`}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 0.3, scale: 1 }}
+        transition={{ duration: 0.5, delay: (fromCol + fromRow) * 0.1 + 0.5 }}
         style={{
           left: `${left}px`,
           top: `${top}px`,
@@ -42,9 +46,17 @@ export default function NetworkMapNetwork({
           height: `${height}px`,
         }}
       />
-      <div
-        key={network.id}
-        className="absolute z-20 text-black text-center flex flex-col items-center justify-center"
+      <motion.div
+        key={network.id + "legend"}
+        className="absolute z-20 text-black text-center flex flex-col items-center justify-center rounded-lg"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        whileHover={{
+          scale: 2,
+          boxShadow: "0px 5px 15px rgba(0,0,0,0.1)",
+          background: "white",
+          zIndex: 100,
+        }}
         style={{
           left: `${legendFieldCol * cellWidth}px`,
           top: `${legendFieldRow * cellHeight}px`,
@@ -52,7 +64,7 @@ export default function NetworkMapNetwork({
           height: `${cellHeight}px`,
         }}
       >
-        <span className="font-bold"> {name}</span>
+        <span className="font-bold">{name}</span>
         <span
           ref={ref}
           style={{
@@ -62,7 +74,7 @@ export default function NetworkMapNetwork({
         >
           {network.ipRange}
         </span>
-      </div>
+      </motion.div>
     </>
   );
 }

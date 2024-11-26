@@ -4,9 +4,11 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 ## Todos
 ## bugs
 - [ ] ttps to match threat actor
+- [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id
 
 ### UX
 - [ ] cmd k
+- [ ] empty screens with smth like rough.js or smth react-rough-fiber
 - [ ] more shortcuts in general for editing etc
 - [ ] add filter for assets etc if there are too many it gets shitty
   - [ ] os filter
