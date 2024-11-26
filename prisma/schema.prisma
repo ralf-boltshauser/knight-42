@@ -98,6 +98,8 @@ model Alert {
   assets                 Asset[]          @relation("AssetAlerts")
   detectionSource        DetectionSource
   categoryId             String
+  techniqueId            String?
+  technique              Technique?       @relation(fields: [techniqueId], references: [id])
   category               AlertCategory    @relation(fields: [categoryId], references: [id])
   status                 AlertStatus
   relatedIOCs            IOC[]            @relation("AlertIOCs")
@@ -148,9 +150,40 @@ model ThreatActor {
   name               String
   type               String // APT, Cybercriminal, Insider, etc.
   linkedAttackChains AttackChain[]
+  techniques         Technique[]   @relation("ThreatActorTechniques")
   notes              String?
   createdAt          DateTime      @default(now())
   updatedAt          DateTime      @updatedAt
+}
+
+enum Tactic {
+  RECONNAISSANCE
+  RESOURCE_DEVELOPMENT
+  INITIAL_ACCESS
+  EXECUTION
+  PERSISTENCE
+  PRIVILEGE_ESCALATION
+  DEFENSE_EVASION
+  CREDENTIAL_ACCESS
+  DISCOVERY
+  LATERAL_MOVEMENT
+  COLLECTION
+  COMMAND_AND_CONTROL
+  EXFILTRATION
+  IMPACT
+}
+
+model Technique {
+  id                 String        @id @default(cuid())
+  name               String
+  ttpIdentifier      String        @unique
+  tactic             Tactic
+  parentTechniqueId  String?
+  parentTechnique    Technique?    @relation("ParentTechniqueChildren", fields: [parentTechniqueId], references: [id])
+  childrenTechniques Technique[]   @relation("ParentTechniqueChildren")
+  threatActors       ThreatActor[] @relation("ThreatActorTechniques")
+  order              Int
+  alerts             Alert[]
 }
 
 enum ResponseActionType {

@@ -10,16 +10,19 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
   - [ ] os filter
   - [ ] 
 - [ ] use proper prioritization everywhere everything should be mission critical etc we don't have time to do everything
-- [ ] try to implement a few use cases that could occur in a SOC environment
-- [ ] a network map
-- [ ] open nextauth_url after start
+  - [ ] dashboard should show criticality
 - [ ] add proper loading states
 
 ### Testing
+- [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
 - [ ] agents won't be working in exercise net
 
 ### Bigger Changes
+- [ ] a network map
+- [ ] mark alerts as reported
+- [ ] attackers have clear ip ranges
+- [ ] utc timeline
 - [ ] consider adding timeline as a model
 
 ## Usage

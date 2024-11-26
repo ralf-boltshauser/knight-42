@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useRef } from "react";
 import { addAlertToAttackChain } from "../attack-chain-actions";
 
-export default function AttackChainDetail({
+export default function AttackChainAlerts({
   attackChain,
   alerts,
 }: {
@@ -31,17 +31,6 @@ export default function AttackChainDetail({
   return (
     <div className="">
       <div className="flex flex-col gap-8" ref={componentRef}>
-        <h1 className="text-2xl font-bold">{attackChain.name}</h1>
-        {attackChain.relatedThreatActor && (
-          <Card>
-            <CardHeader>
-              <CardTitle>Threat Actor</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p>{attackChain.relatedThreatActor?.name}</p>
-            </CardContent>
-          </Card>
-        )}
         {attackChain.alerts && attackChain.alerts.length > 0 ? (
           attackChain.alerts
             .toSorted(

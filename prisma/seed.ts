@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Tactic } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -40,6 +40,718 @@ async function main() {
     await prisma.iOCType.createMany({
       data: iocTypes,
     });
+  }
+
+  const existingTechniques = await prisma.technique.findMany();
+
+  if (existingTechniques.length === 0) {
+    const techniques = [
+      {
+        name: "Active Scanning",
+        ttpIdentifier: "T1595",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 1,
+        childrenTechniques: [
+          {
+            name: "Scanning IP Blocks",
+            ttpIdentifier: "T1595.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Vulnerability Scanning",
+            ttpIdentifier: "T1595.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Wordlist Scanning",
+            ttpIdentifier: "T1595.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+        ],
+      },
+      {
+        name: "Gather Victim Host Information",
+        ttpIdentifier: "T1592",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 2,
+        childrenTechniques: [
+          {
+            name: "Hardware",
+            ttpIdentifier: "T1592.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Software",
+            ttpIdentifier: "T1592.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Firmware",
+            ttpIdentifier: "T1592.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+          {
+            name: "Client Configurations",
+            ttpIdentifier: "T1592.004",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 4,
+          },
+        ],
+      },
+      {
+        name: "Gather Victim Identity Information",
+        ttpIdentifier: "T1589",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 3,
+        childrenTechniques: [
+          {
+            name: "Credentials",
+            ttpIdentifier: "T1589.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Email Addresses",
+            ttpIdentifier: "T1589.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Employee Names",
+            ttpIdentifier: "T1589.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+        ],
+      },
+      {
+        name: "Gather Victim Network Information",
+        ttpIdentifier: "T1590",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 4,
+        childrenTechniques: [
+          {
+            name: "Domain Properties",
+            ttpIdentifier: "T1590.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "DNS",
+            ttpIdentifier: "T1590.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Network Trust Dependencies",
+            ttpIdentifier: "T1590.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+          {
+            name: "Network Topology",
+            ttpIdentifier: "T1590.004",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 4,
+          },
+          {
+            name: "IP Addresses",
+            ttpIdentifier: "T1590.005",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 5,
+          },
+          {
+            name: "Network Security Appliances",
+            ttpIdentifier: "T1590.006",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 6,
+          },
+        ],
+      },
+      {
+        name: "Gather Victim Organization Information",
+        ttpIdentifier: "T1591",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 5,
+        childrenTechniques: [
+          {
+            name: "Determine Physical Locations",
+            ttpIdentifier: "T1591.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Business Relationships",
+            ttpIdentifier: "T1591.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Identify Business Tempo",
+            ttpIdentifier: "T1591.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+          {
+            name: "Identify Roles",
+            ttpIdentifier: "T1591.004",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 4,
+          },
+        ],
+      },
+      {
+        name: "Phishing for Information",
+        ttpIdentifier: "T1598",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 6,
+        childrenTechniques: [
+          {
+            name: "Spearphishing Service",
+            ttpIdentifier: "T1598.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Spearphishing Attachment",
+            ttpIdentifier: "T1598.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Spearphishing Link",
+            ttpIdentifier: "T1598.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+          {
+            name: "Spearphishing via Voice",
+            ttpIdentifier: "T1598.004",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 4,
+          },
+        ],
+      },
+      {
+        name: "Search Closed Sources",
+        ttpIdentifier: "T1597",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 7,
+        childrenTechniques: [
+          {
+            name: "Threat Intel Vendors",
+            ttpIdentifier: "T1597.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Purchase Technical Data",
+            ttpIdentifier: "T1597.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+        ],
+      },
+      {
+        name: "Search Open Technical Databases",
+        ttpIdentifier: "T1596",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 8,
+        childrenTechniques: [
+          {
+            name: "DNS/Passive DNS",
+            ttpIdentifier: "T1596.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "WHOIS",
+            ttpIdentifier: "T1596.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Digital Certificates",
+            ttpIdentifier: "T1596.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+          {
+            name: "CDNs",
+            ttpIdentifier: "T1596.004",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 4,
+          },
+          {
+            name: "Scan Databases",
+            ttpIdentifier: "T1596.005",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 5,
+          },
+        ],
+      },
+      {
+        name: "Search Open Websites/Domains",
+        ttpIdentifier: "T1593",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 9,
+        childrenTechniques: [
+          {
+            name: "Social Media",
+            ttpIdentifier: "T1593.001",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 1,
+          },
+          {
+            name: "Search Engines",
+            ttpIdentifier: "T1593.002",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 2,
+          },
+          {
+            name: "Code Repositories",
+            ttpIdentifier: "T1593.003",
+            tactic: Tactic.RECONNAISSANCE,
+            order: 3,
+          },
+        ],
+      },
+      {
+        name: "Search Victim-Owned Websites",
+        ttpIdentifier: "T1594",
+        tactic: Tactic.RECONNAISSANCE,
+        order: 11,
+        childrenTechniques: [],
+      },
+      {
+        name: "Acquire Access",
+        ttpIdentifier: "T1580",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 1,
+        childrenTechniques: [],
+      },
+      {
+        name: "Acquire Infrastructure",
+        ttpIdentifier: "T1583",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 2,
+        childrenTechniques: [
+          {
+            name: "Domains",
+            ttpIdentifier: "T1583.001",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 1,
+          },
+          {
+            name: "DNS Server",
+            ttpIdentifier: "T1583.002",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 2,
+          },
+          {
+            name: "Virtual Private Server",
+            ttpIdentifier: "T1583.003",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 3,
+          },
+          {
+            name: "Server",
+            ttpIdentifier: "T1583.004",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 4,
+          },
+          {
+            name: "Botnet",
+            ttpIdentifier: "T1583.005",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 5,
+          },
+          {
+            name: "Web Services",
+            ttpIdentifier: "T1583.006",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 6,
+          },
+          {
+            name: "Serverless",
+            ttpIdentifier: "T1583.007",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 7,
+          },
+          {
+            name: "Malvertising",
+            ttpIdentifier: "T1583.008",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 8,
+          },
+        ],
+      },
+      {
+        name: "Compromise Accounts",
+        ttpIdentifier: "T1586",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 3,
+        childrenTechniques: [
+          {
+            name: "Social Media Accounts",
+            ttpIdentifier: "T1586.001",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 1,
+          },
+          {
+            name: "Email Accounts",
+            ttpIdentifier: "T1586.002",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 2,
+          },
+          {
+            name: "Cloud Accounts",
+            ttpIdentifier: "T1586.003",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 3,
+          },
+        ],
+      },
+      // {
+      //   name: "Compromise Infrastructure",
+      //   ttpIdentifier: "T1584",
+      //   tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //   order: 4,
+      //   childrenTechniques: [
+      //     {
+      //       name: "Domains",
+      //       ttpIdentifier: "T1584.001",
+      //       tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //       order: 1,
+      //     },
+      //     {
+      //       name: "DNS Server",
+      //       ttpIdentifier: "T1584.002",
+      //       tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //       order: 2,
+      //     },
+      //     {
+      //       name: "Virtual Private Server",
+      //       ttpIdentifier: "T1584.003",
+      //       tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //       order: 3,
+      //     },
+      //     {
+      //       name: "Server",
+      //       ttpIdentifier: "T1584.004",
+      //       tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //       order: 4,
+      //     },
+      //     {
+      //       name: "Botnet",
+      //       ttpIdentifier: "T1584.005",
+      //       tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //       order: 5,
+      //     },
+      //     {
+      //       name: "Web Services",
+      //       ttpIdentifier: "T1584.006",
+      //       tactic: Tactic.RESOURCE_DEVELOPMENT,
+      //       order: 6,
+      //     },
+      //   ],
+      // },
+      {
+        name: "Establish Accounts",
+        ttpIdentifier: "T1585",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 5,
+        childrenTechniques: [
+          {
+            name: "Social Media Accounts",
+            ttpIdentifier: "T1585.001",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 1,
+          },
+          {
+            name: "Email Accounts",
+            ttpIdentifier: "T1585.002",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 2,
+          },
+          {
+            name: "Cloud Accounts",
+            ttpIdentifier: "T1585.003",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 3,
+          },
+        ],
+      },
+      {
+        name: "Obtain Capabilities",
+        ttpIdentifier: "T1588",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 6,
+        childrenTechniques: [
+          {
+            name: "Malware",
+            ttpIdentifier: "T1588.001",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 1,
+          },
+          {
+            name: "Tool",
+            ttpIdentifier: "T1588.002",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 2,
+          },
+          {
+            name: "Code Signing Certificates",
+            ttpIdentifier: "T1588.003",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 3,
+          },
+          {
+            name: "Digital Certificates",
+            ttpIdentifier: "T1588.004",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 4,
+          },
+        ],
+      },
+      {
+        name: "Compromise Infrastructure",
+        ttpIdentifier: "T1584",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 7,
+        childrenTechniques: [
+          {
+            name: "Domains",
+            ttpIdentifier: "T1584.001",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 1,
+          },
+          {
+            name: "DNS Server",
+            ttpIdentifier: "T1584.002",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 2,
+          },
+          {
+            name: "Virtual Private Server",
+            ttpIdentifier: "T1584.003",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 3,
+          },
+          {
+            name: "Server",
+            ttpIdentifier: "T1584.004",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 4,
+          },
+          {
+            name: "Botnet",
+            ttpIdentifier: "T1584.005",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 5,
+          },
+          {
+            name: "Web Services",
+            ttpIdentifier: "T1584.006",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 6,
+          },
+          {
+            name: "Serverless",
+            ttpIdentifier: "T1584.007",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 7,
+          },
+          {
+            name: "Malvertising",
+            ttpIdentifier: "T1584.008",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 8,
+          },
+        ],
+      },
+      {
+        name: "Develop Capabilities",
+        ttpIdentifier: "T1587",
+        tactic: Tactic.RESOURCE_DEVELOPMENT,
+        order: 8,
+        childrenTechniques: [
+          {
+            name: "Malware",
+            ttpIdentifier: "T1587.001",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 1,
+          },
+          {
+            name: "Tool",
+            ttpIdentifier: "T1587.002",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 2,
+          },
+          {
+            name: "Code Signing Certificates",
+            ttpIdentifier: "T1587.003",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 3,
+          },
+          {
+            name: "Digital Certificates",
+            ttpIdentifier: "T1587.004",
+            tactic: Tactic.RESOURCE_DEVELOPMENT,
+            order: 4,
+          },
+        ],
+      },
+
+      {
+        name: "Drive-by Compromise",
+        ttpIdentifier: "T1189",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 1,
+        childrenTechniques: [],
+      },
+      {
+        name: "Exploit Public-Facing Application",
+        ttpIdentifier: "T1190",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 2,
+        childrenTechniques: [],
+      },
+      {
+        name: "External Remote Services",
+        ttpIdentifier: "T1133",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 3,
+        childrenTechniques: [],
+      },
+      {
+        name: "Hardware Additions",
+        ttpIdentifier: "T1200",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 4,
+        childrenTechniques: [],
+      },
+      {
+        name: "Phishing",
+        ttpIdentifier: "T1566",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 5,
+        childrenTechniques: [
+          {
+            name: "Spearphishing Attachment",
+            ttpIdentifier: "T1566.001",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 1,
+          },
+          {
+            name: "Spearphishing Link",
+            ttpIdentifier: "T1566.002",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 2,
+          },
+          {
+            name: "Spearphishing via Service",
+            ttpIdentifier: "T1566.003",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 3,
+          },
+        ],
+      },
+      {
+        name: "Replication Through Removable Media",
+        ttpIdentifier: "T1091",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 6,
+        childrenTechniques: [],
+      },
+      {
+        name: "Supply Chain Compromise",
+        ttpIdentifier: "T1195",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 7,
+        childrenTechniques: [
+          {
+            name: "Compromise Software Dependencies and Development Tools",
+            ttpIdentifier: "T1195.001",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 1,
+          },
+          {
+            name: "Compromise Software Supply Chain",
+            ttpIdentifier: "T1195.002",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 2,
+          },
+          {
+            name: "Compromise Hardware Supply Chain",
+            ttpIdentifier: "T1195.003",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 3,
+          },
+        ],
+      },
+      {
+        name: "Trusted Relationship",
+        ttpIdentifier: "T1199",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 8,
+        childrenTechniques: [],
+      },
+      {
+        name: "Valid Accounts",
+        ttpIdentifier: "T1078",
+        tactic: Tactic.INITIAL_ACCESS,
+        order: 9,
+        childrenTechniques: [
+          {
+            name: "Default Accounts",
+            ttpIdentifier: "T1078.001",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 1,
+          },
+          {
+            name: "Domain Accounts",
+            ttpIdentifier: "T1078.002",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 2,
+          },
+          {
+            name: "Local Accounts",
+            ttpIdentifier: "T1078.003",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 3,
+          },
+          {
+            name: "Cloud Accounts",
+            ttpIdentifier: "T1078.004",
+            tactic: Tactic.INITIAL_ACCESS,
+            order: 4,
+          },
+        ],
+      },
+    ];
+
+    for (const technique of techniques) {
+      console.log(technique);
+      await prisma.technique.create({
+        data: {
+          ...technique,
+          childrenTechniques: {
+            createMany: {
+              data: technique.childrenTechniques.map((child) => ({
+                ...child,
+              })),
+            },
+          },
+        },
+      });
+    }
   }
 
   // const hosts = [
