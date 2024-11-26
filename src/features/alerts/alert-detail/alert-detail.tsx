@@ -1,8 +1,6 @@
 "use client";
 
 import { Badge } from "@/components/ui/badge";
-import "react-quill/dist/quill.snow.css";
-
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -53,7 +51,9 @@ import {
 } from "lucide-react";
 import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 import { getTechniques, updateAlert } from "../alert-actions";
 import AddRelatedAssetDialog from "./add-related-asset-dialog";
 import IOCDialog from "./ioc-form";
@@ -91,6 +91,14 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
   const { data: techniques } = useQuery({
     queryKey: ["techniques"],
     queryFn: () => getTechniques(),
+  });
+
+  useHotkeys("e", () => {
+    if (!isEditing) {
+      handleEdit();
+    } else {
+      handleSave();
+    }
   });
 
   const [tab, setTab] = useQueryState("tab", { defaultValue: "assets" });

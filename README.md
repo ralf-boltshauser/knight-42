@@ -3,11 +3,10 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
 ## bugs
-- [ ] can't remove ttps form thread actors
-- [ ] deleting threat actors
 
 ### UX
-- [ ] a history / log would be great
+- [ ] cmd k
+- [ ] more shortcuts in general for editing etc
 - [ ] add filter for assets etc if there are too many it gets shitty
   - [ ] os filter
   - [ ] 
@@ -21,12 +20,20 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] agents won't be working in exercise net
 
 ### Bigger Changes
-- [ ] a network map
+- [ ] threat actors should have
+  - [ ] iocs
+    - [ ] ip ranges
+    - [ ] domains 
+  - [ ] attackers have clear ip ranges -> automatic recommendations of threat actors
+- [ ] link iocs from alerts instead of creating new ones, only when no exists
 - [ ] mark alerts as reported
-- [ ] attackers have clear ip ranges
-- [ ] utc timeline
+  - [ ] and put it into timeline of alert
+- [ ] a network map
+  - [ ] uptime agents
 - [ ] consider adding timeline as a model
 - [ ] automatically create misp entry based on alert and link to it
+
+- [ ] utc timeline
 - [ ] wazuh integration
 
 ## Usage
