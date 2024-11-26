@@ -54,8 +54,8 @@ echo "$JSON"
 
 # Check if TARGET_IP is provided and make a POST request
 if [ -n "$TARGET_IP" ]; then
-    echo "Making POST request to http://$TARGET_IP:3000/api/assets..."
-    RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://$TARGET_IP:3000/api/assets")
+    echo "Making POST request to http://$TARGET_IP:4200/api/assets..."
+    RESPONSE=$(curl -s -X POST -H "Content-Type: application/json" -d "$JSON" "http://$TARGET_IP:4200/api/assets")
     echo "Response from server: $RESPONSE"
 fi
 

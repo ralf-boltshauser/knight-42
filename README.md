@@ -7,6 +7,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 ### UX
 - [ ] a history / log would be great
 - [ ] add filter for assets etc if there are too many it gets shitty
+  - [ ] os filter
+  - [ ] 
 - [ ] use proper prioritization everywhere everything should be mission critical etc we don't have time to do everything
 - [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] a network map

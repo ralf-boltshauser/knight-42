@@ -59,7 +59,7 @@ def send_to_server(data, server_ip):
     :param data: Scanned data in JSON format
     :param server_ip: Server IP address
     """
-    url = f"http://{server_ip}:3000/api/assets"
+    url = f"http://{server_ip}:4200/api/assets"
     print(data)
     try:
         print(f"Sending data to {url}...")

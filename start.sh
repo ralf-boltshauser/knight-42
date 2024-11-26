@@ -25,11 +25,11 @@ sed -i '' '/^NEXTAUTH_URL=/d' .env
 IP_ADDR=$(ip route get 1 | awk '{print $7;exit}' 2>/dev/null || ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | head -n1)
 
 # Add new NEXTAUTH_URL with IP to .env
-echo "NEXTAUTH_URL=http://${IP_ADDR}:3000" >> .env
+echo "NEXTAUTH_URL=http://${IP_ADDR}:4200" >> .env
 
 
 # Display live URL
-echo "Will be available at: http://${IP_ADDR}:3000" 
+echo "Will be available at: http://${IP_ADDR}:4200" 
 sleep 10
 
 # Setup app
