@@ -46,6 +46,12 @@ export async function getAttackChain(attackChainId: string) {
               childrenTechniques: true,
             },
           },
+          iocs: {
+            include: {
+              type: true,
+              linkedAlerts: true,
+            },
+          },
         },
       },
       alerts: {

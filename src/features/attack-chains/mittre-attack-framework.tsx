@@ -24,7 +24,7 @@ export default function MittreAttackFramework({
 }: {
   allTtps: PopulatedTechnique[];
   ttps: PopulatedTechnique[];
-  onUpdate: (ttpId: string) => void;
+  onUpdate?: (ttpId: string) => void;
 }) {
   const [openTechniques, setOpenTechniques] = useQueryState(
     "openTechniques",
@@ -42,7 +42,7 @@ export default function MittreAttackFramework({
     return (
       <div
         className={`${baseClasses} ${selectedClasses} p-3`}
-        onDoubleClick={() => onUpdate(technique.id)}
+        onDoubleClick={() => onUpdate?.(technique.id)}
       >
         <div className="flex items-center gap-2">
           <span className="text-sm">{technique.name}</span>

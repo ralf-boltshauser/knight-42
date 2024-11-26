@@ -7,7 +7,6 @@ import AttackChainAlerts from "@/features/attack-chains/attack-chain-detail/atta
 import LinkThreatActor from "@/features/attack-chains/attack-chain-detail/link-threat-actor";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
 import { getAllTtps } from "@/features/techniques/technique-actions";
-import { updateThreatActorTechniques } from "@/features/threat-actors/threat-actor-actions";
 import ThreatActorDetail from "@/features/threat-actors/threat-actor-detail/threat-actor-detail";
 import { prisma } from "@/lib/client";
 import { PopulatedTechnique } from "@/types/technique";
@@ -60,16 +59,7 @@ export default async function AttackChainDetailPage({
           )}
         </TabsContent>
         <TabsContent value="framework">
-          <MittreAttackFramework
-            allTtps={allTtps}
-            ttps={ttps}
-            onUpdate={async (ttpId) => {
-              await updateThreatActorTechniques(
-                attackChain.relatedThreatActor?.id ?? "",
-                ttpId
-              );
-            }}
-          />
+          <MittreAttackFramework allTtps={allTtps} ttps={ttps} />
         </TabsContent>
       </Tabs>
     </div>

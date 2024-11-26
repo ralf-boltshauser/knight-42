@@ -97,7 +97,7 @@ export async function getIOCTypes() {
 
 export async function createIOC(
   ioc: z.infer<typeof IOCSchema>,
-  alertId: string
+  alertId: string | undefined
 ) {
   await prisma.iOC.create({
     data: {
@@ -105,6 +105,15 @@ export async function createIOC(
       linkedAlerts: { connect: { id: alertId } },
     },
   });
+  revalidatePath(`/alerts/${alertId}`);
+}
+
+export async function linkIOCToAlert(iocId: string, alertId: string) {
+  await prisma.iOC.update({
+    where: { id: iocId },
+    data: { linkedAlerts: { connect: { id: alertId } } },
+  });
+
   revalidatePath(`/alerts/${alertId}`);
 }
 
@@ -140,4 +149,8 @@ export async function updateResponseAction(
 
 export async function getTechniques() {
   return await prisma.technique.findMany();
+}
+
+export async function getIOCs() {
+  return await prisma.iOC.findMany();
 }

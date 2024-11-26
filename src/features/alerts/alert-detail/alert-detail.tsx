@@ -46,7 +46,6 @@ import {
   CheckCircle,
   ChevronsUpDown,
   Clock,
-  Edit2,
   Save,
 } from "lucide-react";
 import { useQueryState } from "nuqs";
@@ -203,7 +202,10 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
           </Button>
         ) : (
           <Button onClick={handleEdit}>
-            <Edit2 className="mr-2 h-4 w-4" /> Edit Alert
+            <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg hidden md:flex">
+              e
+            </kbd>
+            Edit
           </Button>
         )}
       </div>

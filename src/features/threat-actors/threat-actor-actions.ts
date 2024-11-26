@@ -23,6 +23,12 @@ export async function getThreatActor(threatActorId: string) {
           childrenTechniques: true,
         },
       },
+      iocs: {
+        include: {
+          type: true,
+          linkedAlerts: true,
+        },
+      },
     },
   });
 }
@@ -52,6 +58,7 @@ export async function createThreatActor(
           id: chain,
         })),
       },
+      iocs: undefined,
     },
   });
 
@@ -89,6 +96,30 @@ export async function updateThreatActorNotes(
   await prisma.threatActor.update({
     where: { id: threatActorId },
     data: { notes },
+  });
+
+  revalidatePath(`/threat-actors/${threatActorId}`);
+}
+
+export async function badgeImportIOCs(
+  threatActorId: string,
+  iocValue: string[],
+  iocType: string
+) {
+  const iocTypeDb = await prisma.iOCType.findUnique({
+    where: { name: iocType },
+  });
+
+  if (!iocTypeDb) {
+    throw new Error("IOC type not found");
+  }
+
+  await prisma.iOC.createMany({
+    data: iocValue.map((value) => ({
+      value,
+      typeId: iocTypeDb.id,
+      threatActorId,
+    })),
   });
 
   revalidatePath(`/threat-actors/${threatActorId}`);

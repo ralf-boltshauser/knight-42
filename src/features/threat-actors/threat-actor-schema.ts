@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { IOCSchema } from "../alerts/alert-detail/ioc-schema";
 
 export const ThreatActorSchema = z.object({
   id: z.string().cuid().optional(),
@@ -8,4 +9,5 @@ export const ThreatActorSchema = z.object({
   linkedAttackChains: z.array(z.string()).optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
+  iocs: z.array(IOCSchema).optional(),
 });
