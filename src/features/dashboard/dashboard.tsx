@@ -6,12 +6,15 @@ import { getActionStatusColor, getAlertStatusColor } from "@/types/alert-types";
 import {
   Alert,
   AlertStatus,
+  Asset,
+  AssetCriticality,
   ResponseAction,
   ResponseActionStatus,
   User,
 } from "@prisma/client";
 import { useQueryState } from "nuqs";
 
+import { getCriticalityColor } from "@/types/asset-types";
 import { useSession } from "next-auth/react";
 import {
   updateAlertStatus,
@@ -22,8 +25,11 @@ export default function Dashboard({
   myAlerts,
   myResponseActions,
 }: {
-  myAlerts: (Alert & { assignedInvestigator: User | null })[];
-  myResponseActions: (ResponseAction & { assignedTeamMember: User | null })[];
+  myAlerts: (Alert & { assignedInvestigator: User | null; assets: Asset[] })[];
+  myResponseActions: (ResponseAction & {
+    assignedTeamMember: User | null;
+    affectedAsset: Asset | null;
+  })[];
 }) {
   const { data: session } = useSession();
   const [tab, setTab] = useQueryState("tab", {
@@ -81,6 +87,11 @@ export default function Dashboard({
                 .map((alert) => ({
                   id: alert.id,
                   link: `/alerts/${alert.id}`,
+                  color: getCriticalityColor(
+                    alert.assets.reduce((acc, asset) => {
+                      return acc.criticality > asset.criticality ? acc : asset;
+                    }).criticality
+                  ),
                   title: alert.name,
                   tailText: alert.assignedInvestigator?.name ?? "",
                 })),
@@ -104,6 +115,10 @@ export default function Dashboard({
                 .map((responseAction) => ({
                   id: responseAction.id,
                   link: `/alerts/${responseAction.relatedIncidentId}?tab=actions`,
+                  color: getCriticalityColor(
+                    responseAction.affectedAsset?.criticality ??
+                      AssetCriticality.LOW
+                  ),
                   title: responseAction.name,
                   tailText: responseAction.assignedTeamMember?.name ?? "",
                 })),

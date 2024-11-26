@@ -1,6 +1,7 @@
 "use server";
 import { prisma } from "@/lib/client";
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { AssetSchema } from "./asset-schema";
 
@@ -17,8 +18,7 @@ export async function createAsset(asset: z.infer<typeof AssetSchema>) {
   });
 
   revalidatePath("/assets");
-
-  return newAsset;
+  redirect(`/assets/${newAsset.id}`);
 }
 
 export async function deleteAsset(formData: FormData) {

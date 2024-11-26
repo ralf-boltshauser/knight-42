@@ -15,13 +15,13 @@ export async function AssetTypeToIcon(type: AssetType) {
 export const getCriticalityColor = (criticality: AssetCriticality) => {
   switch (criticality) {
     case AssetCriticality.LOW:
-      return "bg-green-500";
+      return "green";
     case AssetCriticality.MEDIUM:
-      return "bg-yellow-500";
+      return "yellow";
     case AssetCriticality.HIGH:
-      return "bg-orange-500";
+      return "orange";
     case AssetCriticality.CRITICAL:
-      return "bg-red-500";
+      return "red";
   }
 };
 

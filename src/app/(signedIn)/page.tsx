@@ -12,12 +12,14 @@ export default async function DashboardPage() {
   const myAlerts = await prisma.alert.findMany({
     include: {
       assignedInvestigator: true,
+      assets: true,
     },
   });
 
   const myResponseActions = await prisma.responseAction.findMany({
     include: {
       assignedTeamMember: true,
+      affectedAsset: true,
     },
   });
 

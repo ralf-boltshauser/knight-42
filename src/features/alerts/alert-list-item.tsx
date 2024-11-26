@@ -50,7 +50,9 @@ export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
                   <Link href={`/assets/${asset.id}`} key={asset.id}>
                     <Badge
                       variant={"outline"}
-                      className={getCriticalityColor(asset.criticality)}
+                      className={`bg-${getCriticalityColor(
+                        asset.criticality
+                      )}-500 text-white`}
                     >
                       {asset.name}
                     </Badge>

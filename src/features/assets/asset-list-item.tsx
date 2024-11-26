@@ -63,9 +63,9 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
-                  className={`${getCriticalityColor(
+                  className={`bg-${getCriticalityColor(
                     asset.criticality
-                  )} text-white`}
+                  )}-500 text-white`}
                 >
                   {asset.criticality}
                 </Badge>
