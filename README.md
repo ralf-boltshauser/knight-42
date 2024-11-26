@@ -2,16 +2,22 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
+## bugs
+
 ### UX
-- [ ] add response-actions/id page
+- [ ] a history / log would be great
+- [ ] add filter for assets etc if there are too many it gets shitty
+- [ ] use proper prioritization everywhere everything should be mission critical etc we don't have time to do everything
 - [ ] try to implement a few use cases that could occur in a SOC environment
-- [ ] consider adding timeline as a model
 - [ ] a network map
 - [ ] open nextauth_url after start
 - [ ] add proper loading states
 
 ### Testing
 - [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
+
+### Bigger Changes
+- [ ] consider adding timeline as a model
 
 ## Usage
 

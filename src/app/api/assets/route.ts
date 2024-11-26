@@ -6,22 +6,28 @@ export const POST = async (req: NextRequest) => {
   const body = await req.json();
 
   // if it is an array create many
-  if (Array.isArray(body)) {
-    await prisma.asset.createMany({
-      data: body.map((asset) => ({
-        ...asset,
-        type: AssetType.HOST,
-        identifier: asset.metadata.IP,
-      })),
-    });
-  } else {
-    await prisma.asset.create({
-      data: {
-        ...body,
-        type: AssetType.HOST,
-        identifier: body.metadata.IP,
-      },
-    });
+  try {
+    if (Array.isArray(body)) {
+      await prisma.asset.createMany({
+        data: body.map((asset) => ({
+          ...asset,
+          type: AssetType.HOST,
+          identifier: asset.metadata.IP,
+        })),
+      });
+    } else {
+      await prisma.asset.create({
+        data: {
+          ...body,
+          type: AssetType.HOST,
+          identifier: body.metadata.IP,
+        },
+      });
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (e: any) {
+    console.error(e);
+    return NextResponse.json({ message: e.message }, { status: 500 });
   }
 
   return NextResponse.json({ message: "Asset created successfully" });

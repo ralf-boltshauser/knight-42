@@ -12,7 +12,7 @@ $OS = (Get-WmiObject -Class Win32_OperatingSystem).Caption
 $IP = (Get-NetIPAddress -AddressFamily IPv4 -PrefixOrigin Dhcp).IPAddress
 
 # Get username
-$Username = (Get-WmiObject -Class Win32_UserAccount -Filter "LocalAccount = True").Name
+$Username = (whoami).Split('\')[-1]
 Write-Host "Username: $($Username)"
 
 # Fetch location using an API

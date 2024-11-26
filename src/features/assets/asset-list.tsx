@@ -22,11 +22,13 @@ import {
   CheckCircle,
   Eye,
   EyeOff,
+  LayoutTemplate,
   Plus,
   RotateCw,
   Server,
   Shield,
   ShieldAlert,
+  Terminal,
   User,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -69,6 +71,10 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
       parseAsStringEnum(Object.values(AssetVisibility))
     ).withDefault([])
   );
+  const [osFilter, setOsFilter] = useQueryState(
+    "osFilter",
+    parseAsArrayOf(parseAsStringEnum(["WINDOWS", "LINUX"])).withDefault([])
+  );
 
   const reloadInterval = 30;
   const [reloadCounter, setReloadCounter] = useState(reloadInterval);
@@ -106,7 +112,13 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
       (criticalityFilter.length === 0 ||
         criticalityFilter.includes(asset.criticality)) &&
       (visibilityFilter.length === 0 ||
-        visibilityFilter.includes(asset.visibility))
+        visibilityFilter.includes(asset.visibility)) &&
+      (osFilter.length === 0 ||
+        osFilter.some((os) =>
+          JSON.stringify(asset.metadata)
+            .toLowerCase()
+            .includes(os.toLowerCase())
+        ))
   );
 
   return (
@@ -226,6 +238,22 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
           <ToggleGroupItem value={AssetVisibility.FULL}>
             <Eye className="mr-2 h-4 w-4" />
             Full
+          </ToggleGroupItem>
+        </ToggleGroup>
+        <ToggleGroup
+          type="multiple"
+          value={osFilter}
+          onValueChange={(value) => {
+            setOsFilter(value as string[]);
+          }}
+        >
+          <ToggleGroupItem value="WINDOWS">
+            <LayoutTemplate className="mr-2 h-4 w-4" />
+            Windows
+          </ToggleGroupItem>
+          <ToggleGroupItem value="LINUX">
+            <Terminal className="mr-2 h-4 w-4" />
+            Linux
           </ToggleGroupItem>
         </ToggleGroup>
         <Button
