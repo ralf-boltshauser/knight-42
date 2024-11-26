@@ -88,6 +88,7 @@ export default function KanbanBoard({
               <Link href={card.link} key={card.id}>
                 <motion.div
                   draggable
+                  onMouseDown={() => onDragStart(card, column.id)}
                   onDragStart={() => onDragStart(card, column.id)}
                   onDragEnd={onDragEnd}
                   whileHover={{ scale: 1.02 }}
