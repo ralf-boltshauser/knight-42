@@ -85,7 +85,6 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
   }, [alertData]);
 
   useEffect(() => {
-    console.log("alert changed");
     setAlertData({
       ...alert,
       timeline: [
@@ -142,7 +141,6 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
   const handleSave = () => {
     setIsEditing(false);
     // Here you would typically send the updated data to your backend
-    console.log("Saving updated alert:", editedAlert);
     updateAlert({
       id: editedAlert.id,
       name: editedAlert.name,
@@ -281,7 +279,6 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
             {isEditing ? (
               <Select
                 onValueChange={(value) => {
-                  console.log("value", value);
                   setEditedAlert({
                     ...editedAlert,
                     assignedInvestigatorId: value,

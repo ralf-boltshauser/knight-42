@@ -17,6 +17,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ### Testing
 - [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
+- [ ] agents won't be working in exercise net
 
 ### Bigger Changes
 - [ ] consider adding timeline as a model

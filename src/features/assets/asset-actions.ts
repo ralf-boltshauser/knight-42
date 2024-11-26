@@ -1,6 +1,5 @@
 "use server";
 import { prisma } from "@/lib/client";
-import console from "console";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { AssetSchema } from "./asset-schema";
@@ -28,13 +27,10 @@ export async function deleteAsset(formData: FormData) {
     where: { id },
   });
 
-  console.log("Deleted asset", id);
-
   revalidatePath("/assets");
 }
 
 export async function updateAsset(asset: z.infer<typeof AssetSchema>) {
-  console.log("Updating asset", asset);
   await prisma.asset.update({
     where: { id: asset.id },
     data: asset,
@@ -42,4 +38,25 @@ export async function updateAsset(asset: z.infer<typeof AssetSchema>) {
 
   revalidatePath("/assets");
   revalidatePath(`/assets/${asset.id}`);
+}
+
+export async function getAssets() {
+  const assetList = await prisma.asset.findMany({
+    include: {
+      assignedTeamMember: true,
+      alerts: {
+        include: {
+          category: true,
+          assignedInvestigator: true,
+        },
+      },
+      responseActions: {
+        include: {
+          assignedTeamMember: true,
+        },
+      },
+    },
+  });
+
+  return assetList;
 }

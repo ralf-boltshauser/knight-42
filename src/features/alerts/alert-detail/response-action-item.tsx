@@ -25,7 +25,6 @@ export default function ResponseActionItem({
 
   const handleStatusChange = async (status: ResponseActionStatus) => {
     setStatus(status);
-    console.log(status);
     await updateResponseAction(responseActionItem.id, { status });
   };
   return (

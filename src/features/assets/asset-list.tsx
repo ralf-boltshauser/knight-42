@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { PopulatedAsset } from "@/types/asset";
+import { Sound } from "@/types/sounds";
 import {
   AlertStatus,
   AlertType,
@@ -17,6 +18,7 @@ import {
   AssetType,
   AssetVisibility,
 } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import {
   AlertCircle,
   CheckCircle,
@@ -38,13 +40,32 @@ import {
   parseAsStringEnum,
   useQueryState,
 } from "nuqs";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import { useSound } from "use-sound";
+import { getAssets } from "./asset-actions";
 import { AssetForm } from "./asset-form";
 import AssetListItem from "./asset-list-item";
 import EmptyAssetList from "./empty-asset-list";
 
-export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
+export default function AssetList({
+  initialAssets,
+}: {
+  initialAssets: PopulatedAsset[];
+}) {
   const { data: session } = useSession();
+  const [play] = useSound(Sound.NOTIFICATION_1);
+
+  const [assets, setAssets] = useState<PopulatedAsset[]>(initialAssets);
+
+  const {
+    data: updatedAssets,
+    refetch,
+    isSuccess,
+  } = useQuery({
+    queryKey: ["assets"],
+    queryFn: () => getAssets(),
+  });
+
   const [searchTerm, setSearchTerm] = useState("");
   const [filterType, setFilterType] = useState<AssetType | null>(null);
   const [reload, setReload] = useQueryState(
@@ -76,7 +97,7 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
     parseAsArrayOf(parseAsStringEnum(["WINDOWS", "LINUX"])).withDefault([])
   );
 
-  const reloadInterval = 30;
+  const reloadInterval = 15;
   const [reloadCounter, setReloadCounter] = useState(reloadInterval);
 
   useEffect(() => {
@@ -87,22 +108,22 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
       }, 1000);
 
       if (reloadCounter <= 0) {
-        window.location.reload();
+        refetch();
         setReloadCounter(reloadInterval);
       }
     }
 
     return () => clearInterval(interval);
-  }, [reload, reloadCounter]);
+  }, [reload, reloadCounter, refetch]);
 
-  if (!session) return null;
-  const filteredAssets = assets.filter(
-    (asset) =>
+  const assetFilter = useCallback(
+    (asset: PopulatedAsset) =>
+      asset.alerts &&
       (filterType === null || asset.type === filterType) &&
       (asset.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         asset.identifier.toLowerCase().includes(searchTerm.toLowerCase())) &&
       (onlyMine === false ||
-        asset.assignedTeamMemberId === session.user.dbId) &&
+        asset.assignedTeamMemberId === session?.user.dbId) &&
       (onlyUnderAttack === false ||
         asset.alerts.some(
           (alert) =>
@@ -118,8 +139,35 @@ export default function AssetList({ assets }: { assets: PopulatedAsset[] }) {
           JSON.stringify(asset.metadata)
             .toLowerCase()
             .includes(os.toLowerCase())
-        ))
+        )),
+    [
+      filterType,
+      searchTerm,
+      onlyMine,
+      session?.user.dbId,
+      onlyUnderAttack,
+      criticalityFilter,
+      visibilityFilter,
+      osFilter,
+    ]
   );
+
+  useEffect(() => {
+    if (isSuccess) {
+      // check if it the updated assets are different from the current assets
+      if (
+        JSON.stringify(
+          (updatedAssets as PopulatedAsset[]).filter(assetFilter)
+        ) !== JSON.stringify(assets.filter(assetFilter))
+      ) {
+        console.log("updated assets", updatedAssets);
+        play();
+        setAssets(updatedAssets as PopulatedAsset[]);
+      }
+    }
+  }, [updatedAssets, isSuccess, assets, play, assetFilter]);
+
+  const filteredAssets = assets.filter(assetFilter);
 
   return (
     <div className="w-full flex flex-col gap-4">

@@ -66,7 +66,6 @@ export function AssetForm({
     try {
       values.metadata = JSON.parse(values.metadata);
       if (defaultValues) {
-        console.log("updating asset", values);
         updateAsset(values);
         toast.success("Asset updated successfully");
       } else {

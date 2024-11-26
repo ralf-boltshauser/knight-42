@@ -95,10 +95,9 @@ export function AlertForm() {
         categories?.find((c) => c.id === form.getValues().categoryId)?.name
       } - ${assets?.find((a) => a.id === form.getValues("assets")?.[0])?.name}`
     );
-  }, [form.getValues(), assets, categories]);
+  }, [form, assets, categories]);
 
   function onSubmit(values: z.infer<typeof AlertSchema>) {
-    console.log(values);
     toast.success("Alert created successfully");
     createAlert(values);
     form.reset();

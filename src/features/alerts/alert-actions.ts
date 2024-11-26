@@ -104,7 +104,6 @@ export async function createIOC(
     },
   });
   revalidatePath(`/alerts/${alertId}`);
-  console.log("IOC created");
 }
 
 export async function createResponseAction(
