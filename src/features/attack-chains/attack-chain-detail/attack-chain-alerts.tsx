@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { exportComponentAsPNG } from "react-component-export-image";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Select,
   SelectContent,
@@ -95,10 +96,10 @@ export default function AttackChainAlerts({
                       <h4 className="font-medium text-sm text-gray-700">
                         Technique:
                       </h4>
-                      <p>
+                      <Badge className="mt-1" variant={"outline"}>
                         {alert.technique?.ttpIdentifier} -{" "}
                         {alert.technique?.name}
-                      </p>
+                      </Badge>
                     </div>
                   )}
                 </div>

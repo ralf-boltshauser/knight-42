@@ -28,14 +28,14 @@ export default function MittreAttackFramework({
     const baseClasses = "rounded-lg border";
     const isSelected = ttps.some((t) => t.id === technique.id);
     const selectedClasses = isSelected
-      ? "border-blue-500 bg-blue-50"
+      ? "border-red-500 bg-red-50"
       : "border-gray-200 hover:border-gray-300";
 
     return (
       <div className={`${baseClasses} ${selectedClasses} p-3`}>
         <div className="flex items-center gap-2">
           <span className="text-sm">{technique.name}</span>
-          {isSelected && <span className="text-blue-500">✓</span>}
+          {isSelected && <span className="text-red-500">✓</span>}
         </div>
         <div className="text-xs text-gray-500 mt-1">
           {technique.ttpIdentifier}
@@ -53,7 +53,7 @@ export default function MittreAttackFramework({
         technique.childrenTechniques.some((ct) => ct.id === t.id)
     );
     const selectedClasses = isSelected
-      ? "border-blue-500 bg-blue-50"
+      ? "border-red-500 bg-red-50"
       : "border-gray-200 hover:border-gray-300";
 
     return (
@@ -67,7 +67,7 @@ export default function MittreAttackFramework({
               <div className="flex items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{technique.name}</span>
-                  {isSelected && <span className="text-blue-500">✓</span>}
+                  {isSelected && <span className="text-red-500">✓</span>}
                 </div>
                 <ChevronDown className="w-4 h-4" />
               </div>

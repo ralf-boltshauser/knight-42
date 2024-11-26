@@ -278,7 +278,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="p-0">
+                  <PopoverContent className="p-0 w-fit">
                     <Command>
                       <CommandInput placeholder="Search technique..." />
                       <CommandList>
@@ -287,10 +287,14 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                           {techniques?.map((technique) => {
                             const value =
                               technique.ttpIdentifier + " - " + technique.name;
+                            const parent = techniques?.find(
+                              (t) => t.id === technique.parentTechniqueId
+                            );
                             return (
                               <CommandItem
                                 key={technique.id}
                                 value={value}
+                                className="w-full"
                                 onSelect={() => {
                                   setEditedAlert({
                                     ...editedAlert,
@@ -306,7 +310,13 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                                       : "opacity-0"
                                   )}
                                 />
-                                {value}
+                                {parent ? (
+                                  <span className="text-nowrap">
+                                    {parent.name} - {technique.name}
+                                  </span>
+                                ) : (
+                                  <span className="text-nowrap">{value}</span>
+                                )}
                               </CommandItem>
                             );
                           })}
