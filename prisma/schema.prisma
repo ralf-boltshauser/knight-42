@@ -134,6 +134,7 @@ model Alert {
   startDateTime          DateTime         @default(now())
   endDateTime            DateTime?
   assets                 Asset[]          @relation("AssetAlerts")
+  mispEntryLink          String?
   detectionSource        DetectionSource
   categoryId             String
   techniqueId            String?

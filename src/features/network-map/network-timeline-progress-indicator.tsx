@@ -4,11 +4,17 @@ import { Progress } from "@/components/ui/progress";
 import { getEventStatusColor } from "@/types/event-types";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { useNetworkMap } from "./network-map-context";
+import { PlaybackType, useNetworkMap } from "./network-map-context";
 
 function NetworkTimelineProgressIndicatorComponent() {
-  const { datetime, events, setDatetime, timelineStart, timelineEnd } =
-    useNetworkMap();
+  const {
+    datetime,
+    events,
+    setDatetime,
+    setPlaybackType,
+    timelineStart,
+    timelineEnd,
+  } = useNetworkMap();
 
   if (!timelineStart || !timelineEnd) {
     return (
@@ -135,6 +141,7 @@ function NetworkTimelineProgressIndicatorComponent() {
                   100
             );
             setDatetime(newTime);
+            setPlaybackType(PlaybackType.PLAY);
           }}
           onClick={(e) => {
             const rect = (
@@ -152,6 +159,7 @@ function NetworkTimelineProgressIndicatorComponent() {
                   100
             );
             setDatetime(newTime);
+            setPlaybackType(PlaybackType.PLAY);
           }}
         >
           <Progress value={progress} max={100} className="cursor-pointer" />

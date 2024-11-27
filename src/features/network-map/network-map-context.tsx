@@ -18,6 +18,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import { useHotkeys } from "react-hotkeys-hook";
 import useSound from "use-sound";
 import { getNetworkMapEvents } from "./network-actions";
 
@@ -109,6 +110,8 @@ export function NetworkMapProvider({
       return PlaybackType.PLAY;
     });
   }, [playbackType, setPlaybackType]);
+
+  useHotkeys("space", togglePlay);
 
   const getDynamicEventsByAsset = useCallback(
     (assetId: string) => {

@@ -184,6 +184,7 @@ export async function createIOC(
         title: "IOC Identified",
         action: EventAction.KNOWLEDGE,
         alertId: alertId,
+        iocId: newIOC.id,
         responsibleId: session?.user.dbId,
       },
     });

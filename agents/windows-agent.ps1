@@ -46,3 +46,4 @@ if ($TargetIP) {
 # Optionally, save JSON to a file
 $Json | Out-File -FilePath .\server_info.json -Encoding utf8
 Write-Host "JSON saved to server_info.json"
+

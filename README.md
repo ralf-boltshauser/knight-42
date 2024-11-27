@@ -92,7 +92,7 @@ curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/head
 ```
 ### Windows Agent
 ```powershell
-Set-ExecutionPolicy Bypass
+Set-ExecutionPolicy Bypass -Scope Process -Force
 Invoke-WebRequest -Uri https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/agents/windows-agent.ps1 -OutFile windows-agent.ps1; .\windows-agent.ps1 -TargetIP 192.168.0.113
 ```
 
