@@ -6,6 +6,7 @@ export enum PlaybackType {
   LIVE = "LIVE",
 }
 
+import { Sound } from "@/types/sounds";
 import { EventStatus } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
@@ -17,6 +18,7 @@ import {
   useMemo,
   useState,
 } from "react";
+import useSound from "use-sound";
 import { getNetworkMapEvents } from "./network-actions";
 
 const NetworkMapContext = createContext<NetworkMapContextType | undefined>(
@@ -48,6 +50,8 @@ export function NetworkMapProvider({
   initialEvents?: Awaited<ReturnType<typeof getNetworkMapEvents>>;
   children: React.ReactNode;
 }) {
+  // use sound play not-1
+  const [play] = useSound(Sound.NOTIFICATION_1);
   const [events, setEvents] = useState(initialEvents);
   const [datetime, setDatetime] = useQueryState("datetime", {
     parse: (value) => new Date(value),
@@ -85,7 +89,15 @@ export function NetworkMapProvider({
   useEffect(() => {
     if (newEvents) {
       console.log("newEvents", newEvents);
+
       setEvents(newEvents);
+      // if newevents are different than events play sound
+      if (
+        JSON.stringify(newEvents.filter((e) => e.status != null)) !==
+        JSON.stringify(events.filter((e) => e.status != null))
+      ) {
+        play();
+      }
     }
   }, [newEvents]);
 
