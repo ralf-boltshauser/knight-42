@@ -1,6 +1,17 @@
 "use server";
 import { prisma } from "@/lib/client";
-import { Alert, AlertStatus, AlertType, DetectionSource } from "@prisma/client";
+import {
+  convertAlertStatusToEventStatus,
+  convertAlertTypeToEventStatus,
+} from "@/types/event-types";
+import {
+  Alert,
+  AlertStatus,
+  AlertType,
+  DetectionSource,
+  EventAction,
+  EventStatus,
+} from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -53,6 +64,14 @@ export async function createAlert(alert: z.infer<typeof AlertSchema>) {
         connect: alert.relatedIOCs?.map((ioc) => ({ id: ioc })),
       },
       assignedInvestigatorId: alert.assignedInvestigatorId,
+      events: {
+        create: {
+          title: alert.name + " created",
+          asset: { connect: { id: alert.assets?.[0] } },
+          action: EventAction.INVESTIGATION,
+          status: EventStatus.WARNING,
+        },
+      },
     },
   });
 
@@ -61,15 +80,15 @@ export async function createAlert(alert: z.infer<typeof AlertSchema>) {
 
 export async function updateAlert(alert: {
   id: string;
-  name: string;
-  categoryId: string;
-  type: AlertType;
-  assignedInvestigatorId: string | undefined;
-  status: AlertStatus;
-  techniqueId: string | undefined;
-  description: string;
-  endDateTime: Date | undefined;
-  detectionSource: DetectionSource;
+  name?: string;
+  categoryId?: string;
+  type?: AlertType;
+  assignedInvestigatorId?: string;
+  status?: AlertStatus;
+  techniqueId?: string;
+  description?: string;
+  endDateTime?: Date;
+  detectionSource?: DetectionSource;
 }) {
   await prisma.alert.update({
     where: { id: alert.id },
@@ -85,6 +104,46 @@ export async function updateAlert(alert: {
       detectionSource: alert.detectionSource,
     },
   });
+
+  console.log("alert updated", alert);
+
+  if (alert.status) {
+    await prisma.event.create({
+      data: {
+        title:
+          alert.name +
+          " " +
+          (alert.status == AlertStatus.ESCALATED
+            ? "escalated"
+            : alert.status == AlertStatus.RESOLVED
+            ? "resolved"
+            : "under investigation"),
+        status: convertAlertStatusToEventStatus(alert.status),
+        alertId: alert.id,
+      },
+    });
+  }
+
+  if (alert.type) {
+    await prisma.event.create({
+      data: {
+        title:
+          alert.name + " " + (alert.type == AlertType.INCIDENT && "escalated"),
+        status: convertAlertTypeToEventStatus(alert.type),
+        alertId: alert.id,
+      },
+    });
+  }
+
+  if (alert.techniqueId) {
+    await prisma.event.create({
+      data: {
+        title: alert.name + " linked to technique",
+        action: EventAction.KNOWLEDGE,
+        alertId: alert.id,
+      },
+    });
+  }
 
   revalidatePath(`/alerts/${alert.id}`);
   revalidatePath(`/alerts`);
@@ -105,6 +164,17 @@ export async function createIOC(
       linkedAlerts: { connect: { id: alertId } },
     },
   });
+
+  if (alertId) {
+    await prisma.event.create({
+      data: {
+        title: "IOC Identified",
+        action: EventAction.KNOWLEDGE,
+        alertId: alertId,
+      },
+    });
+  }
+
   revalidatePath(`/alerts/${alertId}`);
 }
 
@@ -112,6 +182,14 @@ export async function linkIOCToAlert(iocId: string, alertId: string) {
   await prisma.iOC.update({
     where: { id: iocId },
     data: { linkedAlerts: { connect: { id: alertId } } },
+  });
+
+  await prisma.event.create({
+    data: {
+      title: "IOC Identified",
+      action: EventAction.KNOWLEDGE,
+      alertId: alertId,
+    },
   });
 
   revalidatePath(`/alerts/${alertId}`);
@@ -132,6 +210,14 @@ export async function createResponseAction(
     },
   });
 
+  await prisma.event.create({
+    data: {
+      title: responseAction.name + " created",
+      action: EventAction.ACTION,
+      alertId: alertId,
+    },
+  });
+
   revalidatePath(`/alerts/${alertId}`);
 }
 
@@ -139,12 +225,25 @@ export async function updateResponseAction(
   id: string,
   responseAction: Partial<z.infer<typeof ResponseActionSchema>>
 ) {
-  await prisma.responseAction.update({
+  const res = await prisma.responseAction.update({
     where: { id },
     data: {
       ...responseAction,
     },
   });
+
+  if (res.name && responseAction.status) {
+    await prisma.event.create({
+      data: {
+        title: res.name + " set to " + responseAction.status,
+        action: EventAction.ACTION,
+        responseActionId: id,
+        alertId: res.relatedIncidentId,
+      },
+    });
+  }
+
+  revalidatePath(`/alerts/${res.relatedIncidentId}`);
 }
 
 export async function getTechniques() {

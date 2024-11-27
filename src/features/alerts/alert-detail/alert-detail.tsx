@@ -170,15 +170,30 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
     // Here you would typically send the updated data to your backend
     updateAlert({
       id: editedAlert.id,
-      name: editedAlert.name,
-      categoryId: editedAlert.categoryId,
-      type: editedAlert.type,
-      assignedInvestigatorId: editedAlert.assignedInvestigatorId || undefined,
-      status: editedAlert.status,
-      techniqueId: editedAlert.techniqueId || undefined,
-      description: editedAlert.description,
-      endDateTime: editedAlert.endDateTime || undefined,
-      detectionSource: editedAlert.detectionSource,
+      ...(editedAlert.name !== alert.name && { name: editedAlert.name }),
+      ...(editedAlert.categoryId !== alert.categoryId && {
+        categoryId: editedAlert.categoryId,
+      }),
+      ...(editedAlert.type !== alert.type && { type: editedAlert.type }),
+      ...(editedAlert.assignedInvestigatorId !==
+        alert.assignedInvestigatorId && {
+        assignedInvestigatorId: editedAlert.assignedInvestigatorId || undefined,
+      }),
+      ...(editedAlert.status !== alert.status && {
+        status: editedAlert.status,
+      }),
+      ...(editedAlert.techniqueId !== alert.techniqueId && {
+        techniqueId: editedAlert.techniqueId || undefined,
+      }),
+      ...(editedAlert.description !== alert.description && {
+        description: editedAlert.description,
+      }),
+      ...(editedAlert.endDateTime !== alert.endDateTime && {
+        endDateTime: editedAlert.endDateTime || undefined,
+      }),
+      ...(editedAlert.detectionSource !== alert.detectionSource && {
+        detectionSource: editedAlert.detectionSource,
+      }),
     });
   };
 
@@ -560,7 +575,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
               <TabsContent value="timeline">
                 <ScrollArea className="h-[400px] pr-4">
                   <div className="space-y-4">
-                    {editedAlert.timeline.map((event, index) => (
+                    {editedAlert.events.map((event, index) => (
                       <div
                         key={event.id}
                         className="flex items-center space-x-4"
@@ -571,10 +586,10 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                           </span>
                         </div>
                         <div className="flex-grow">
-                          <p className="font-medium">{event.description}</p>
+                          <p className="font-medium">{event.title}</p>
                           <p className="text-sm text-muted-foreground">
                             {format(
-                              new Date(event.timestamp),
+                              new Date(event.createdAt),
                               "MMM d, yyyy HH:mm"
                             )}
                           </p>

@@ -24,6 +24,7 @@ export default async function AlertDetailPage({
           type: true,
         },
       },
+      events: true,
     },
   });
 

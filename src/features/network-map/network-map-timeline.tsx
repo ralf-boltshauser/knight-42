@@ -143,7 +143,7 @@ export default function NetworkMapTimeline() {
                       )}
                       {event.responseAction && (
                         <Link
-                          href={`/response-actions/${event.responseAction.id}`}
+                          href={`/alerts/${event.responseAction.relatedIncidentId}?tab=actions`}
                         >
                           <Badge
                             variant="secondary"

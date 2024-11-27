@@ -2,6 +2,7 @@ import {
   Alert,
   AlertCategory,
   Asset,
+  Event,
   IOC,
   IOCType,
   ResponseAction,
@@ -18,6 +19,7 @@ export type PopulatedAlert = Alert & {
   relatedIOCs: (IOC & {
     type: IOCType;
   })[];
+  events: Event[];
 };
 
 export type PopulatedResponseAction = ResponseAction & {

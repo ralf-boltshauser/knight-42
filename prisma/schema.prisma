@@ -268,6 +268,7 @@ enum EventStatus {
 }
 
 enum EventAction {
+  INVESTIGATION
   KNOWLEDGE
   ACTION
 }

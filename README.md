@@ -3,6 +3,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
 - MAKE EVENTS WITH RESPONSIBLE / EXECUTE
+- when selecting a ttp on the alert, show whether it is related to a threat actor or not
 - REALTIME NETWORK MAP
 - MAP THREAT ACTORS BASED ON TTPS
 ## bugs

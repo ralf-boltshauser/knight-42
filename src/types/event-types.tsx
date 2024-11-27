@@ -1,4 +1,9 @@
-import { EventAction, EventStatus } from "@prisma/client";
+import {
+  AlertStatus,
+  AlertType,
+  EventAction,
+  EventStatus,
+} from "@prisma/client";
 import { Brain, Shield } from "lucide-react";
 
 export const getEventStatusColor = (status: EventStatus | null) => {
@@ -20,5 +25,27 @@ export const getEventActionIcon = (action: EventAction) => {
       return Brain;
     case EventAction.ACTION:
       return Shield;
+  }
+};
+
+export const convertAlertStatusToEventStatus = (status: AlertStatus) => {
+  switch (status) {
+    case AlertStatus.INITIAL_INVESTIGATION:
+      return EventStatus.WARNING;
+    case AlertStatus.ESCALATED:
+      return EventStatus.DOWN;
+    default:
+      return EventStatus.OKAY;
+  }
+};
+
+export const convertAlertTypeToEventStatus = (type: AlertType) => {
+  switch (type) {
+    case AlertType.ALERT:
+      return EventStatus.WARNING;
+    case AlertType.INCIDENT:
+      return EventStatus.DOWN;
+    default:
+      return EventStatus.OKAY;
   }
 };
