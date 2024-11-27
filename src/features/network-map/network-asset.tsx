@@ -20,20 +20,9 @@ export default function NetworkAsset({
 }) {
   const { fontSize, ref } = useFitText();
 
-  const { getDynamicEventsByAsset: getDynamicEvents, getCurrentAssetStatus } =
-    useNetworkMap();
-
-  const events = getDynamicEvents(asset.id);
-  const mostRecentEvent = events
-    .sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-    )
-    .at(-1);
+  const { getCurrentAssetStatus } = useNetworkMap();
 
   const assetStatus = getCurrentAssetStatus(asset.id);
-  console.log("events", events);
-  console.log("status", assetStatus, getEventStatusColor(assetStatus));
 
   const col = fieldAxis.horizontal.indexOf(asset.identifier[0]) + 1;
   const row = parseInt(asset.identifier.slice(1));

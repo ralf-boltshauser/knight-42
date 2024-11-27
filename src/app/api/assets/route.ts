@@ -11,7 +11,7 @@ export const POST = async (req: NextRequest) => {
       await prisma.asset.createMany({
         data: body.map((asset) => ({
           ...asset,
-          type: AssetType.HOST,
+          type: AssetType.WINDOWS_SERVER,
           identifier: asset.metadata.IP,
         })),
       });
@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest) => {
       await prisma.asset.create({
         data: {
           ...body,
-          type: AssetType.HOST,
+          type: AssetType.WINDOWS_SERVER,
           identifier: body.metadata.IP,
         },
       });

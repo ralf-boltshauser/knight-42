@@ -1,6 +1,13 @@
 "use client";
 
+export enum PlaybackType {
+  PLAY = "PLAY",
+  PAUSE = "PAUSE",
+  LIVE = "LIVE",
+}
+
 import { EventStatus } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import { useQueryState } from "nuqs";
 import {
   createContext,
@@ -10,7 +17,6 @@ import {
   useMemo,
   useState,
 } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 import { getNetworkMapEvents } from "./network-actions";
 
 const NetworkMapContext = createContext<NetworkMapContextType | undefined>(
@@ -23,10 +29,11 @@ type NetworkMapContextType = {
   timelineEnd: Date;
   playSpeed: number;
   setPlaySpeed: (speed: number) => void;
+  playbackType: PlaybackType;
+  setPlaybackType: (type: PlaybackType) => void;
+  togglePlay: () => void;
   events: Awaited<ReturnType<typeof getNetworkMapEvents>>;
   setDatetime: (date: Date) => void;
-  isPlaying: boolean;
-  togglePlay: () => void;
   dynamicEvents: Awaited<ReturnType<typeof getNetworkMapEvents>>;
   getDynamicEventsByAsset: (
     assetId: string
@@ -35,12 +42,13 @@ type NetworkMapContextType = {
 };
 
 export function NetworkMapProvider({
-  events = [],
+  initialEvents = [],
   children,
 }: {
-  events: Awaited<ReturnType<typeof getNetworkMapEvents>>;
+  initialEvents?: Awaited<ReturnType<typeof getNetworkMapEvents>>;
   children: React.ReactNode;
 }) {
+  const [events, setEvents] = useState(initialEvents);
   const [datetime, setDatetime] = useQueryState("datetime", {
     parse: (value) => new Date(value),
     defaultValue: new Date("Tue Nov 27 2024 07:20:00"),
@@ -49,18 +57,46 @@ export function NetworkMapProvider({
     parse: (value) => parseInt(value),
     defaultValue: 5,
   });
-  const [isPlaying, setIsPlaying] = useState(false);
+  const [playbackType, setPlaybackType] = useQueryState("playbackType", {
+    parse: (value) => value as PlaybackType,
+    defaultValue: PlaybackType.LIVE,
+  });
+
+  // if playback type is live, then set interval to 30 sec to refetch all events and update the datetime
+  const { data: newEvents, refetch } = useQuery({
+    queryKey: ["network-map-events-dynamic"],
+    queryFn: () => getNetworkMapEvents(),
+  });
+
+  useEffect(() => {
+    refetch();
+  }, []);
+  // if playback type is live set interval 5 sec and console log live
+  useEffect(() => {
+    if (playbackType === PlaybackType.LIVE) {
+      const intervalId = setInterval(() => {
+        refetch();
+        setDatetime(new Date());
+      }, 5000);
+      return () => clearInterval(intervalId);
+    }
+  }, [playbackType]);
+
+  useEffect(() => {
+    if (newEvents) {
+      console.log("newEvents", newEvents);
+      setEvents(newEvents);
+    }
+  }, [newEvents]);
 
   const togglePlay = useCallback(() => {
-    setIsPlaying((prev) => {
-      if (prev) {
-        return false;
+    setPlaybackType((prev) => {
+      if (prev !== PlaybackType.PAUSE) {
+        return PlaybackType.PAUSE;
       }
-      return true;
+      return PlaybackType.PLAY;
     });
-  }, [datetime, events]);
-
-  useHotkeys("space", () => togglePlay());
+  }, [playbackType, setPlaybackType]);
 
   const getDynamicEventsByAsset = useCallback(
     (assetId: string) => {
@@ -91,24 +127,28 @@ export function NetworkMapProvider({
     const start = new Date(events.at(0)?.createdAt ?? new Date());
     start.setHours(0, 0, 0, 0);
     return start;
-  }, [events]);
+  }, [events, datetime]);
 
-  const timelineEnd = useMemo(() => {
-    const end = new Date(events.at(-1)?.createdAt ?? new Date());
-    end.setHours(23, 59, 59, 999);
-    return end;
-  }, [events]);
+  const [timelineEnd, setTimelineEnd] = useState<Date>(new Date());
+
+  useEffect(() => {
+    // update timeline end to be the now every sec
+    const intervalId = setInterval(() => {
+      setTimelineEnd(new Date());
+    }, 1000);
+    return () => clearInterval(intervalId);
+  }, []);
 
   useEffect(() => {
     let intervalId: NodeJS.Timeout;
 
-    if (isPlaying) {
+    if (playbackType === PlaybackType.PLAY) {
       intervalId = setInterval(() => {
         setDatetime((prevDate) => {
           const newDate = new Date(prevDate);
           newDate.setMinutes(newDate.getMinutes() + playSpeed);
           if (timelineEnd && newDate > timelineEnd) {
-            setIsPlaying(false);
+            setPlaybackType(PlaybackType.LIVE);
             return timelineEnd;
           }
           return newDate;
@@ -121,7 +161,7 @@ export function NetworkMapProvider({
         clearInterval(intervalId);
       }
     };
-  }, [isPlaying, timelineEnd, playSpeed]);
+  }, [playbackType, timelineEnd, playSpeed]);
 
   return (
     <NetworkMapContext.Provider
@@ -131,13 +171,14 @@ export function NetworkMapProvider({
         timelineEnd,
         playSpeed,
         setPlaySpeed,
+        playbackType,
+        togglePlay,
         events,
         setDatetime,
-        isPlaying,
-        togglePlay,
         getDynamicEventsByAsset: getDynamicEventsByAsset,
         getCurrentAssetStatus,
         dynamicEvents,
+        setPlaybackType,
       }}
     >
       {children}

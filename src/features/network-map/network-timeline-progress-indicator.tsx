@@ -3,9 +3,10 @@
 import { Progress } from "@/components/ui/progress";
 import { getEventStatusColor } from "@/types/event-types";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
 import { useNetworkMap } from "./network-map-context";
 
-export default function NetworkTimelineProgressIndicator() {
+function NetworkTimelineProgressIndicatorComponent() {
   const { datetime, events, setDatetime, timelineStart, timelineEnd } =
     useNetworkMap();
 
@@ -159,3 +160,8 @@ export default function NetworkTimelineProgressIndicator() {
     </div>
   );
 }
+
+export default dynamic(
+  () => Promise.resolve(NetworkTimelineProgressIndicatorComponent),
+  { ssr: false }
+);

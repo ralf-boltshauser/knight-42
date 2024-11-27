@@ -39,7 +39,7 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
             >
               <div className="flex items-center gap-2">
                 <div className="bg-primary/10 p-2 rounded-full">
-                  {asset.type === AssetType.HOST ? (
+                  {asset.type === AssetType.WINDOWS_SERVER ? (
                     <Server className="h-6 w-6 text-primary" />
                   ) : (
                     <User className="h-6 w-6 text-primary" />

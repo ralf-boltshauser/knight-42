@@ -33,6 +33,7 @@ export default function MittreAttackFramework({
     parseAsArrayOf(parseAsString).withDefault([])
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [copy, copyText] = useCopyToClipboard();
 
   const handleCopy = (text: string) => {

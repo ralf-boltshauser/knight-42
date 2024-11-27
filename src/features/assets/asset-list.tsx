@@ -189,15 +189,21 @@ export default function AssetList({
               All
             </Button>
             <Button
-              variant={filterType === AssetType.HOST ? "default" : "outline"}
-              onClick={() => setFilterType(AssetType.HOST)}
+              variant={
+                filterType === AssetType.WINDOWS_SERVER ? "default" : "outline"
+              }
+              onClick={() => setFilterType(AssetType.WINDOWS_SERVER)}
             >
               <Server className="mr-2 h-4 w-4" />
               Hosts
             </Button>
             <Button
-              variant={filterType === AssetType.USER ? "default" : "outline"}
-              onClick={() => setFilterType(AssetType.USER)}
+              variant={
+                filterType === AssetType.WINDOWS_WORKSTATION
+                  ? "default"
+                  : "outline"
+              }
+              onClick={() => setFilterType(AssetType.WINDOWS_WORKSTATION)}
             >
               <User className="mr-2 h-4 w-4" />
               Users

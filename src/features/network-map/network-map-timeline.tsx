@@ -16,14 +16,14 @@ import { getEventStatusColor } from "@/types/event-types";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useNetworkMap } from "./network-map-context";
+import { PlaybackType, useNetworkMap } from "./network-map-context";
 
 export default function NetworkMapTimeline() {
   const {
     datetime,
     setDatetime,
+    playbackType,
     togglePlay,
-    isPlaying,
     dynamicEvents,
     playSpeed,
     setPlaySpeed,
@@ -43,8 +43,9 @@ export default function NetworkMapTimeline() {
           type="text"
           value={datetimeInput}
           onChange={(e) => setDatetimeInput(e.target.value)}
-          onBlur={(e) => {
+          onBlur={() => {
             console.log("Setting datetime to:", datetimeInput);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
             const [day, month, year, _, hours, minutes, seconds] = datetimeInput
               .split(/[., :]/)
               .map(Number);
@@ -81,7 +82,18 @@ export default function NetworkMapTimeline() {
             </SelectContent>
           </Select>
           <Button onClick={togglePlay}>
-            {isPlaying ? <PauseIcon /> : <PlayIcon />}
+            {playbackType !== PlaybackType.PAUSE ? (
+              playbackType == PlaybackType.PLAY ? (
+                <PauseIcon />
+              ) : (
+                <div className="relative">
+                  <PauseIcon />
+                  <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                </div>
+              )
+            ) : (
+              <PlayIcon />
+            )}
           </Button>
         </div>
       </div>

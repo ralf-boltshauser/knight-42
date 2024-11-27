@@ -72,8 +72,8 @@ export default function FieldSelector({
       <div className="flex flex-row gap-2">
         {Array.from({ length: fieldAxis.horizontal.length + 1 }).map(
           (_, index) => (
-            <div className="flex flex-col gap-2">
-              <div key={index} className="w-10 h-10 border border-black">
+            <div className="flex flex-col gap-2" key={index}>
+              <div className="w-10 h-10 border border-black">
                 {index === 0 ? "" : fieldAxis.horizontal[index - 1]}
               </div>
               {Array.from({ length: fieldAxis.vertical.length }).map(

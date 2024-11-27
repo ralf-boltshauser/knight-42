@@ -79,7 +79,7 @@ export default function ThreatActorDetail({
         ) : (
           <div
             dangerouslySetInnerHTML={{ __html: threatActor.notes ?? "" }}
-            className="prose w-full"
+            className="prose w-full max-w-none"
             onClick={() => handleSetEdit(true)}
           ></div>
         )}
