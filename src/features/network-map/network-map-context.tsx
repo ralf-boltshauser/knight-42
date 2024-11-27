@@ -135,32 +135,19 @@ export function NetworkMapProvider({
     // update timeline end to be the now every sec
     const intervalId = setInterval(() => {
       setTimelineEnd(new Date());
+
+      // update playback time
+      if (playbackType === PlaybackType.PLAY) {
+        const newDate = new Date(datetime);
+        newDate.setMinutes(newDate.getMinutes() + playSpeed);
+        setDatetime(newDate);
+        if (timelineEnd && newDate > timelineEnd) {
+          setPlaybackType(PlaybackType.LIVE);
+          return timelineEnd;
+        }
+      }
     }, 1000);
     return () => clearInterval(intervalId);
-  }, []);
-
-  useEffect(() => {
-    let intervalId: NodeJS.Timeout;
-
-    if (playbackType === PlaybackType.PLAY) {
-      intervalId = setInterval(() => {
-        setDatetime((prevDate) => {
-          const newDate = new Date(prevDate);
-          newDate.setMinutes(newDate.getMinutes() + playSpeed);
-          if (timelineEnd && newDate > timelineEnd) {
-            setPlaybackType(PlaybackType.LIVE);
-            return timelineEnd;
-          }
-          return newDate;
-        });
-      }, 1000); // Update every second
-    }
-
-    return () => {
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    };
   }, [playbackType, timelineEnd, playSpeed]);
 
   return (

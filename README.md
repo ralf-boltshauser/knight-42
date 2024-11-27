@@ -2,7 +2,6 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
-- MAKE EVENTS WITH RESPONSIBLE / EXECUTE
 - when selecting a ttp on the alert, show whether it is related to a threat actor or not
 - REALTIME NETWORK MAP
 - MAP THREAT ACTORS BASED ON TTPS
@@ -18,14 +17,15 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
   - [ ] this is not working because i can't do status updates on the alerts i need the timeline model, and the status of events can be "non altering" so i can communicate stuf without adjusting the ui
 
 ### UX
-- [ ] cmd k
 - [ ] ADD A APPROVED FOR RESPONSE ACTIONS
+- [ ] the network select should highlight the x and y axis sides when hovering a field
 - [ ] add clear lines on network timeline for showing when a new day start
 - [ ] empty screens with smth like rough.js or smth react-rough-fiber
 - [ ] more shortcuts in general for editing etc
 - [ ] add filter for assets etc if there are too many it gets shitty
   - [ ] os filter
   - [ ] 
+- [ ] cmd k
 - [ ] use proper prioritization everywhere everything should be mission critical etc we don't have time to do everything
   - [ ] dashboard should show criticality
 - [ ] add proper loading states

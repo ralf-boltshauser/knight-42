@@ -36,6 +36,12 @@ export default function NetworkMapTimeline() {
     setDatetimeInput(datetime.toLocaleString("de-CH"));
   }, [datetime]);
 
+  function ellipsisText(text: string, maxLength: number = 15) {
+    return text.length > maxLength
+      ? text.substring(0, maxLength) + "..."
+      : text;
+  }
+
   return (
     <div className="w-full mx-5 max-h-[90dvh]">
       <div className="flex flex-row justify-between items-center my-5">
@@ -109,25 +115,25 @@ export default function NetworkMapTimeline() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   layoutId={event.id}
-                  className={`w-full p-4 rounded-lg shadow-md border border-gray-200 bg-${getEventStatusColor(
+                  className={`w-full text-sm p-4 rounded-lg shadow-md border border-gray-200 bg-${getEventStatusColor(
                     event.status
                   )}-200 hover:shadow-lg transition-shadow`}
                 >
                   <div className="flex flex-row justify-between items-center">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-1 flex-grow">
                       <h3 className="font-semibold text-lg">{event.title}</h3>
                       <p className="text-sm text-gray-500">
                         {event.createdAt.toLocaleString("de-CH")}
                       </p>
                     </div>
-                    <div className="flex flex-col justify-center items-end gap-2">
+                    <div className="flex flex-col justify-center items-end gap-2 w-[150px]">
                       {event.asset && (
                         <Link href={`/assets/${event.asset.id}`}>
                           <Badge
                             variant="secondary"
-                            className="bg-blue-100 text-blue-800 hover:bg-blue-200"
+                            className="bg-blue-100 text-blue-800 hover:bg-blue-200 text-ellipsis whitespace-nowrap"
                           >
-                            {event.asset.name}
+                            {ellipsisText(event.asset.name)}
                           </Badge>
                         </Link>
                       )}
@@ -135,9 +141,9 @@ export default function NetworkMapTimeline() {
                         <Link href={`/iocs/${event.ioc.id}`}>
                           <Badge
                             variant="secondary"
-                            className="bg-purple-100 text-purple-800 hover:bg-purple-200"
+                            className="bg-purple-100 text-purple-800 hover:bg-purple-200 text-ellipsis whitespace-nowrap"
                           >
-                            {event.ioc.value}
+                            {ellipsisText(event.ioc.value)}
                           </Badge>
                         </Link>
                       )}
@@ -147,9 +153,9 @@ export default function NetworkMapTimeline() {
                         >
                           <Badge
                             variant="secondary"
-                            className="bg-green-100 text-green-800 hover:bg-green-200"
+                            className="bg-green-100 text-green-800 hover:bg-green-200 text-ellipsis whitespace-nowrap"
                           >
-                            {event.responseAction.name}
+                            {ellipsisText(event.responseAction.name)}
                           </Badge>
                         </Link>
                       )}
@@ -157,9 +163,9 @@ export default function NetworkMapTimeline() {
                         <Link href={`/alerts/${event.alert.id}`}>
                           <Badge
                             variant="secondary"
-                            className="bg-red-100 text-red-800 hover:bg-red-200"
+                            className="bg-red-100 text-red-800 hover:bg-red-200 text-ellipsis whitespace-nowrap"
                           >
-                            {event.alert.name}
+                            {ellipsisText(event.alert.name)}
                           </Badge>
                         </Link>
                       )}
@@ -167,9 +173,9 @@ export default function NetworkMapTimeline() {
                         <Link href={`/users/${event.responsible.id}`}>
                           <Badge
                             variant="secondary"
-                            className="bg-gray-100 text-gray-800 hover:bg-gray-200"
+                            className="bg-gray-100 text-gray-800 hover:bg-gray-200 text-ellipsis whitespace-nowrap"
                           >
-                            {event.responsible.name}
+                            {ellipsisText(event.responsible.name)}
                           </Badge>
                         </Link>
                       )}

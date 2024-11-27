@@ -1,4 +1,5 @@
 "use server";
+import { authOptions } from "@/lib/auth/auth";
 import { prisma } from "@/lib/client";
 import {
   convertAlertStatusToEventStatus,
@@ -12,6 +13,7 @@ import {
   EventAction,
   EventStatus,
 } from "@prisma/client";
+import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -70,6 +72,11 @@ export async function createAlert(alert: z.infer<typeof AlertSchema>) {
           asset: { connect: { id: alert.assets?.[0] } },
           action: EventAction.INVESTIGATION,
           status: EventStatus.WARNING,
+          responsible: {
+            connect: {
+              id: alert.assignedInvestigatorId ?? undefined,
+            },
+          },
         },
       },
     },
@@ -90,7 +97,7 @@ export async function updateAlert(alert: {
   endDateTime?: Date;
   detectionSource?: DetectionSource;
 }) {
-  await prisma.alert.update({
+  const dbAlert = await prisma.alert.update({
     where: { id: alert.id },
     data: {
       name: alert.name,
@@ -120,6 +127,7 @@ export async function updateAlert(alert: {
             : "under investigation"),
         status: convertAlertStatusToEventStatus(alert.status),
         alertId: alert.id,
+        responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
       },
     });
   }
@@ -131,6 +139,7 @@ export async function updateAlert(alert: {
           alert.name + " " + (alert.type == AlertType.INCIDENT && "escalated"),
         status: convertAlertTypeToEventStatus(alert.type),
         alertId: alert.id,
+        responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
       },
     });
   }
@@ -141,6 +150,7 @@ export async function updateAlert(alert: {
         title: alert.name + " linked to technique",
         action: EventAction.KNOWLEDGE,
         alertId: alert.id,
+        responsibleId: dbAlert.assignedInvestigatorId,
       },
     });
   }
@@ -158,7 +168,8 @@ export async function createIOC(
   ioc: z.infer<typeof IOCSchema>,
   alertId: string | undefined
 ) {
-  await prisma.iOC.create({
+  const session = await getServerSession(authOptions);
+  const newIOC = await prisma.iOC.create({
     data: {
       ...ioc,
       linkedAlerts: { connect: { id: alertId } },
@@ -171,6 +182,7 @@ export async function createIOC(
         title: "IOC Identified",
         action: EventAction.KNOWLEDGE,
         alertId: alertId,
+        responsibleId: session?.user.dbId,
       },
     });
   }
@@ -179,6 +191,7 @@ export async function createIOC(
 }
 
 export async function linkIOCToAlert(iocId: string, alertId: string) {
+  const session = await getServerSession(authOptions);
   await prisma.iOC.update({
     where: { id: iocId },
     data: { linkedAlerts: { connect: { id: alertId } } },
@@ -189,6 +202,7 @@ export async function linkIOCToAlert(iocId: string, alertId: string) {
       title: "IOC Identified",
       action: EventAction.KNOWLEDGE,
       alertId: alertId,
+      responsibleId: session?.user.dbId,
     },
   });
 
@@ -201,7 +215,7 @@ export async function createResponseAction(
   affectedAssetId: string | undefined,
   assignedTeamMemberId: string | undefined
 ) {
-  await prisma.responseAction.create({
+  const res = await prisma.responseAction.create({
     data: {
       ...responseAction,
       relatedIncidentId: alertId,
@@ -215,6 +229,7 @@ export async function createResponseAction(
       title: responseAction.name + " created",
       action: EventAction.ACTION,
       alertId: alertId,
+      responsibleId: res.assignedTeamMemberId,
     },
   });
 
@@ -239,6 +254,7 @@ export async function updateResponseAction(
         action: EventAction.ACTION,
         responseActionId: id,
         alertId: res.relatedIncidentId,
+        responsibleId: res.assignedTeamMemberId,
       },
     });
   }
