@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest) => {
             orderBy: { timestamp: "desc" },
           });
 
-          let res = await prisma.asset.update({
+          const res = await prisma.asset.update({
             where: { id: asset.id },
             data: {
               assetUptimes: {
