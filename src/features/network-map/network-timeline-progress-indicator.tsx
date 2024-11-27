@@ -28,6 +28,22 @@ export default function NetworkTimelineProgressIndicator() {
     0
   );
 
+  // Generate array of dates between start and end
+  const getDaysBetweenDates = (startDate: Date, endDate: Date) => {
+    const days = [];
+    const currentDate = new Date(startDate);
+    currentDate.setHours(0, 0, 0, 0);
+    const lastDate = new Date(endDate);
+
+    while (currentDate <= lastDate) {
+      days.push(new Date(currentDate));
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    return days;
+  };
+
+  const dayMarkers = getDaysBetweenDates(timelineStart, timelineEnd);
+
   return (
     <div className="my-5">
       <div className="flex flex-row gap-2 items-center">
@@ -36,15 +52,44 @@ export default function NetworkTimelineProgressIndicator() {
           {datetime.toLocaleString("de-CH")}
         </p>
       </div>
-      <div className="flex flex-row justify-between text-sm text-gray-500 mb-1">
+      <div className="flex flex-row justify-between text-sm text-gray-500 mb-2">
         <p className="hover:text-gray-700 transition-colors">
           {timelineStart.toLocaleString("de-CH")}
         </p>
+        {dayMarkers.slice(1).map((day, index) => (
+          <p
+            key={index}
+            className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+          >
+            {day.toLocaleDateString("de-CH")}
+          </p>
+        ))}
         <p className="hover:text-gray-700 transition-colors">
           {timelineEnd.toLocaleString("de-CH")}
         </p>
       </div>
       <div className="relative">
+        {dayMarkers.slice(1).map((day, index) => {
+          const dayProgress = Math.max(
+            Math.min(
+              ((day.getTime() - timelineStart.getTime()) /
+                (timelineEnd.getTime() - timelineStart.getTime())) *
+                100,
+              100
+            ),
+            0
+          );
+          return (
+            <div
+              key={index}
+              className="absolute w-[1px] h-8 -top-3 bg-black"
+              style={{
+                left: `${dayProgress}%`,
+                transform: "translateX(-50%)",
+              }}
+            />
+          );
+        })}
         {events.map((event) => {
           const eventProgress = Math.max(
             Math.min(
@@ -81,6 +126,23 @@ export default function NetworkTimelineProgressIndicator() {
             const percentage = Math.max(
               0,
               Math.min(100, ((info.point.x - rect.left) / rect.width) * 100)
+            );
+            const newTime = new Date(
+              timelineStart.getTime() +
+                ((timelineEnd.getTime() - timelineStart.getTime()) *
+                  percentage) /
+                  100
+            );
+            setDatetime(newTime);
+          }}
+          onClick={(e) => {
+            const rect = (
+              e.target as HTMLElement
+            ).parentElement?.getBoundingClientRect();
+            if (!rect) return;
+            const percentage = Math.max(
+              0,
+              Math.min(100, ((e.clientX - rect.left) / rect.width) * 100)
             );
             const newTime = new Date(
               timelineStart.getTime() +

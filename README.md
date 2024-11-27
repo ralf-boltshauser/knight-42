@@ -2,6 +2,7 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
+- MAKE EVENTS WITH RESPONSIBLE / EXECUTE
 ## bugs
 - [ ] ttps to match threat actor
 - [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id
@@ -15,6 +16,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ### UX
 - [ ] cmd k
+- [ ] ADD A APPROVED FOR RESPONSE ACTIONS
+- [ ] add clear lines on network timeline for showing when a new day start
 - [ ] empty screens with smth like rough.js or smth react-rough-fiber
 - [ ] more shortcuts in general for editing etc
 - [ ] add filter for assets etc if there are too many it gets shitty
