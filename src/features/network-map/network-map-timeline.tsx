@@ -120,7 +120,7 @@ export default function NetworkMapTimeline() {
                         {event.createdAt.toLocaleString("de-CH")}
                       </p>
                     </div>
-                    <div className="flex flex-row gap-2">
+                    <div className="flex flex-col justify-center items-end gap-2">
                       {event.asset && (
                         <Link href={`/assets/${event.asset.id}`}>
                           <Badge
