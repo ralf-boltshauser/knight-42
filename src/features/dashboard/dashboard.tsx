@@ -2,12 +2,17 @@
 
 import KanbanBoard from "@/components/ui/kanban-board";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { getActionStatusColor, getAlertStatusColor } from "@/types/alert-types";
+import {
+  getActionStatusColor,
+  getAlertStatusColor,
+  getReportStatusColor,
+} from "@/types/alert-types";
 import {
   Alert,
   AlertStatus,
   Asset,
   AssetCriticality,
+  ReportStatus,
   ResponseAction,
   ResponseActionStatus,
   User,
@@ -18,6 +23,7 @@ import { getCriticalityColor } from "@/types/asset-types";
 import { useSession } from "next-auth/react";
 import {
   updateAlertStatus,
+  updateReportStatus,
   updateResponseActionStatus,
 } from "./dashboard-actions";
 
@@ -72,6 +78,7 @@ export default function Dashboard({
               </span>
             )}
           </TabsTrigger>
+          <TabsTrigger value="reports">Reports</TabsTrigger>
         </TabsList>
         <TabsContent value="alerts">
           <KanbanBoard
@@ -123,6 +130,35 @@ export default function Dashboard({
                   tailText: responseAction.assignedTeamMember?.name ?? "",
                 })),
             }))}
+          />
+        </TabsContent>
+        <TabsContent value="reports">
+          <KanbanBoard
+            columns={Object.values(ReportStatus).map((status) => ({
+              id: status,
+              title: status,
+              color: getReportStatusColor(status),
+              cards: myAlerts
+                .filter((alert) => alert.reportStatus === status)
+                .map((alert) => ({
+                  id: alert.id,
+                  link: `/alerts/${alert.id}`,
+                  color: getCriticalityColor(
+                    alert.assets.reduce((acc, asset) => {
+                      return acc.criticality > asset.criticality ? acc : asset;
+                    }).criticality
+                  ),
+                  title: alert.name,
+                  tailText: `${alert.assignedInvestigator?.name ?? ""} ${
+                    alert.lastReportAt
+                      ? `(Last reported: ${alert.lastReportAt.toLocaleDateString()})`
+                      : ""
+                  }`,
+                })),
+            }))}
+            onUpdate={(columnId, cardId) => {
+              updateReportStatus(cardId, columnId as ReportStatus);
+            }}
           />
         </TabsContent>
       </Tabs>

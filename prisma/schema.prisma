@@ -96,9 +96,10 @@ model Asset {
   alerts          Alert[]          @relation("AssetAlerts")
   responseActions ResponseAction[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  events    Event[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  events       Event[]
+  assetUptimes AssetUptime[]
 }
 
 enum AlertType {
@@ -126,6 +127,13 @@ enum AlertStatus {
   RESOLVED
 }
 
+enum ReportStatus {
+  NEW
+  HAD_CHANGES
+  REPORTED_NATIONAL
+  REPORTED_INTERNATIONAL
+}
+
 model Alert {
   id                     String           @id @default(cuid())
   name                   String
@@ -136,6 +144,8 @@ model Alert {
   assets                 Asset[]          @relation("AssetAlerts")
   mispEntryLink          String?
   detectionSource        DetectionSource
+  reportStatus           ReportStatus     @default(NEW)
+  lastReportAt           DateTime?
   categoryId             String
   techniqueId            String?
   technique              Technique?       @relation(fields: [techniqueId], references: [id])
@@ -151,6 +161,14 @@ model Alert {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   events    Event[]
+}
+
+model AssetUptime {
+  id        String   @id @default(cuid())
+  assetId   String
+  asset     Asset    @relation(fields: [assetId], references: [id])
+  up        Boolean
+  timestamp DateTime @default(now())
 }
 
 model IOCType {
@@ -273,6 +291,7 @@ enum EventAction {
   INVESTIGATION
   KNOWLEDGE
   ACTION
+  REPORTING
 }
 
 model Event {

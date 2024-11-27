@@ -36,7 +36,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getTeamMembers } from "@/features/team/team-actions";
 import { cn } from "@/lib/utils";
 import { PopulatedAlert } from "@/types/alert";
-import { AlertStatus, AlertType, User } from "@prisma/client";
+import { AlertStatus, AlertType, ReportStatus, User } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import {
@@ -188,6 +188,9 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
       ...(editedAlert.description !== alert.description && {
         description: editedAlert.description,
       }),
+      ...(editedAlert.reportStatus !== alert.reportStatus && {
+        reportStatus: editedAlert.reportStatus,
+      }),
       ...(editedAlert.endDateTime !== alert.endDateTime && {
         endDateTime: editedAlert.endDateTime || undefined,
       }),
@@ -228,7 +231,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <Card className="md:col-span-2">
           <CardHeader>
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-8">
               {isEditing ? (
                 <Input
                   name="name"
@@ -239,29 +242,61 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
               ) : (
                 <CardTitle className="text-2xl">{editedAlert.name}</CardTitle>
               )}
-              {isEditing ? (
-                <Select
-                  onValueChange={(value) =>
-                    setEditedAlert({ ...editedAlert, type: value as AlertType })
-                  }
-                  defaultValue={editedAlert.type}
-                >
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Select type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ALERT">Alert</SelectItem>
-                    <SelectItem value="INCIDENT">Incident</SelectItem>
-                  </SelectContent>
-                </Select>
-              ) : (
-                <Badge
-                  variant="secondary"
-                  className={getAlertTypeColor(editedAlert.type)}
-                >
-                  {editedAlert.type}
-                </Badge>
-              )}
+              <div className="flex items-center gap-4">
+                {isEditing ? (
+                  <Select
+                    onValueChange={(value) =>
+                      setEditedAlert({
+                        ...editedAlert,
+                        type: value as AlertType,
+                      })
+                    }
+                    defaultValue={editedAlert.type}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ALERT">Alert</SelectItem>
+                      <SelectItem value="INCIDENT">Incident</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge
+                    variant="secondary"
+                    className={getAlertTypeColor(editedAlert.type)}
+                  >
+                    {editedAlert.type}
+                  </Badge>
+                )}
+                {isEditing ? (
+                  <Select
+                    onValueChange={(value) =>
+                      setEditedAlert({
+                        ...editedAlert,
+                        reportStatus: value as ReportStatus,
+                      })
+                    }
+                    defaultValue={editedAlert.reportStatus}
+                  >
+                    <SelectTrigger className="w-[180px]">
+                      <SelectValue placeholder="Select report status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="NEW">New</SelectItem>
+                      <SelectItem value="HAD_CHANGES">Had Changes</SelectItem>
+                      <SelectItem value="REPORTED_NATIONAL">
+                        Reported National
+                      </SelectItem>
+                      <SelectItem value="REPORTED_INTERNATIONAL">
+                        Reported International
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge variant="secondary">{editedAlert.reportStatus}</Badge>
+                )}
+              </div>
             </div>
             <div className="flex items-center gap-4">
               <div className="flex items-center gap-2">

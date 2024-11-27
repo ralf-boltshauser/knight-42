@@ -6,6 +6,7 @@ import {
   AlertStatus,
   AlertType,
   EventAction,
+  ReportStatus,
   ResponseActionStatus,
 } from "@prisma/client";
 import { getServerSession } from "next-auth";
@@ -84,4 +85,33 @@ export async function getDashboardNavbarCount() {
     alerts: myActiveAlerts,
     responseActions: myActiveResponseActions,
   };
+}
+
+export async function updateReportStatus(
+  alertId: string,
+  status: ReportStatus
+) {
+  const session = await getServerSession(authOptions);
+  const res = await prisma.alert.update({
+    where: { id: alertId },
+    data: {
+      reportStatus: status,
+      lastReportAt:
+        status == ReportStatus.REPORTED_INTERNATIONAL ||
+        status == ReportStatus.REPORTED_NATIONAL
+          ? new Date()
+          : undefined,
+    },
+  });
+
+  await prisma.event.create({
+    data: {
+      title: res.name + " report status set to " + status,
+      action: EventAction.REPORTING,
+      alertId: alertId,
+      responsibleId: session?.user.dbId,
+    },
+  });
+
+  revalidatePath("/");
 }

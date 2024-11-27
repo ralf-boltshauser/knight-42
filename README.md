@@ -2,6 +2,7 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
+- [ ] show uptime checker on asset detail, or maybe even on asset list
 ## bugs
 
 ### Bigger Changes

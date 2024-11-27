@@ -17,7 +17,9 @@ import { Eye, MoreHorizontal, Server, User } from "lucide-react";
 import Link from "next/link";
 
 import { deleteAsset } from "./asset-actions";
+import AssetUptimeDisplay from "./asset-uptime-display";
 export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
+  console.log(asset.assetUptimes);
   const underAttack = asset.alerts.some(
     (alert) =>
       alert.status !== AlertStatus.RESOLVED && alert.type == AlertType.INCIDENT
@@ -32,10 +34,10 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
     <Card key={asset.id} className={`hover:bg-accent transition-colors `}>
       <CardContent className="pt-6">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div className="flex items-center flex-row gap-2 w-full justify-between">
+          <div className="flex items-center flex-row gap-2 justify-between w-full">
             <Link
               href={`/assets/${asset.id}`}
-              className="flex items-center gap-2 flex-row justify-between w-full"
+              className="flex items-center gap-2 flex-row justify-between "
             >
               <div className="flex items-center gap-2">
                 <div className="bg-primary/10 p-2 rounded-full">
@@ -60,6 +62,14 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
                   </p>
                 </div>
               </div>
+            </Link>
+            {asset.assetUptimes && asset.assetUptimes.length > 0 && (
+              <AssetUptimeDisplay
+                assetUptimes={asset.assetUptimes}
+                limit={10}
+              />
+            )}
+            <div className="flex flex-row gap-2 items-center">
               <div className="flex flex-wrap items-center gap-2">
                 <Badge
                   variant="outline"
@@ -83,31 +93,31 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
                   </div>
                 )}
               </div>
-            </Link>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuItem asChild>
-                  <Link href={`/assets/${asset.id}`}>
-                    <Eye className="mr-2 h-4 w-4" />
-                    <span>View Asset</span>
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>Edit Asset</DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600" asChild>
-                  <form action={deleteAsset}>
-                    <input type="hidden" name="id" value={asset.id} />
-                    <button type="submit">Delete</button>
-                  </form>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" className="h-8 w-8 p-0">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                  <DropdownMenuItem asChild>
+                    <Link href={`/assets/${asset.id}`}>
+                      <Eye className="mr-2 h-4 w-4" />
+                      <span>View Asset</span>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>Edit Asset</DropdownMenuItem>
+                  <DropdownMenuItem className="text-red-600" asChild>
+                    <form action={deleteAsset}>
+                      <input type="hidden" name="id" value={asset.id} />
+                      <button type="submit">Delete</button>
+                    </form>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           </div>
         </div>
       </CardContent>

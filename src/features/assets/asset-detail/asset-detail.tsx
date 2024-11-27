@@ -24,6 +24,7 @@ import {
 import Link from "next/link";
 import { useState } from "react";
 import { AssetForm } from "../asset-form";
+import AssetUptimeDisplay from "../asset-uptime-display";
 
 // Mock data based on the Prisma schema
 type AssetDetailType = {
@@ -171,7 +172,21 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
           <TabsTrigger value="details">Details</TabsTrigger>
         </TabsList>
         <TabsContent value="timeline" className="mt-6">
+          {asset.assetUptimes && asset.assetUptimes.length > 0 ? (
+            <div className="my-5">
+              <h2 className="text-lg font-semibold">Uptime</h2>
+              <AssetUptimeDisplay
+                assetUptimes={asset.assetUptimes}
+                limit={50}
+              />
+            </div>
+          ) : (
+            <pre className="text-sm text-muted-foreground my-5">
+              Run the uptime checker to see this!{" "}
+            </pre>
+          )}
           {timelineEvents.length === 0 && <p className="">No events found</p>}
+          <h2 className="text-lg font-semibold mb-3">Timeline</h2>
           <div className="relative">
             <div className="absolute left-4 top-0 bottom-0 w-0.5 bg-gray-200 dark:bg-gray-800"></div>
             <div className="space-y-8">

@@ -1,4 +1,10 @@
-import { Alert, AlertCategory, Asset, ResponseAction } from "@prisma/client";
+import {
+  Alert,
+  AlertCategory,
+  Asset,
+  AssetUptime,
+  ResponseAction,
+} from "@prisma/client";
 import { User } from "next-auth";
 
 export type PopulatedAsset = Asset & {
@@ -8,4 +14,5 @@ export type PopulatedAsset = Asset & {
     assignedInvestigator: User;
   })[];
   responseActions: (ResponseAction & { assignedTeamMember: User })[];
+  assetUptimes?: AssetUptime[];
 };

@@ -75,7 +75,7 @@ export function NetworkMapProvider({
 
   useEffect(() => {
     refetch();
-  }, []);
+  }, [refetch]);
   // if playback type is live set interval 5 sec and console log live
   useEffect(() => {
     if (playbackType === PlaybackType.LIVE) {
@@ -85,7 +85,7 @@ export function NetworkMapProvider({
       }, 5000);
       return () => clearInterval(intervalId);
     }
-  }, [playbackType]);
+  }, [playbackType, refetch, setDatetime]);
 
   useEffect(() => {
     if (newEvents) {

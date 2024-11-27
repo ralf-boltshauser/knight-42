@@ -12,6 +12,7 @@ import {
   DetectionSource,
   EventAction,
   EventStatus,
+  ReportStatus,
 } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -22,7 +23,11 @@ import { ResponseActionSchema } from "./alert-detail/response-action-schema";
 import { AlertSchema } from "./alert-schema";
 
 export async function getAssets() {
-  return await prisma.asset.findMany();
+  return await prisma.asset.findMany({
+    include: {
+      assetUptimes: true,
+    },
+  });
 }
 
 export async function getOutstandingAssets(alert: Alert) {
@@ -92,6 +97,7 @@ export async function updateAlert(alert: {
   type?: AlertType;
   assignedInvestigatorId?: string;
   status?: AlertStatus;
+  reportStatus?: ReportStatus;
   techniqueId?: string;
   description?: string;
   endDateTime?: Date;
@@ -106,6 +112,7 @@ export async function updateAlert(alert: {
       assignedInvestigatorId: alert.assignedInvestigatorId,
       status: alert.status,
       techniqueId: alert.techniqueId,
+      reportStatus: alert.reportStatus,
       description: alert.description,
       endDateTime: alert.endDateTime,
       detectionSource: alert.detectionSource,

@@ -7,6 +7,7 @@ export async function getAssetById(assetId: string) {
       id: assetId,
     },
     include: {
+      assetUptimes: true,
       assignedTeamMember: true,
       alerts: {
         include: {

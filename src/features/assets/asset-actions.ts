@@ -43,6 +43,7 @@ export async function updateAsset(asset: z.infer<typeof AssetSchema>) {
 export async function getAssets() {
   const assetList = await prisma.asset.findMany({
     include: {
+      assetUptimes: true,
       assignedTeamMember: true,
       alerts: {
         include: {
