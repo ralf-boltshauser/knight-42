@@ -20,6 +20,22 @@ export default async function RecommendedThreatActors({
       },
     },
     include: {
+      techniques: {
+        where: {
+          alerts: {
+            some: {
+              attackChainId: attackChain.id,
+            },
+          },
+        },
+        include: {
+          alerts: {
+            where: {
+              attackChainId: attackChain.id,
+            },
+          },
+        },
+      },
       iocs: {
         where: {
           linkedAlerts: {
@@ -40,13 +56,23 @@ export default async function RecommendedThreatActors({
     },
   });
 
+  console.log(threatActors.map((ta) => ta.techniques));
+
   return (
     <div className="space-y-6">
       {threatActors
         .sort(
           (a, b) =>
-            b.iocs.reduce((acc, ioc) => acc + ioc.linkedAlerts.length, 0) -
-            a.iocs.reduce((acc, ioc) => acc + ioc.linkedAlerts.length, 0)
+            b.iocs.reduce((acc, ioc) => acc + ioc.linkedAlerts.length, 0) +
+            b.techniques.reduce(
+              (acc, technique) => acc + technique.alerts.length,
+              0
+            ) -
+            (a.iocs.reduce((acc, ioc) => acc + ioc.linkedAlerts.length, 0) +
+              a.techniques.reduce(
+                (acc, technique) => acc + technique.alerts.length,
+                0
+              ))
         )
         .map((threatActor, index) => (
           <div key={threatActor.id} className="border rounded-lg p-4">
@@ -76,6 +102,41 @@ export default async function RecommendedThreatActors({
                         <li key={alert.id}>{alert.name}</li>
                       ))}
                     </ul>
+                  </div>
+                </div>
+              ))}
+              {threatActor.techniques.map((technique) => (
+                <div
+                  key={technique.id}
+                  className="border rounded p-3 bg-gray-50"
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">Technique:</span>
+                      <span>{technique.name}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">ID:</span>
+                      <span className="font-mono text-sm">
+                        {technique.ttpIdentifier}
+                      </span>
+                    </div>
+                    <div>
+                      <div className="font-medium mb-1">Related Alerts:</div>
+                      {technique.alerts.length > 0 ? (
+                        <ul className="list-disc list-inside">
+                          {technique.alerts.map((alert) => (
+                            <li key={alert.id} className="text-sm">
+                              {alert.name}
+                            </li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <p className="text-sm text-gray-500">
+                          No related alerts
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))}

@@ -151,6 +151,16 @@ export default function NetworkMapTimeline() {
                           </Badge>
                         </Link>
                       )}
+                      {event.responsible && (
+                        <Link href={`/users/${event.responsible.id}`}>
+                          <Badge
+                            variant="secondary"
+                            className="bg-gray-100 text-gray-800 hover:bg-gray-200"
+                          >
+                            {event.responsible.name}
+                          </Badge>
+                        </Link>
+                      )}
                     </div>
                   </div>
                 </motion.div>

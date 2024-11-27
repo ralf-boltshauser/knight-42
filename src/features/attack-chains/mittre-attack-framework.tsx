@@ -12,6 +12,8 @@ import { ChevronDown } from "lucide-react";
 import { parseAsArrayOf, parseAsString, useQueryState } from "nuqs";
 import { useRef } from "react";
 import { exportComponentAsPNG } from "react-component-export-image";
+import { toast } from "sonner";
+import { useCopyToClipboard } from "usehooks-ts";
 
 type TechniqueItemProps = {
   technique: PopulatedTechnique;
@@ -30,6 +32,14 @@ export default function MittreAttackFramework({
     "openTechniques",
     parseAsArrayOf(parseAsString).withDefault([])
   );
+
+  const [copy, copyText] = useCopyToClipboard();
+
+  const handleCopy = (text: string) => {
+    copyText(text);
+    toast.success("Copied to clipboard");
+  };
+
   const componentRef = useRef<HTMLDivElement>(null);
 
   function TechniqueItem({ technique }: { technique: Technique }) {
@@ -48,7 +58,10 @@ export default function MittreAttackFramework({
           <span className="text-xs">{technique.name}</span>
           {isSelected && <span className="text-red-500">✓</span>}
         </div>
-        <div className="text-[8px] text-gray-500 mt-1">
+        <div
+          className="text-[8px] text-gray-500 mt-1"
+          onClick={() => handleCopy(technique.ttpIdentifier)}
+        >
           {technique.ttpIdentifier}
         </div>
       </div>
@@ -91,7 +104,10 @@ export default function MittreAttackFramework({
                 </div>
                 <ChevronDown className="w-4 h-4" />
               </div>
-              <div className="text-[8px] text-start text-gray-500 mt-1">
+              <div
+                className="text-[8px] text-start text-gray-500 mt-1"
+                onClick={() => handleCopy(technique.ttpIdentifier)}
+              >
                 {technique.ttpIdentifier}
               </div>
             </div>

@@ -75,7 +75,7 @@ export default function NetworkMap({
                 (_, index) => {
                   const cellSize = `calc(min(90dvh / ${
                     fieldAxis.vertical.length + 1
-                  }, (100dvw - 500px) / ${fieldAxis.horizontal.length + 1}))`;
+                  }, (100dvw - 400px) / ${fieldAxis.horizontal.length + 1}))`;
                   return (
                     <div
                       className="flex flex-col"

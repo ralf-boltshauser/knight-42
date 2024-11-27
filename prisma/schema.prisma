@@ -25,6 +25,7 @@ model User {
   alerts          Alert[]
   responseActions ResponseAction[]
   attackChains    AttackChain[]
+  events          Event[]
 }
 
 enum AssetType {
@@ -287,6 +288,9 @@ model Event {
 
   responseActionId String?
   responseAction   ResponseAction? @relation(fields: [responseActionId], references: [id])
+
+  responsibleId String?
+  responsible   User?   @relation(fields: [responsibleId], references: [id])
 
   createdAt DateTime @default(now())
 }

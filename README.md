@@ -3,6 +3,8 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
 - MAKE EVENTS WITH RESPONSIBLE / EXECUTE
+- REALTIME NETWORK MAP
+- MAP THREAT ACTORS BASED ON TTPS
 ## bugs
 - [ ] ttps to match threat actor
 - [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id

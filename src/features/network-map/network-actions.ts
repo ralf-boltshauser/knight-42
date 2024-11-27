@@ -48,6 +48,7 @@ export async function getNetworkMapEvents() {
       alert: true,
       ioc: true,
       responseAction: true,
+      responsible: true,
     },
   });
 }

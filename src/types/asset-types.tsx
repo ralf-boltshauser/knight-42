@@ -1,32 +1,38 @@
 import { Badge } from "@/components/ui/badge";
 import { AssetCriticality, AssetType, AssetVisibility } from "@prisma/client";
-import {
-  Box,
-  Computer,
-  Eye,
-  EyeOff,
-  Globe,
-  Router,
-  Server,
-  Shield,
-} from "lucide-react";
+import { Eye, EyeOff } from "lucide-react";
+import Image from "next/image";
 export function AssetTypeToIcon(type: AssetType) {
+  function image(src: string, alt: string) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        className="w-full h-full"
+        width={64}
+        height={64}
+      />
+    );
+  }
   switch (type) {
     case AssetType.WINDOWS_WORKSTATION:
+      return image("/icons/windows-workstation.png", "Windows");
     case AssetType.LINUX_WORKSTATION:
-      return <Computer />;
+      return image("/icons/linux-workstation.png", "Linux");
     case AssetType.WINDOWS_SERVER:
+      return image("/icons/windows-server.png", "Windows Server");
     case AssetType.LINUX_SERVER:
+      return image("/icons/linux-server.png", "Linux Server");
     case AssetType.SERVER:
-      return <Server />;
+      return image("/icons/server.png", "Server");
     case AssetType.ROUTER:
-      return <Router />;
+      return image("/icons/router.png", "Router");
     case AssetType.FIREWALL:
-      return <Shield />;
+      return image("/icons/firewall.png", "Firewall");
     case AssetType.CONTAINER:
-      return <Box />;
+      return image("/icons/container.png", "Container");
     case AssetType.DNS:
-      return <Globe />;
+      return image("/icons/dns.png", "DNS");
   }
 }
 
