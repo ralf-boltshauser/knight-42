@@ -75,6 +75,7 @@ export async function getAttackChain(attackChainId: string) {
               type: true,
             },
           },
+          events: true,
         },
       },
       analyst: true,

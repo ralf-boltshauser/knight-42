@@ -9,15 +9,30 @@ export default async function RecommendedThreatActors({
   if (!attackChain) return null;
   const threatActors = await prisma.threatActor.findMany({
     where: {
-      iocs: {
-        some: {
-          linkedAlerts: {
+      OR: [
+        {
+          iocs: {
             some: {
-              attackChainId: attackChain.id,
+              linkedAlerts: {
+                some: {
+                  attackChainId: attackChain.id,
+                },
+              },
             },
           },
         },
-      },
+        {
+          techniques: {
+            some: {
+              alerts: {
+                some: {
+                  attackChainId: attackChain.id,
+                },
+              },
+            },
+          },
+        },
+      ],
     },
     include: {
       techniques: {

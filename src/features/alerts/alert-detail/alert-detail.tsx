@@ -335,13 +335,28 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                                       : "opacity-0"
                                   )}
                                 />
-                                {parent ? (
-                                  <span className="text-nowrap">
-                                    {parent.name} - {technique.name}
-                                  </span>
-                                ) : (
-                                  <span className="text-nowrap">{value}</span>
-                                )}
+                                <div className="flex flex-row justify-between items-center gap-1">
+                                  {parent ? (
+                                    <span className="text-nowrap">
+                                      {parent.name} - {technique.name}
+                                    </span>
+                                  ) : (
+                                    <span className="text-nowrap">{value}</span>
+                                  )}
+                                  {technique.threatActors.length > 0 && (
+                                    <div className="flex gap-1 flex-wrap">
+                                      {technique.threatActors.map((actor) => (
+                                        <Badge
+                                          key={actor.id}
+                                          variant="secondary"
+                                          className="bg-red-100 text-red-800 text-xs"
+                                        >
+                                          {actor.name}
+                                        </Badge>
+                                      ))}
+                                    </div>
+                                  )}
+                                </div>
                               </CommandItem>
                             );
                           })}

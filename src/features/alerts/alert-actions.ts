@@ -118,11 +118,11 @@ export async function updateAlert(alert: {
     await prisma.event.create({
       data: {
         title:
-          alert.name +
+          dbAlert.name +
           " " +
-          (alert.status == AlertStatus.ESCALATED
+          (dbAlert.status == AlertStatus.ESCALATED
             ? "escalated"
-            : alert.status == AlertStatus.RESOLVED
+            : dbAlert.status == AlertStatus.RESOLVED
             ? "resolved"
             : "under investigation"),
         status: convertAlertStatusToEventStatus(alert.status),
@@ -136,7 +136,9 @@ export async function updateAlert(alert: {
     await prisma.event.create({
       data: {
         title:
-          alert.name + " " + (alert.type == AlertType.INCIDENT && "escalated"),
+          dbAlert.name +
+          " " +
+          (dbAlert.type == AlertType.INCIDENT && "escalated"),
         status: convertAlertTypeToEventStatus(alert.type),
         alertId: alert.id,
         responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
@@ -147,7 +149,7 @@ export async function updateAlert(alert: {
   if (alert.techniqueId) {
     await prisma.event.create({
       data: {
-        title: alert.name + " linked to technique",
+        title: dbAlert.name + " linked to technique",
         action: EventAction.KNOWLEDGE,
         alertId: alert.id,
         responsibleId: dbAlert.assignedInvestigatorId,
@@ -263,7 +265,11 @@ export async function updateResponseAction(
 }
 
 export async function getTechniques() {
-  return await prisma.technique.findMany();
+  return await prisma.technique.findMany({
+    include: {
+      threatActors: true,
+    },
+  });
 }
 
 export async function getIOCs() {

@@ -119,7 +119,7 @@ export default function NetworkMapTimeline() {
                     event.status
                   )}-200 hover:shadow-lg transition-shadow`}
                 >
-                  <div className="flex flex-row justify-between items-center">
+                  <div className="flex flex-row justify-between items-center gap-4">
                     <div className="flex flex-col gap-1 flex-grow">
                       <h3 className="font-semibold text-lg">{event.title}</h3>
                       <p className="text-sm text-gray-500">
