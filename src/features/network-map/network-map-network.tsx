@@ -38,7 +38,7 @@ export default function NetworkMapNetwork({
         className={`absolute bg-${network.networkColor.toLowerCase()}-500 hover:animate-pulse opacity-30 z-10 border rounded-lg border-dashed`}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 0.3, scale: 1 }}
-        transition={{ duration: 0.5, delay: (fromCol + fromRow) * 0.1 + 0.5 }}
+        transition={{ duration: 0.5 }}
         style={{
           left: `${left}px`,
           top: `${top}px`,

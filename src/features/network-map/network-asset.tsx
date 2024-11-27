@@ -1,11 +1,13 @@
 "use client";
 
 import { AssetTypeToIcon } from "@/types/asset-types";
+import { getEventStatusColor } from "@/types/event-types";
 import { fieldAxis } from "@/types/field";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import useFitText from "use-fit-text";
 import { getNetworkMapAssets } from "./network-actions";
+import { useNetworkMap } from "./network-map-context";
 
 export default function NetworkAsset({
   asset,
@@ -17,6 +19,21 @@ export default function NetworkAsset({
   cellHeight: number;
 }) {
   const { fontSize, ref } = useFitText();
+
+  const { getDynamicEventsByAsset: getDynamicEvents, getCurrentAssetStatus } =
+    useNetworkMap();
+
+  const events = getDynamicEvents(asset.id);
+  const mostRecentEvent = events
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
+    .at(-1);
+
+  const assetStatus = getCurrentAssetStatus(asset.id);
+  console.log("events", events);
+  console.log("status", assetStatus, getEventStatusColor(assetStatus));
 
   const col = fieldAxis.horizontal.indexOf(asset.identifier[0]) + 1;
   const row = parseInt(asset.identifier.slice(1));
@@ -30,7 +47,7 @@ export default function NetworkAsset({
       animate={{ opacity: 1, scale: 1 }}
       transition={{
         duration: 0.4,
-        delay: (col + row) * 0.15 + 1,
+        // delay: (col + row) * 0.1 + 1,
         type: "spring",
         damping: 10,
         stiffness: 100,
@@ -63,7 +80,11 @@ export default function NetworkAsset({
             {(asset.metadata as { IP: string })?.IP}
           </span>
         </div>
-        <div className="bg-white w-[90%] h-[90%] absolute z-10 rounded" />
+        <div
+          className={`w-[90%] h-[90%] absolute z-10 rounded bg-${getEventStatusColor(
+            assetStatus
+          )}-200`}
+        />
       </Link>
     </motion.div>
   );

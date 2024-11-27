@@ -29,3 +29,25 @@ export async function getNetworks() {
 export async function getNetworkMapAssets() {
   return await prisma.asset.findMany();
 }
+
+export async function getNetworkMapAlerts() {
+  return await prisma.alert.findMany({
+    include: {
+      assets: true,
+    },
+  });
+}
+
+export async function getNetworkMapEvents() {
+  return await prisma.event.findMany({
+    orderBy: {
+      createdAt: "asc",
+    },
+    include: {
+      asset: true,
+      alert: true,
+      ioc: true,
+      responseAction: true,
+    },
+  });
+}

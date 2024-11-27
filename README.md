@@ -5,6 +5,13 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 ## bugs
 - [ ] ttps to match threat actor
 - [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id
+- [ ]   const mostRecentAlert = alerts
+    .sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    )
+    .at(-1);
+  - [ ] this is not working because i can't do status updates on the alerts i need the timeline model, and the status of events can be "non altering" so i can communicate stuf without adjusting the ui
 
 ### UX
 - [ ] cmd k
@@ -27,6 +34,9 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
   - [ ] and put it into timeline of alert
 - [x] a network map
   - [ ] timeline of the network map
+  - [ ] to build this i need
+    - [ ] a timeline model, which are inserted for every alert that is created etc 
+    - [ ] fetch the timeline instead of alerts
   - [ ] uptime agents
 - [ ] consider adding timeline as a model
 - [ ] automatically create misp entry based on alert and link to it

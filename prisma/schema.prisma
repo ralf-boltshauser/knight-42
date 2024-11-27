@@ -97,6 +97,7 @@ model Asset {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  events    Event[]
 }
 
 enum AlertType {
@@ -147,6 +148,7 @@ model Alert {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  events    Event[]
 }
 
 model IOCType {
@@ -168,6 +170,7 @@ model IOC {
   createdAt         DateTime         @default(now())
   updatedAt         DateTime         @updatedAt
   responseActions   ResponseAction[]
+  events            Event[]
 }
 
 model AttackChain {
@@ -254,4 +257,36 @@ model ResponseAction {
   assignedTeamMember   User?                @relation(fields: [assignedTeamMemberId], references: [id])
   createdAt            DateTime             @default(now())
   updatedAt            DateTime             @updatedAt
+  events               Event[]
+}
+
+enum EventStatus {
+  OKAY
+  WARNING
+  DOWN
+}
+
+enum EventAction {
+  KNOWLEDGE
+  ACTION
+}
+
+model Event {
+  id      String       @id @default(cuid())
+  title   String
+  status  EventStatus?
+  action  EventAction?
+  alertId String?
+  alert   Alert?       @relation(fields: [alertId], references: [id])
+
+  assetId String?
+  asset   Asset?  @relation(fields: [assetId], references: [id])
+
+  iocId String?
+  ioc   IOC?    @relation(fields: [iocId], references: [id])
+
+  responseActionId String?
+  responseAction   ResponseAction? @relation(fields: [responseActionId], references: [id])
+
+  createdAt DateTime @default(now())
 }
