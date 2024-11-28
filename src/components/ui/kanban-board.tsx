@@ -16,7 +16,7 @@ export type Card = {
   id: string;
   title: string;
   color: string;
-  tailText: string;
+  tailText: React.ReactNode;
   link: string;
 };
 

@@ -19,8 +19,10 @@ import {
 } from "@prisma/client";
 import { useQueryState } from "nuqs";
 
+import { Badge } from "@/components/ui/badge";
 import { getCriticalityColor } from "@/types/asset-types";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import {
   updateAlertStatus,
   updateReportStatus,
@@ -100,7 +102,16 @@ export default function Dashboard({
                     }).criticality
                   ),
                   title: alert.name,
-                  tailText: alert.assignedInvestigator?.name ?? "",
+                  tailText: (
+                    <div className="flex flex-row gap-2 items-center">
+                      {alert.assets.map((a) => (
+                        <Link key={a.id} href={`/assets/${a.id}`}>
+                          <Badge variant="outline">{a.name}</Badge>
+                        </Link>
+                      ))}
+                      <span>{alert.assignedInvestigator?.name ?? ""}</span>
+                    </div>
+                  ),
                 })),
             }))}
           />
