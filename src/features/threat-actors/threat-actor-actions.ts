@@ -91,11 +91,12 @@ export async function updateThreatActorTechniques(
 
 export async function updateThreatActorNotes(
   threatActorId: string,
+  name: string,
   notes: string
 ) {
   await prisma.threatActor.update({
     where: { id: threatActorId },
-    data: { notes },
+    data: { name, notes },
   });
 
   revalidatePath(`/threat-actors/${threatActorId}`);

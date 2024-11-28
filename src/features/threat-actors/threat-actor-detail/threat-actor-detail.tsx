@@ -1,6 +1,7 @@
 "use client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
 import { PopulatedTechnique } from "@/types/technique";
@@ -36,6 +37,7 @@ export default function ThreatActorDetail({
     toast.success("Copied to clipboard");
   };
 
+  const [name, setName] = useState(threatActor?.name ?? "");
   const [notes, setNotes] = useState(threatActor?.notes ?? "");
   if (!threatActor) return null;
 
@@ -47,15 +49,23 @@ export default function ThreatActorDetail({
   };
 
   const handleSave = async () => {
-    await updateThreatActorNotes(threatActor.id, notes);
+    await updateThreatActorNotes(threatActor.id, name, notes);
     setEdit(false);
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-3">{threatActor.name}</h1>
-      <div className="flex items-center  mb-3 justify-start gap-4">
-        <h2 className="text-lg font-bold">Notes</h2>
+    <div className="w-full">
+      <div className="flex flex-row items-center justify-start gap-4 mb-3 w-full">
+        {edit ? (
+          <Input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="text-2xl font-bold w-full max-w-screen-sm"
+          />
+        ) : (
+          <h1 className="text-2xl font-bold">{name}</h1>
+        )}
         <Button
           variant="outline"
           size="icon"
@@ -64,6 +74,9 @@ export default function ThreatActorDetail({
         >
           {edit ? <Save className="h-4 w-4" /> : <Edit2 className="h-4 w-4" />}
         </Button>
+      </div>
+      <div className="flex items-center  mb-3 justify-start gap-4">
+        <h2 className="text-lg font-bold">Notes</h2>
       </div>
       <div className="text-muted-foreground my-5 w-full">
         {edit ? (
