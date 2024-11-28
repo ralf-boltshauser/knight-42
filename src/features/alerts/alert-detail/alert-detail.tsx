@@ -48,6 +48,7 @@ import {
   CheckCircle,
   ChevronsUpDown,
   Clock,
+  LinkIcon,
   Save,
 } from "lucide-react";
 import { useQueryState } from "nuqs";
@@ -199,6 +200,9 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
       ...(editedAlert.detectionSource !== alert.detectionSource && {
         detectionSource: editedAlert.detectionSource,
       }),
+      ...(editedAlert.mispEntryLink !== alert.mispEntryLink && {
+        mispEntryLink: editedAlert.mispEntryLink || undefined,
+      }),
     });
   };
 
@@ -309,126 +313,164 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 )}
               </div>
             </div>
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2">
-                {getStatusIcon(editedAlert.status)}
+            <div className="flex items-center gap-4 justify-between">
+              <div className="flex flex-row gap-2 items-center">
+                <div className="flex items-center gap-2">
+                  {getStatusIcon(editedAlert.status)}
+                  {isEditing ? (
+                    <Select
+                      onValueChange={handleStatusChange}
+                      defaultValue={editedAlert.status}
+                    >
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Object.values(AlertStatus).map((status) => (
+                          <SelectItem key={status} value={status}>
+                            {status}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <span>{editedAlert.status}</span>
+                  )}
+                </div>
                 {isEditing ? (
-                  <Select
-                    onValueChange={handleStatusChange}
-                    defaultValue={editedAlert.status}
-                  >
-                    <SelectTrigger className="w-[180px]">
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {Object.values(AlertStatus).map((status) => (
-                        <SelectItem key={status} value={status}>
-                          {status}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        className="justify-between"
+                      >
+                        {editedAlert.techniqueId
+                          ? techniques?.find(
+                              (technique) =>
+                                technique.id === editedAlert.techniqueId
+                            )?.name
+                          : "Select technique..."}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="p-0 w-fit">
+                      <Command>
+                        <CommandInput placeholder="Search technique..." />
+                        <CommandList>
+                          <CommandEmpty>No technique found.</CommandEmpty>
+                          <CommandGroup>
+                            {techniques?.map((technique) => {
+                              const value =
+                                technique.ttpIdentifier +
+                                " - " +
+                                technique.name;
+                              const parent = techniques?.find(
+                                (t) => t.id === technique.parentTechniqueId
+                              );
+                              return (
+                                <CommandItem
+                                  key={technique.id}
+                                  value={value}
+                                  className="w-full"
+                                  onSelect={() => {
+                                    setEditedAlert({
+                                      ...editedAlert,
+                                      techniqueId: technique.id,
+                                    });
+                                  }}
+                                >
+                                  <Check
+                                    className={cn(
+                                      "mr-2 h-4 w-4",
+                                      editedAlert.techniqueId === technique.id
+                                        ? "opacity-100"
+                                        : "opacity-0"
+                                    )}
+                                  />
+                                  <div className="flex flex-row justify-between items-center gap-1">
+                                    {parent ? (
+                                      <span className="text-nowrap">
+                                        {parent.name} - {technique.name}
+                                      </span>
+                                    ) : (
+                                      <span className="text-nowrap">
+                                        {value}
+                                      </span>
+                                    )}
+                                    {technique.threatActors.length > 0 && (
+                                      <div className="flex gap-1 flex-wrap">
+                                        {technique.threatActors.map((actor) => (
+                                          <Badge
+                                            key={actor.id}
+                                            variant="secondary"
+                                            className="bg-red-100 text-red-800 text-xs"
+                                          >
+                                            {actor.name}
+                                          </Badge>
+                                        ))}
+                                      </div>
+                                    )}
+                                  </div>
+                                </CommandItem>
+                              );
+                            })}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
                 ) : (
-                  <span>{editedAlert.status}</span>
+                  <span>
+                    {editedAlert.techniqueId ? (
+                      <span>
+                        {(() => {
+                          const technique = techniques?.find(
+                            (t) => t.id === editedAlert.techniqueId
+                          );
+                          return technique
+                            ? `${technique.ttpIdentifier} - ${technique.name}`
+                            : null;
+                        })()}
+                      </span>
+                    ) : (
+                      "No technique assigned"
+                    )}
+                  </span>
                 )}
               </div>
-              {isEditing ? (
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant="outline"
-                      role="combobox"
-                      className="justify-between"
-                    >
-                      {editedAlert.techniqueId
-                        ? techniques?.find(
-                            (technique) =>
-                              technique.id === editedAlert.techniqueId
-                          )?.name
-                        : "Select technique..."}
-                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="p-0 w-fit">
-                    <Command>
-                      <CommandInput placeholder="Search technique..." />
-                      <CommandList>
-                        <CommandEmpty>No technique found.</CommandEmpty>
-                        <CommandGroup>
-                          {techniques?.map((technique) => {
-                            const value =
-                              technique.ttpIdentifier + " - " + technique.name;
-                            const parent = techniques?.find(
-                              (t) => t.id === technique.parentTechniqueId
-                            );
-                            return (
-                              <CommandItem
-                                key={technique.id}
-                                value={value}
-                                className="w-full"
-                                onSelect={() => {
-                                  setEditedAlert({
-                                    ...editedAlert,
-                                    techniqueId: technique.id,
-                                  });
-                                }}
-                              >
-                                <Check
-                                  className={cn(
-                                    "mr-2 h-4 w-4",
-                                    editedAlert.techniqueId === technique.id
-                                      ? "opacity-100"
-                                      : "opacity-0"
-                                  )}
-                                />
-                                <div className="flex flex-row justify-between items-center gap-1">
-                                  {parent ? (
-                                    <span className="text-nowrap">
-                                      {parent.name} - {technique.name}
-                                    </span>
-                                  ) : (
-                                    <span className="text-nowrap">{value}</span>
-                                  )}
-                                  {technique.threatActors.length > 0 && (
-                                    <div className="flex gap-1 flex-wrap">
-                                      {technique.threatActors.map((actor) => (
-                                        <Badge
-                                          key={actor.id}
-                                          variant="secondary"
-                                          className="bg-red-100 text-red-800 text-xs"
-                                        >
-                                          {actor.name}
-                                        </Badge>
-                                      ))}
-                                    </div>
-                                  )}
-                                </div>
-                              </CommandItem>
-                            );
-                          })}
-                        </CommandGroup>
-                      </CommandList>
-                    </Command>
-                  </PopoverContent>
-                </Popover>
-              ) : (
-                <span>
-                  {editedAlert.techniqueId ? (
-                    <span>
-                      {(() => {
-                        const technique = techniques?.find(
-                          (t) => t.id === editedAlert.techniqueId
-                        );
-                        return technique
-                          ? `${technique.ttpIdentifier} - ${technique.name}`
-                          : null;
-                      })()}
-                    </span>
-                  ) : (
-                    "No technique assigned"
-                  )}
-                </span>
-              )}
+              <div className="flex flex-row gap-2 items-center">
+                {isEditing ? (
+                  <div>
+                    <Input
+                      name="mispLink"
+                      placeholder="Paste misp link!"
+                      value={editedAlert.mispEntryLink || ""}
+                      onChange={(e) =>
+                        setEditedAlert({
+                          ...editedAlert,
+                          mispEntryLink: e.target.value,
+                        })
+                      }
+                    />
+                  </div>
+                ) : (
+                  <>
+                    {editedAlert.mispEntryLink ? (
+                      <Button variant={"outline"} asChild>
+                        <Link href={editedAlert.mispEntryLink} target="_blank">
+                          <LinkIcon className="mr-2 h-4 w-4" />
+                          Link to MISP
+                        </Link>
+                      </Button>
+                    ) : (
+                      <p className="text-muted-foreground text-sm">
+                        No MISP link
+                      </p>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
           </CardHeader>
           <CardContent>

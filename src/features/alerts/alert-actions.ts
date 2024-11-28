@@ -100,6 +100,7 @@ export async function updateAlert(alert: {
   reportStatus?: ReportStatus;
   techniqueId?: string;
   description?: string;
+  mispEntryLink?: string;
   endDateTime?: Date;
   detectionSource?: DetectionSource;
 }) {
@@ -124,6 +125,7 @@ export async function updateAlert(alert: {
           : undefined,
       description: alert.description,
       endDateTime: alert.endDateTime,
+      mispEntryLink: alert.mispEntryLink,
       detectionSource: alert.detectionSource,
     },
   });
@@ -169,6 +171,17 @@ export async function updateAlert(alert: {
         action: EventAction.KNOWLEDGE,
         alertId: alert.id,
         responsibleId: dbAlert.assignedInvestigatorId,
+      },
+    });
+  }
+
+  if (alert.mispEntryLink) {
+    await prisma.event.create({
+      data: {
+        title: dbAlert.name + " linked to MISP",
+        action: EventAction.KNOWLEDGE,
+        alertId: alert.id,
+        responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
       },
     });
   }
