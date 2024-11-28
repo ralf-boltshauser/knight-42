@@ -4,6 +4,7 @@ export default async function SettingsPage() {
   return (
     <div>
       <SSHConfig />
+      {/* <PopulateNetwork /> */}
     </div>
   );
 }

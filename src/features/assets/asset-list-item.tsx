@@ -11,9 +11,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { PopulatedAsset } from "@/types/asset";
-import { getCriticalityColor, getVisibilityBadge } from "@/types/asset-types";
-import { AlertStatus, AlertType, AssetType } from "@prisma/client";
-import { Eye, MoreHorizontal, Server, User } from "lucide-react";
+import {
+  AssetTypeToIcon,
+  getCriticalityColor,
+  getVisibilityBadge,
+} from "@/types/asset-types";
+import { AlertStatus, AlertType } from "@prisma/client";
+import { Eye, MoreHorizontal } from "lucide-react";
 import Link from "next/link";
 
 import { deleteAsset } from "./asset-actions";
@@ -40,12 +44,8 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
               className="flex items-center gap-2 flex-row justify-between "
             >
               <div className="flex items-center gap-2">
-                <div className="bg-primary/10 p-2 rounded-full">
-                  {asset.type === AssetType.WINDOWS_SERVER ? (
-                    <Server className="h-6 w-6 text-primary" />
-                  ) : (
-                    <User className="h-6 w-6 text-primary" />
-                  )}
+                <div className="bg-primary/10 w-16 h-16 p-2 rounded-full">
+                  {AssetTypeToIcon(asset.type)}
                 </div>
                 <div>
                   <h3 className="font-semibold flex items-center gap-2">
@@ -108,7 +108,6 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>Edit Asset</DropdownMenuItem>
                   <DropdownMenuItem className="text-red-600" asChild>
                     <form action={deleteAsset}>
                       <input type="hidden" name="id" value={asset.id} />

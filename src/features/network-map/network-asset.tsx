@@ -47,7 +47,7 @@ export default function NetworkAsset({
         const size = Math.min(el.offsetWidth / 80, el.offsetHeight / 40);
         el.style.setProperty("--dynamic-text-size", `${size}px`);
       }}
-      whileHover={{ scale: 2.05 }}
+      whileHover={{ scale: 2.05, zIndex: 1000 }}
     >
       <Link
         href={`/assets/${asset.id}`}

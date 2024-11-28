@@ -4,12 +4,17 @@ import { Progress } from "@/components/ui/progress";
 import { getEventStatusColor } from "@/types/event-types";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import { PlaybackType, useNetworkMap } from "./network-map-context";
+import {
+  PlaybackType,
+  TimelineFilter,
+  useNetworkMap,
+} from "./network-map-context";
 
 function NetworkTimelineProgressIndicatorComponent() {
   const {
     datetime,
     events,
+    timelineFilter,
     setDatetime,
     setPlaybackType,
     timelineStart,
@@ -34,6 +39,13 @@ function NetworkTimelineProgressIndicatorComponent() {
     ),
     0
   );
+
+  const filteredEvents = events.filter((event) => {
+    if (timelineFilter === TimelineFilter.FOCUSED) {
+      return !!event.status;
+    }
+    return true;
+  });
 
   // Generate array of dates between start and end
   const getDaysBetweenDates = (startDate: Date, endDate: Date) => {
@@ -97,7 +109,7 @@ function NetworkTimelineProgressIndicatorComponent() {
             />
           );
         })}
-        {events.map((event) => {
+        {filteredEvents.map((event) => {
           const eventProgress = Math.max(
             Math.min(
               ((new Date(event.createdAt).getTime() - timelineStart.getTime()) /
@@ -141,7 +153,7 @@ function NetworkTimelineProgressIndicatorComponent() {
                   100
             );
             setDatetime(newTime);
-            setPlaybackType(PlaybackType.PLAY);
+            setPlaybackType(PlaybackType.PAUSE);
           }}
           onClick={(e) => {
             const rect = (
@@ -159,7 +171,7 @@ function NetworkTimelineProgressIndicatorComponent() {
                   100
             );
             setDatetime(newTime);
-            setPlaybackType(PlaybackType.PLAY);
+            setPlaybackType(PlaybackType.PAUSE);
           }}
         >
           <Progress value={progress} max={100} className="cursor-pointer" />

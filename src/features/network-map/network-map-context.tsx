@@ -6,6 +6,11 @@ export enum PlaybackType {
   LIVE = "LIVE",
 }
 
+export enum TimelineFilter {
+  ALL = "ALL",
+  FOCUSED = "FOCUSED",
+}
+
 import { Sound } from "@/types/sounds";
 import { EventStatus } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +47,8 @@ type NetworkMapContextType = {
     assetId: string
   ) => Awaited<ReturnType<typeof getNetworkMapEvents>>;
   getCurrentAssetStatus: (assetId: string) => EventStatus;
+  timelineFilter: TimelineFilter;
+  setTimelineFilter: (filter: TimelineFilter) => void;
 };
 
 export function NetworkMapProvider({
@@ -65,6 +72,11 @@ export function NetworkMapProvider({
   const [playbackType, setPlaybackType] = useQueryState("playbackType", {
     parse: (value) => value as PlaybackType,
     defaultValue: PlaybackType.LIVE,
+  });
+
+  const [timelineFilter, setTimelineFilter] = useQueryState("timelineFilter", {
+    parse: (value) => value as TimelineFilter,
+    defaultValue: TimelineFilter.ALL,
   });
 
   // if playback type is live, then set interval to 30 sec to refetch all events and update the datetime
@@ -124,8 +136,15 @@ export function NetworkMapProvider({
   );
 
   const dynamicEvents = useMemo(() => {
-    return events.filter((event) => new Date(event.createdAt) <= datetime);
-  }, [events, datetime]);
+    return events
+      .filter((event) => new Date(event.createdAt) <= datetime)
+      .filter((event) => {
+        if (timelineFilter === TimelineFilter.FOCUSED) {
+          return !!event.status;
+        }
+        return true;
+      });
+  }, [events, datetime, timelineFilter]);
 
   const getCurrentAssetStatus = useCallback(
     (assetId: string) => {
@@ -181,6 +200,8 @@ export function NetworkMapProvider({
         getCurrentAssetStatus,
         dynamicEvents,
         setPlaybackType,
+        timelineFilter,
+        setTimelineFilter,
       }}
     >
       {children}

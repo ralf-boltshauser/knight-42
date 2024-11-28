@@ -4,6 +4,7 @@ import { fieldAxis } from "@/types/field";
 import { Network } from "@prisma/client";
 import { motion } from "framer-motion";
 import useFitText from "use-fit-text";
+import CreateNetworkFormDialog from "./create-network-form";
 
 export default function NetworkMapNetwork({
   network,
@@ -64,16 +65,20 @@ export default function NetworkMapNetwork({
           height: `${cellHeight}px`,
         }}
       >
-        <span className="font-bold">{name}</span>
-        <span
-          ref={ref}
-          style={{
-            fontSize,
-            width: `${cellWidth * 0.8}px`,
-          }}
-        >
-          {network.ipRange}
-        </span>
+        <CreateNetworkFormDialog network={network}>
+          <div className="w-full flex flex-col items-center justify-center">
+            <span className="font-bold">{name}</span>
+            <span
+              ref={ref}
+              style={{
+                fontSize,
+                width: `${cellWidth * 0.8}px`,
+              }}
+            >
+              {network.ipRange}
+            </span>
+          </div>
+        </CreateNetworkFormDialog>
       </motion.div>
     </>
   );

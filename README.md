@@ -2,6 +2,7 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
+- [ ] filter timeline
 ## bugs
 - [ ] IOC types not shown
 
@@ -14,7 +15,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 ### UX
 - [ ] automatically detect which network a host belongs to
 - [ ] the network select should highlight the x and y axis sides when hovering a field
-- [ ] more shortcuts in general for editing etc
+- [ ] more shortcuts in general for editing **etc**
 - [ ] empty screens with smth like rough.js or smth react-rough-fiber
 - [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id
 - [ ] add filter for assets etc if there are too many it gets shitty

@@ -27,8 +27,10 @@ import { createNetwork, getNetworks, updateNetwork } from "./network-actions";
 
 export default function CreateNetworkFormDialog({
   network,
+  children,
 }: {
   network?: Network;
+  children?: React.ReactNode;
 }) {
   const [fieldFrom, setFieldFrom] = useState(network?.fieldFrom || "");
   const [fieldTo, setFieldTo] = useState(network?.fieldTo || "");
@@ -62,8 +64,7 @@ export default function CreateNetworkFormDialog({
         networkColor: network.networkColor,
         parentNetworkId: selectedParentNetworkId,
       });
-    }
-    if (name && ipRange && fieldFrom && fieldTo && fieldLegend) {
+    } else if (name && ipRange && fieldFrom && fieldTo && fieldLegend) {
       createNetwork({
         name,
         ipRange,
@@ -87,7 +88,7 @@ export default function CreateNetworkFormDialog({
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button>Create Network</Button>
+        {children ? children : <Button>Create Network</Button>}
       </DialogTrigger>
       <DialogContent className="max-w-[80vw] max-h-[80vh] h-full w-full flex flex-col justify-between items-start gap-4 overflow-y-auto">
         <div className="w-full">
@@ -165,7 +166,9 @@ export default function CreateNetworkFormDialog({
             <Button variant="outline">Cancel</Button>
           </DialogClose>
           <DialogClose asChild>
-            <Button onClick={handleCreateNetwork}>Create</Button>
+            <Button onClick={handleCreateNetwork}>
+              {network ? "Update" : "Create"}
+            </Button>
           </DialogClose>
         </DialogFooter>
       </DialogContent>

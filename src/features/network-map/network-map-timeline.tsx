@@ -16,7 +16,11 @@ import { getEventStatusColor } from "@/types/event-types";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { PlaybackType, useNetworkMap } from "./network-map-context";
+import {
+  PlaybackType,
+  TimelineFilter,
+  useNetworkMap,
+} from "./network-map-context";
 
 export default function NetworkMapTimeline() {
   const {
@@ -27,6 +31,8 @@ export default function NetworkMapTimeline() {
     dynamicEvents,
     playSpeed,
     setPlaySpeed,
+    timelineFilter,
+    setTimelineFilter,
   } = useNetworkMap();
   const [datetimeInput, setDatetimeInput] = useState(
     datetime.toLocaleString("de-CH")
@@ -73,6 +79,23 @@ export default function NetworkMapTimeline() {
           className="border rounded px-2 py-1 w-fit"
         />
         <div className="flex flex-row gap-2">
+          <Select
+            onValueChange={(value) =>
+              setTimelineFilter(value as TimelineFilter)
+            }
+            value={timelineFilter}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Timeline filter" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(TimelineFilter).map((filter) => (
+                <SelectItem key={filter} value={filter}>
+                  {filter}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
           <Select
             onValueChange={(value) => setPlaySpeed(parseInt(value))}
             value={playSpeed.toString()}
