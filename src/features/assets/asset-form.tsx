@@ -118,7 +118,7 @@ export function AssetForm({
     });
     console.log(newMeta);
     form.setValue("metadata", newMeta);
-  }, [form, form.watch("networkId"), networks]);
+  }, [form, form.getValues("networkId"), networks]);
 
   async function onSubmit(values: z.infer<typeof AssetSchema>) {
     try {

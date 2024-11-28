@@ -23,6 +23,7 @@ import { Badge } from "@/components/ui/badge";
 import { getCriticalityColor } from "@/types/asset-types";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useHotkeys } from "react-hotkeys-hook";
 import {
   updateAlertStatus,
   updateReportStatus,
@@ -42,6 +43,26 @@ export default function Dashboard({
   const { data: session } = useSession();
   const [tab, setTab] = useQueryState("tab", {
     defaultValue: "alerts",
+  });
+
+  const tabs = ["alerts", "response-actions", "reports"];
+
+  useHotkeys("tab", (e) => {
+    e.preventDefault();
+    setTab((prev) => {
+      const currentIndex = tabs.indexOf(prev);
+      const nextIndex = (currentIndex + 1) % tabs.length;
+      return tabs[nextIndex];
+    });
+  });
+
+  useHotkeys("shift+tab", (e) => {
+    e.preventDefault();
+    setTab((prev) => {
+      const currentIndex = tabs.indexOf(prev);
+      const nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+      return tabs[nextIndex];
+    });
   });
 
   const activeAlerts = myAlerts.filter(

@@ -114,7 +114,7 @@ export function NetworkMapProvider({
         play();
       }
     }
-  }, [newEvents]);
+  }, [newEvents, events, setEvents, play]);
 
   const togglePlay = useCallback(() => {
     setPlaybackType((prev) => {
@@ -123,7 +123,7 @@ export function NetworkMapProvider({
       }
       return PlaybackType.PLAY;
     });
-  }, [playbackType, setPlaybackType]);
+  }, [setPlaybackType]);
 
   useHotkeys("space", togglePlay);
 

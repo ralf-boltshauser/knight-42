@@ -105,6 +105,24 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
 
   const [tab, setTab] = useQueryState("tab", { defaultValue: "assets" });
 
+  const handleNextTab = (e: KeyboardEvent) => {
+    e.preventDefault();
+    const tabs = ["assets", "iocs", "actions", "timeline"];
+    const currentIndex = tabs.indexOf(tab);
+    const nextIndex = (currentIndex + 1) % tabs.length;
+    setTab(tabs[nextIndex]);
+  };
+
+  const previousTab = (e: KeyboardEvent) => {
+    e.preventDefault();
+    const tabs = ["assets", "iocs", "actions", "timeline"];
+    const currentIndex = tabs.indexOf(tab);
+    const nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
+    setTab(tabs[nextIndex]);
+  };
+
+  useHotkeys("tab", handleNextTab);
+  useHotkeys("shift+tab", previousTab);
   const { data: teamMembers } = useQuery({
     queryKey: ["teamMembers"],
     queryFn: () => getTeamMembers(),

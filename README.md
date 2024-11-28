@@ -8,17 +8,16 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 ### Bigger Changes
 - [ ] automatically create misp entry based on alert and link to it
 
-- [ ] utc timeline
+- [ ] utc **timeline**
 - [ ] wazuh integration
 
 ### UX
 - [ ] more shortcuts in general for editing etc
 - [ ] empty screens with smth like rough.js or smth react-rough-fiber
-- [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id
 - [ ] add filter for assets etc if there are too many it gets shitty
   - [ ] os filter
   - [ ] 
-- [ ] cmd k
+- [ ] cmd **k**
 - [ ] use proper prioritization everywhere everything should be mission critical etc we don't have time to do everything
   - [ ] dashboard should show criticality
 - [ ] add proper loading states
@@ -27,7 +26,6 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
 - [ ] agents won't be working in exercise net
-
 
 ### Low prio
 

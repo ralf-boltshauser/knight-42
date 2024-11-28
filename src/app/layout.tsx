@@ -1,3 +1,4 @@
+import { CmdK } from "@/features/cmd-k/cmd-k";
 import { EasterEggProvider } from "@/features/easter-eggs/easter-egg-context";
 import { authOptions } from "@/lib/auth/auth";
 import type { Metadata } from "next";
@@ -59,7 +60,10 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <EasterEggProvider>
-          <Providers session={session}>{children}</Providers>
+          <Providers session={session}>
+            {children}
+            <CmdK />
+          </Providers>
         </EasterEggProvider>
         <Toaster />
       </body>

@@ -62,20 +62,28 @@ export function AppSidebar() {
 
   const [clickCount, setClickCount] = useState(0);
   const [countClicks, setCountClicks] = useState(false);
+  const [cmdDown, setCmdDown] = useState(false);
+
   const memeClicks = 5;
 
   // when shift down set count clicks to true
   useEffect(() => {
     const listener = (event: KeyboardEvent) => {
-      console.log(event);
       if (event.key === "Shift") {
         setCountClicks(true);
+      }
+
+      if (event.key === "Meta") {
+        setCmdDown(true);
       }
     };
 
     const unset = (event: KeyboardEvent) => {
       if (event.key === "Shift") {
         setCountClicks(false);
+      }
+      if (event.key === "Meta") {
+        setCmdDown(false);
       }
     };
 
@@ -89,17 +97,11 @@ export function AppSidebar() {
 
   // reset after 5 seconds if click count is 5
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
     if (clickCount > 3 && clickCount < memeClicks) {
       toast.info(
         `${memeClicks - clickCount} clicks left to reach meme sounds!`
       );
     }
-    if (clickCount >= memeClicks) {
-      timeout = setTimeout(() => setClickCount(0), 5000);
-    }
-
-    return () => clearTimeout(timeout);
   }, [clickCount]);
 
   return (
@@ -107,7 +109,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <div
-            className="text-lg px-2 py-1 font-bold cursor-pointer"
+            className="text-lg px-2 py-1 font-bold cursor-pointer flex flex-row items-center justify-between gap-4"
             onClick={() => {
               setClickCount((prev) => {
                 if (prev + 1 >= 5) {
@@ -126,6 +128,15 @@ export function AppSidebar() {
             ) : (
               <span>KNIGHT 🤡</span>
             )}
+            <kbd
+              className={`px-1.5 py-0.5 text-xs font-mono border rounded-md ${
+                cmdDown
+                  ? "bg-gray-200 border-gray-300"
+                  : "bg-gray-100 border-gray-200"
+              }`}
+            >
+              ⌘ K
+            </kbd>
           </div>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
