@@ -50,34 +50,57 @@ export default function NetworkMapTimeline() {
 
   return (
     <div className="w-full mx-5 max-h-[90dvh]">
-      <div className="flex flex-row justify-between items-center my-5">
-        <Input
-          type="text"
-          value={datetimeInput}
-          onChange={(e) => setDatetimeInput(e.target.value)}
-          onBlur={() => {
-            console.log("Setting datetime to:", datetimeInput);
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const [day, month, year, _, hours, minutes, seconds] = datetimeInput
-              .split(/[., :]/)
-              .map(Number);
-            const newDate = new Date(
-              year,
-              month - 1,
-              day,
-              hours,
-              minutes,
-              seconds
-            );
-            if (!isNaN(newDate.getTime())) {
-              setDatetime(newDate);
-              setDatetimeInput(newDate.toLocaleString("de-CH"));
-            } else {
-              setDatetimeInput(datetime.toLocaleString("de-CH"));
-            }
-          }}
-          className="border rounded px-2 py-1 w-fit"
-        />
+      <div className="flex flex-row justify-between items-center my-5 gap-4">
+        <div className="flex-col flex gap-2 flex-grow">
+          <div className="flex flex-row gap-1 text-xs">
+            <span className=" text-muted-foreground">New York (EST):</span>
+            <span>
+              {datetime.toLocaleString("de-CH", {
+                timeZone: "America/New_York",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </span>
+          </div>
+          <Input
+            type="text"
+            value={datetimeInput}
+            onChange={(e) => setDatetimeInput(e.target.value)}
+            onBlur={() => {
+              console.log("Setting datetime to:", datetimeInput);
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              const [day, month, year, _, hours, minutes, seconds] =
+                datetimeInput.split(/[., :]/).map(Number);
+              const newDate = new Date(
+                year,
+                month - 1,
+                day,
+                hours,
+                minutes,
+                seconds
+              );
+              if (!isNaN(newDate.getTime())) {
+                setDatetime(newDate);
+                setDatetimeInput(newDate.toLocaleString("de-CH"));
+              } else {
+                setDatetimeInput(datetime.toLocaleString("de-CH"));
+              }
+            }}
+            className="border rounded px-2 py-1 w-full"
+          />
+          <div className="flex flex-row gap-1 text-xs">
+            <span className=" text-muted-foreground">Estonia (EET):</span>
+            <span>
+              {datetime.toLocaleString("de-CH", {
+                timeZone: "Europe/Tallinn",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit",
+              })}
+            </span>
+          </div>
+        </div>
         <div className="flex flex-row gap-2">
           <Select
             onValueChange={(value) =>
