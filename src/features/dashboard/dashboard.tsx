@@ -142,7 +142,7 @@ export default function Dashboard({
                 .filter((alert) => alert.reportStatus === status)
                 .map((alert) => ({
                   id: alert.id,
-                  link: `/alerts/${alert.id}`,
+                  link: `/alerts/${alert.id}?tab=timeline`,
                   color: getCriticalityColor(
                     alert.assets.reduce((acc, asset) => {
                       return acc.criticality > asset.criticality ? acc : asset;
@@ -151,7 +151,9 @@ export default function Dashboard({
                   title: alert.name,
                   tailText: `${alert.assignedInvestigator?.name ?? ""} ${
                     alert.lastReportAt
-                      ? `(Last reported: ${alert.lastReportAt.toLocaleDateString()})`
+                      ? `(Last reported: ${alert.lastReportAt.toLocaleTimeString(
+                          "de-ch"
+                        )})`
                       : ""
                   }`,
                 })),

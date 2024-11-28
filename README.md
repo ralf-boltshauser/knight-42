@@ -2,8 +2,8 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
-- [ ] show uptime checker on asset detail, or maybe even on asset list
 ## bugs
+- [ ] IOC types not shown
 
 ### Bigger Changes
 - [ ] mark alerts as reported

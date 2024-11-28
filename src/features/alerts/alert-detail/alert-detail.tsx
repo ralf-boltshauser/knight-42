@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -294,7 +295,16 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                     </SelectContent>
                   </Select>
                 ) : (
-                  <Badge variant="secondary">{editedAlert.reportStatus}</Badge>
+                  <Badge variant="secondary">
+                    <Link
+                      href={`/network-map?datetime=${editedAlert.lastReportAt?.toLocaleString(
+                        "en-US",
+                        { timeZone: "Europe/Zurich" }
+                      )}&playbackType=PAUSE`}
+                    >
+                      {editedAlert.reportStatus}
+                    </Link>
+                  </Badge>
                 )}
               </div>
             </div>
@@ -626,25 +636,50 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 <ScrollArea className="h-[400px] pr-4">
                   <div className="space-y-4">
                     {editedAlert.events.map((event, index) => (
-                      <div
-                        key={event.id}
-                        className="flex items-center space-x-4"
-                      >
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="text-lg font-semibold text-primary">
-                            {index + 1}
-                          </span>
+                      <>
+                        {" "}
+                        <div
+                          key={event.id}
+                          className="flex items-center space-x-4"
+                        >
+                          <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+                            <span className="text-lg font-semibold text-primary">
+                              {index + 1}
+                            </span>
+                          </div>
+                          <div className="flex-grow">
+                            <p className="font-medium">{event.title}</p>
+                            <p className="text-sm text-muted-foreground">
+                              {format(
+                                new Date(event.createdAt),
+                                "MMM d, yyyy HH:mm"
+                              )}
+                            </p>
+                          </div>
                         </div>
-                        <div className="flex-grow">
-                          <p className="font-medium">{event.title}</p>
-                          <p className="text-sm text-muted-foreground">
-                            {format(
-                              new Date(event.createdAt),
-                              "MMM d, yyyy HH:mm"
-                            )}
-                          </p>
-                        </div>
-                      </div>
+                        {editedAlert.lastReportAt &&
+                          event.createdAt < editedAlert.lastReportAt &&
+                          (editedAlert.events[index + 1] == undefined ||
+                            editedAlert.events[index + 1].createdAt >
+                              editedAlert.lastReportAt) && (
+                            <div className="flex items-center space-x-4">
+                              <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+                                <span className="text-lg font-semibold text-green-800">
+                                  R
+                                </span>
+                              </div>
+                              <div className="flex-grow">
+                                <p className="font-medium">Last Report</p>
+                                <p className="text-sm text-muted-foreground">
+                                  {format(
+                                    new Date(editedAlert.lastReportAt!),
+                                    "MMM d, yyyy HH:mm"
+                                  )}
+                                </p>
+                              </div>
+                            </div>
+                          )}
+                      </>
                     ))}
                   </div>
                 </ScrollArea>

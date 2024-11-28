@@ -163,7 +163,7 @@ export function NetworkMapProvider({
       }
     }, 1000);
     return () => clearInterval(intervalId);
-  }, [playbackType, timelineEnd, playSpeed]);
+  }, [playbackType, timelineEnd, playSpeed, datetime]);
 
   return (
     <NetworkMapContext.Provider

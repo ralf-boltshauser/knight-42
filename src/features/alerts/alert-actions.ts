@@ -112,7 +112,16 @@ export async function updateAlert(alert: {
       assignedInvestigatorId: alert.assignedInvestigatorId,
       status: alert.status,
       techniqueId: alert.techniqueId,
-      reportStatus: alert.reportStatus,
+      lastReportAt:
+        alert.reportStatus == ReportStatus.REPORTED_INTERNATIONAL
+          ? new Date()
+          : undefined,
+      reportStatus:
+        alert.reportStatus !== undefined
+          ? alert.reportStatus
+          : Object.keys(alert).length > 1
+          ? ReportStatus.HAD_CHANGES
+          : undefined,
       description: alert.description,
       endDateTime: alert.endDateTime,
       detectionSource: alert.detectionSource,
@@ -158,6 +167,16 @@ export async function updateAlert(alert: {
       data: {
         title: dbAlert.name + " linked to technique",
         action: EventAction.KNOWLEDGE,
+        alertId: alert.id,
+        responsibleId: dbAlert.assignedInvestigatorId,
+      },
+    });
+  }
+
+  if (alert.reportStatus) {
+    await prisma.event.create({
+      data: {
+        title: dbAlert.name + " report status set to " + alert.reportStatus,
         alertId: alert.id,
         responsibleId: dbAlert.assignedInvestigatorId,
       },

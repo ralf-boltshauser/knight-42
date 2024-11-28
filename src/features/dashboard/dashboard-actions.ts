@@ -24,6 +24,13 @@ export async function updateAlertStatus(alertId: string, status: AlertStatus) {
     },
   });
 
+  await prisma.alert.updateMany({
+    where: { id: alertId, reportStatus: { not: ReportStatus.NEW } },
+    data: {
+      reportStatus: ReportStatus.HAD_CHANGES,
+    },
+  });
+
   if (alert.assets.length > 0) {
     for (const asset of alert.assets) {
       await prisma.event.create({
@@ -97,16 +104,14 @@ export async function updateReportStatus(
     data: {
       reportStatus: status,
       lastReportAt:
-        status == ReportStatus.REPORTED_INTERNATIONAL ||
-        status == ReportStatus.REPORTED_NATIONAL
-          ? new Date()
-          : undefined,
+        status == ReportStatus.REPORTED_INTERNATIONAL ? new Date() : undefined,
     },
   });
 
   await prisma.event.create({
     data: {
       title: res.name + " report status set to " + status,
+      createdAt: new Date(Date.now() - 2000),
       action: EventAction.REPORTING,
       alertId: alertId,
       responsibleId: session?.user.dbId,

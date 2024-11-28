@@ -24,6 +24,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -66,6 +67,18 @@ export default function ThreatActorForm() {
     await createThreatActor(values);
     form.reset();
   }
+
+  const handleGetTTpsFromPaste = (paste: string) => {
+    // from a large string regex for T1234 T and for digits or for T1234.123, there are multiple techniques in the string
+    const ttpRegex = /T\d{4}(?:\.\d{1,3})?/g;
+    const ttpMatches = paste.match(ttpRegex);
+    const ttpTechniques = techniques
+      ?.filter((t) => ttpMatches?.includes(t.ttpIdentifier))
+      .map((t) => t.id);
+    console.log(ttpTechniques);
+
+    return ttpTechniques;
+  };
 
   return (
     <Form {...form}>
@@ -118,7 +131,16 @@ export default function ThreatActorForm() {
           name="techniques"
           render={({ field }) => (
             <FormItem className="flex flex-col">
-              <FormLabel>Techniques</FormLabel>
+              <FormLabel>
+                Techniques {field.value && field.value.length}
+              </FormLabel>
+              <Textarea
+                placeholder="Techniques pastable"
+                onChange={(e) => {
+                  const ttpTechniques = handleGetTTpsFromPaste(e.target.value);
+                  form.setValue("techniques", ttpTechniques);
+                }}
+              />
               <Popover>
                 <PopoverTrigger asChild>
                   <FormControl>
