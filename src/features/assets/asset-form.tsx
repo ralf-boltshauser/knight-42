@@ -73,31 +73,52 @@ export function AssetForm({
   });
 
   // when ip is set check all network ip ranges if it belongs to any of them and set the network id accordingly
-  useEffect(() => {
-    console.log(form.getValues("metadata"));
-    console.log(
-      form.getValues("metadata").IP,
-      form.getValues("metadata").IP?.split(".").length
-    );
-    const metadata = JSON.parse(form.getValues("metadata"));
-    console.log(metadata);
-    if (metadata && metadata.IP && metadata.IP.split(".").length == 4) {
-      console.log("net", networks);
+  // useEffect(() => {
+  //   console.log(form.getValues("metadata"));
+  //   console.log(
+  //     form.getValues("metadata").IP,
+  //     form.getValues("metadata").IP?.split(".").length
+  //   );
+  //   const metadata = JSON.parse(form.getValues("metadata"));
+  //   console.log(metadata);
+  //   if (
+  //     metadata &&
+  //     metadata.IP &&
+  //     metadata.IP.split(".").length == 4 &&
+  //     !form.getValues("networkId")
+  //   ) {
+  //     console.log("net", networks);
 
-      const network = networks?.find((network) =>
-        (() => {
-          const assetIp = metadata.IP;
-          const networkRange = network.ipRange;
-          // Convert IP and range to first 3 octets for /24 comparison
-          const assetPrefix = assetIp.split(".").slice(0, 3).join(".");
-          const networkPrefix = networkRange.split(".").slice(0, 3).join(".");
-          return assetPrefix === networkPrefix;
-        })()
-      );
-      console.log("found network", network);
-      form.setValue("networkId", network?.id || null);
-    }
-  }, [form, networks, form.watch("metadata")]);
+  //     const network = networks?.find((network) =>
+  //       (() => {
+  //         const assetIp = metadata.IP;
+  //         const networkRange = network.ipRange;
+  //         // Convert IP and range to first 3 octets for /24 comparison
+  //         const assetPrefix = assetIp.split(".").slice(0, 3).join(".");
+  //         const networkPrefix = networkRange.split(".").slice(0, 3).join(".");
+  //         return assetPrefix === networkPrefix;
+  //       })()
+  //     );
+  //     console.log("found network", network);
+  //     form.setValue("networkId", network?.id || null);
+  //   }
+  // }, [form, networks, form.watch("metadata")]);
+
+  // if network changes overwrite ip
+  useEffect(() => {
+    const metadata = JSON.parse(form.getValues("metadata"));
+    const network = networks?.find(
+      (network) => network.id === form.getValues("networkId")
+    );
+    console.log("network", network);
+    console.log(metadata);
+    const newMeta = JSON.stringify({
+      ...metadata,
+      IP: network?.ipRange.split("/")[0],
+    });
+    console.log(newMeta);
+    form.setValue("metadata", newMeta);
+  }, [form, form.watch("networkId"), networks]);
 
   function onSubmit(values: z.infer<typeof AssetSchema>) {
     try {
@@ -240,25 +261,6 @@ export function AssetForm({
           )}
         />
 
-        <div className="flex flex-col gap-2">
-          <Label>Host IP</Label>
-          <Input
-            placeholder="Set ip"
-            value={JSON.parse(form.getValues("metadata")).IP}
-            onChange={(e) => {
-              form.setValue(
-                "metadata",
-                JSON.stringify({
-                  ...JSON.parse(form.getValues("metadata")),
-                  IP: e.target.value,
-                })
-              );
-              // trigger onchange of metadata
-              form.trigger("metadata");
-            }}
-          />
-        </div>
-
         {/* Network */}
         <FormField
           control={form.control}
@@ -287,6 +289,24 @@ export function AssetForm({
             </FormItem>
           )}
         />
+        <div className="flex flex-col gap-2">
+          <Label>Host IP</Label>
+          <Input
+            placeholder="Set ip"
+            value={JSON.parse(form.getValues("metadata")).IP}
+            onChange={(e) => {
+              form.setValue(
+                "metadata",
+                JSON.stringify({
+                  ...JSON.parse(form.getValues("metadata")),
+                  IP: e.target.value,
+                })
+              );
+              // trigger onchange of metadata
+              form.trigger("metadata");
+            }}
+          />
+        </div>
 
         {/* Assigned Team Member */}
         <FormField
