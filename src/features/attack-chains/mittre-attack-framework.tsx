@@ -129,7 +129,7 @@ export default function MittreAttackFramework({
     <div className="w-full">
       <div className="flex overflow-x-auto gap-4 p-4" ref={componentRef}>
         {Object.values(Tactic).map((tactic) => {
-          const techniques = allTtps.filter((t) => t.tactic === tactic);
+          const techniques = allTtps.filter((t) => t.tactic.includes(tactic));
           return (
             <div key={tactic} className="min-w-[200px] flex-shrink-0">
               <div className="font-bold text-lg mb-4 text-gray-700">

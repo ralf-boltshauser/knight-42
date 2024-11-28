@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import React from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -636,11 +637,10 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 <ScrollArea className="h-[400px] pr-4">
                   <div className="space-y-4">
                     {editedAlert.events.map((event, index) => (
-                      <>
-                        {" "}
+                      <React.Fragment key={event.id}>
                         <div
-                          key={event.id}
                           className="flex items-center space-x-4"
+                          key={event.id + "-event"}
                         >
                           <div className="flex-shrink-0 w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                             <span className="text-lg font-semibold text-primary">
@@ -662,7 +662,10 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                           (editedAlert.events[index + 1] == undefined ||
                             editedAlert.events[index + 1].createdAt >
                               editedAlert.lastReportAt) && (
-                            <div className="flex items-center space-x-4">
+                            <div
+                              className="flex items-center space-x-4"
+                              key={event.id + "-last-report"}
+                            >
                               <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
                                 <span className="text-lg font-semibold text-green-800">
                                   R
@@ -679,7 +682,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                               </div>
                             </div>
                           )}
-                      </>
+                      </React.Fragment>
                     ))}
                   </div>
                 </ScrollArea>

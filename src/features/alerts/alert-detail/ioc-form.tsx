@@ -45,7 +45,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, IOCType } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -63,6 +63,7 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
     queryKey: ["iocs"],
     queryFn: () => getIOCs(),
   });
+  const [open, setOpen] = useState(false);
   const form = useForm<z.infer<typeof IOCSchema>>({
     resolver: zodResolver(IOCSchema),
     defaultValues: {
@@ -73,10 +74,24 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
     },
   });
 
-  const { data: iocTypes } = useQuery({
-    queryKey: ["iocTypes"],
-    queryFn: () => getIOCTypes(),
+  const {
+    data: iocTypes,
+    error,
+    isLoading: isLoadingIocTypes,
+    status,
+    refetch,
+  } = useQuery({
+    queryKey: ["iocTypes-form"],
+    queryFn: async () => {
+      return await getIOCTypes();
+    },
+    enabled: false,
   });
+
+  useEffect(() => {
+    refetch();
+  }, [refetch, open]);
+  console.log("error loading iocstpyes", error, status);
 
   function onSubmit(values: z.infer<typeof IOCSchema>) {
     toast.success("IOC added successfully");
@@ -85,7 +100,7 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button>
           <Plus className="mr-2 h-4 w-4" /> Add IOC
@@ -175,21 +190,33 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
                     <FormItem>
                       <FormLabel>Type</FormLabel>
                       <FormControl>
-                        <Select
-                          onValueChange={field.onChange}
-                          defaultValue={field.value}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select IOC type" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {iocTypes?.map((type: IOCType) => (
-                              <SelectItem key={type.id} value={type.id}>
-                                {type.name}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
+                        {!isLoadingIocTypes ? (
+                          <Select
+                            onValueChange={field.onChange}
+                            defaultValue={field.value}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select IOC type" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {iocTypes?.map((type: IOCType) => (
+                                <SelectItem key={type.id} value={type.id}>
+                                  {type.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        ) : (
+                          <p>Something went wrong please reload! </p>
+                          // <Button
+                          //   onClick={() => refetch()}
+                          //   type="button"
+                          //   className="block"
+                          //   variant={"outline"}
+                          // >
+                          //   Refetch IOC Types
+                          // </Button>
+                        )}
                       </FormControl>
                       <FormMessage />
                     </FormItem>

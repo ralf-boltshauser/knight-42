@@ -189,6 +189,7 @@ export async function updateAlert(alert: {
 }
 
 export async function getIOCTypes() {
+  console.log("getIOCTypes");
   return await prisma.iOCType.findMany();
 }
 

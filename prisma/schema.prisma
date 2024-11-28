@@ -238,7 +238,7 @@ model Technique {
   id                 String        @id @default(cuid())
   name               String
   ttpIdentifier      String        @unique
-  tactic             Tactic
+  tactic             Tactic[]
   parentTechniqueId  String?
   parentTechnique    Technique?    @relation("ParentTechniqueChildren", fields: [parentTechniqueId], references: [id])
   childrenTechniques Technique[]   @relation("ParentTechniqueChildren")

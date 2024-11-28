@@ -1,0 +1,31 @@
+[
+  {
+    "name": "Mission Unclassified Network",
+    "fieldFrom": "A1",
+    "fieldTo": "G6",
+    "networkColor": "BLUE",
+    "assets": [
+      {
+        "name": "OpenSense Firewall",
+        "ip": "198.18.111.31",
+        "type": "FIREWALL"
+      }
+    ],
+    "subNetworks": [
+      {
+        "name": "SOC",
+        "ipRange": "10.121.231.0/24",
+        "fieldFrom": "A1",
+        "fieldTo": "D2",
+        "networkColor": "GRAY",
+        "assets": [
+          {
+            "name": "Investigator (Kali)",
+            "ip": "10.121.231.215",
+            "type": "LINUX_WORKSTATION"
+          }
+        ]
+      }
+    ]
+  }
+]

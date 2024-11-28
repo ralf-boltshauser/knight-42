@@ -6,18 +6,16 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 - [ ] IOC types not shown
 
 ### Bigger Changes
-- [ ] mark alerts as reported
-  - [ ] and put it into timeline of alert
-- [ ] uptime agents
 - [ ] automatically create misp entry based on alert and link to it
 
 - [ ] utc timeline
 - [ ] wazuh integration
 
 ### UX
+- [ ] automatically detect which network a host belongs to
+- [ ] the network select should highlight the x and y axis sides when hovering a field
 - [ ] more shortcuts in general for editing etc
 - [ ] empty screens with smth like rough.js or smth react-rough-fiber
-- [ ] the network select should highlight the x and y axis sides when hovering a field
 - [ ] add a way to edit networks like clicking on the network would be a great idea to open /network-map/:id
 - [ ] add filter for assets etc if there are too many it gets shitty
   - [ ] os filter

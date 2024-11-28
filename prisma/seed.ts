@@ -48,12 +48,12 @@ async function main() {
     const techniques: {
       name: string;
       ttpIdentifier: string;
-      tactic: Tactic;
+      tactic: Tactic | Tactic[];
       order: number;
       childrenTechniques: {
         name: string;
         ttpIdentifier: string;
-        tactic: Tactic;
+        tactic: Tactic | Tactic[];
         order: number;
       }[];
     }[] = [
@@ -4419,7 +4419,7 @@ async function main() {
       {
         name: "Account Manipulation",
         ttpIdentifier: "T1098",
-        tactic: Tactic.PERSISTENCE,
+        tactic: [Tactic.PERSISTENCE, Tactic.PRIVILEGE_ESCALATION],
         order: 1,
         childrenTechniques: [
           {
@@ -5787,10 +5787,16 @@ async function main() {
         await prisma.technique.create({
           data: {
             ...technique,
+            tactic: Array.isArray(technique.tactic)
+              ? technique.tactic
+              : [technique.tactic],
             childrenTechniques: {
               createMany: {
                 data: technique.childrenTechniques.map((child) => ({
                   ...child,
+                  tactic: Array.isArray(child.tactic)
+                    ? child.tactic
+                    : [child.tactic],
                 })),
               },
             },
