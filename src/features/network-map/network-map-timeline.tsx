@@ -16,12 +16,8 @@ import { getEventStatusColor } from "@/types/event-types";
 import { PauseIcon, PlayIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  PlaybackType,
-  TimelineFilter,
-  useNetworkMap,
-} from "./network-map-context";
-
+import { TimelineFilter } from "./filter-types";
+import { PlaybackType, useNetworkMap } from "./network-map-context";
 export default function NetworkMapTimeline() {
   const {
     datetime,

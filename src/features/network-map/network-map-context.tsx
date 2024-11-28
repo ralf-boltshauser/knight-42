@@ -6,11 +6,6 @@ export enum PlaybackType {
   LIVE = "LIVE",
 }
 
-export enum TimelineFilter {
-  ALL = "ALL",
-  FOCUSED = "FOCUSED",
-}
-
 import { Sound } from "@/types/sounds";
 import { EventStatus } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
@@ -26,6 +21,7 @@ import {
 import { useHotkeys } from "react-hotkeys-hook";
 import useSound from "use-sound";
 import { useEasterEgg } from "../easter-eggs/easter-egg-context";
+import { TimelineFilter } from "./filter-types";
 import { getNetworkMapEvents } from "./network-actions";
 
 const NetworkMapContext = createContext<NetworkMapContextType | undefined>(
@@ -78,13 +74,13 @@ export function NetworkMapProvider({
 
   const [timelineFilter, setTimelineFilter] = useQueryState("timelineFilter", {
     parse: (value) => value as TimelineFilter,
-    defaultValue: TimelineFilter.ALL,
+    defaultValue: TimelineFilter.FOCUSED,
   });
 
   // if playback type is live, then set interval to 30 sec to refetch all events and update the datetime
   const { data: newEvents, refetch } = useQuery({
     queryKey: ["network-map-events-dynamic"],
-    queryFn: () => getNetworkMapEvents(),
+    queryFn: () => getNetworkMapEvents(timelineFilter),
   });
 
   useEffect(() => {

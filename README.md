@@ -24,6 +24,7 @@ Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ### Testing
 - [ ] try to implement a few use cases that could occur in a SOC environment
+- [ ] do some smart caching or smth
 - [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
 - [ ] agents won't be working in exercise net
 

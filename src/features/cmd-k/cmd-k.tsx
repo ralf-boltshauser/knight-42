@@ -1,6 +1,14 @@
 "use client";
 
-import { ArrowLeft, Bell, Link, Server, Shield, Skull } from "lucide-react";
+import {
+  ArrowLeft,
+  Bell,
+  Home,
+  Link,
+  Server,
+  Shield,
+  Skull,
+} from "lucide-react";
 import * as React from "react";
 
 import {
@@ -142,6 +150,10 @@ export function CmdK() {
           {mode === CmdMode.Menu ? (
             <>
               <CommandGroup heading="Navigation">
+                <CommandItem onSelect={() => handleNavigate("/")}>
+                  <Home className="mr-2 h-4 w-4" />
+                  <span>Dashboard</span>
+                </CommandItem>
                 <CommandItem onSelect={() => handleSetMode(CmdMode.Alerts)}>
                   <Bell className="mr-2 h-4 w-4" />
                   <span>Alerts</span>

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/client";
 import { fieldAxis } from "@/types/field";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
+import { TimelineFilter } from "./filter-types";
 import { NetworkSchema } from "./network-schema";
 
 export async function createNetwork(network: z.infer<typeof NetworkSchema>) {
@@ -39,10 +40,17 @@ export async function getNetworkMapAlerts() {
   });
 }
 
-export async function getNetworkMapEvents() {
-  return await prisma.event.findMany({
+export async function getNetworkMapEvents(timelineFilter: TimelineFilter) {
+  const res = await prisma.event.findMany({
+    where: {
+      ...(timelineFilter === TimelineFilter.FOCUSED
+        ? {
+            status: { not: null },
+          }
+        : {}),
+    },
     orderBy: {
-      createdAt: "asc",
+      createdAt: "desc",
     },
     include: {
       asset: true,
@@ -52,6 +60,10 @@ export async function getNetworkMapEvents() {
       responsible: true,
     },
   });
+
+  console.log("res", res.length);
+
+  return res.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
 }
 
 export async function getBlockedSlots(): Promise<{ x: number; y: number }[]> {

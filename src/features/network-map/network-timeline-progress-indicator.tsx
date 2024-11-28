@@ -4,11 +4,8 @@ import { Progress } from "@/components/ui/progress";
 import { getEventStatusColor } from "@/types/event-types";
 import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
-import {
-  PlaybackType,
-  TimelineFilter,
-  useNetworkMap,
-} from "./network-map-context";
+import { TimelineFilter } from "./filter-types";
+import { PlaybackType, useNetworkMap } from "./network-map-context";
 
 function NetworkTimelineProgressIndicatorComponent() {
   const {
