@@ -25,6 +25,7 @@ import {
 } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import useSound from "use-sound";
+import { useEasterEgg } from "../easter-eggs/easter-egg-context";
 import { getNetworkMapEvents } from "./network-actions";
 
 const NetworkMapContext = createContext<NetworkMapContextType | undefined>(
@@ -59,7 +60,8 @@ export function NetworkMapProvider({
   children: React.ReactNode;
 }) {
   // use sound play not-1
-  const [play] = useSound(Sound.NOTIFICATION_1);
+  const { getSound } = useEasterEgg();
+  const [play] = useSound(getSound(Sound.NOTIFICATION_1));
   const [events, setEvents] = useState(initialEvents);
   const [datetime, setDatetime] = useQueryState("datetime", {
     parse: (value) => new Date(value),

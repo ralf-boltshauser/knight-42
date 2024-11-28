@@ -42,6 +42,7 @@ import {
 } from "nuqs";
 import { useCallback, useEffect, useState } from "react";
 import { useSound } from "use-sound";
+import { useEasterEgg } from "../easter-eggs/easter-egg-context";
 import { getAssets } from "./asset-actions";
 import { AssetForm } from "./asset-form";
 import AssetListItem from "./asset-list-item";
@@ -53,9 +54,11 @@ export default function AssetList({
   initialAssets: PopulatedAsset[];
 }) {
   const { data: session } = useSession();
-  const [play] = useSound(Sound.NOTIFICATION_1);
 
   const [assets, setAssets] = useState<PopulatedAsset[]>(initialAssets);
+
+  const { getSound } = useEasterEgg();
+  const [play] = useSound(getSound(Sound.NOTIFICATION_1));
 
   const {
     data: updatedAssets,

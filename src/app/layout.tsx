@@ -1,3 +1,4 @@
+import { EasterEggProvider } from "@/features/easter-eggs/easter-egg-context";
 import { authOptions } from "@/lib/auth/auth";
 import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
@@ -57,7 +58,9 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Providers session={session}>{children}</Providers>
+        <EasterEggProvider>
+          <Providers session={session}>{children}</Providers>
+        </EasterEggProvider>
         <Toaster />
       </body>
     </html>

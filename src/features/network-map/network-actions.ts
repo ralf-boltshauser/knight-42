@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/client";
+import { fieldAxis } from "@/types/field";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { NetworkSchema } from "./network-schema";
@@ -50,5 +51,23 @@ export async function getNetworkMapEvents() {
       responseAction: true,
       responsible: true,
     },
+  });
+}
+
+export async function getBlockedSlots(): Promise<{ x: number; y: number }[]> {
+  const blockedSlots: string[] = [];
+  // fetch all asset identifiers
+  const assets = await prisma.asset.findMany();
+  assets.forEach((asset) => {
+    blockedSlots.push(asset.identifier);
+  });
+  const networks = await prisma.network.findMany();
+  networks.forEach((network) => {
+    blockedSlots.push(network.fieldLegend);
+  });
+  return blockedSlots.map((s) => {
+    const x = fieldAxis.horizontal.indexOf(s[0]);
+    const y = fieldAxis.vertical.indexOf(s.substring(1));
+    return { x, y };
   });
 }

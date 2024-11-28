@@ -120,15 +120,15 @@ export function AssetForm({
     form.setValue("metadata", newMeta);
   }, [form, form.watch("networkId"), networks]);
 
-  function onSubmit(values: z.infer<typeof AssetSchema>) {
+  async function onSubmit(values: z.infer<typeof AssetSchema>) {
     try {
       values.metadata = JSON.parse(values.metadata);
       if (defaultValues) {
-        updateAsset(values);
+        await updateAsset(values);
         toast.success("Asset updated successfully");
       } else {
         toast.success("Asset created successfully");
-        createAsset(values);
+        await createAsset(values);
         form.reset();
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -293,7 +293,7 @@ export function AssetForm({
           <Label>Host IP</Label>
           <Input
             placeholder="Set ip"
-            value={JSON.parse(form.getValues("metadata")).IP}
+            value={JSON.parse(form.getValues("metadata"))?.IP || ""}
             onChange={(e) => {
               form.setValue(
                 "metadata",
