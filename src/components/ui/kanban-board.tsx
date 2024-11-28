@@ -86,7 +86,7 @@ export default function KanbanBoard({
           </Badge>
           <div className="min-h-[200px] flex flex-col gap-2">
             {column.cards.map((card) => (
-              <Link href={card.link} key={card.id}>
+              <Link href={card.link} key={card.id} passHref legacyBehavior>
                 <motion.div
                   draggable
                   onMouseDown={() => onDragStart(card, column.id)}

@@ -109,3 +109,7 @@ Usage
 ```bash
 python3 network-scan.py -t 192.168.0.1/24 -s 192.168.0.113
 ```
+
+# Credits
+- Nicolas Caluori has created a uptime checker.
+- Bamuel Saumgartner and Simon Schmandt has created the mittre attack techniques seed.

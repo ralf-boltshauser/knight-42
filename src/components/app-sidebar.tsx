@@ -61,7 +61,31 @@ export function AppSidebar() {
   const mySidebar = useSidebar();
 
   const [clickCount, setClickCount] = useState(0);
+  const [countClicks, setCountClicks] = useState(false);
   const memeClicks = 5;
+
+  // when shift down set count clicks to true
+  useEffect(() => {
+    const listener = (event: KeyboardEvent) => {
+      console.log(event);
+      if (event.key === "Shift") {
+        setCountClicks(true);
+      }
+    };
+
+    const unset = (event: KeyboardEvent) => {
+      if (event.key === "Shift") {
+        setCountClicks(false);
+      }
+    };
+
+    document.addEventListener("keydown", listener);
+    document.addEventListener("keyup", unset);
+    return () => {
+      document.removeEventListener("keydown", listener);
+      document.removeEventListener("keyup", unset);
+    };
+  }, []);
 
   // reset after 5 seconds if click count is 5
   useEffect(() => {
@@ -89,6 +113,9 @@ export function AppSidebar() {
                 if (prev + 1 >= 5) {
                   setMemeSoundsAllowed(!memeSoundsAllowed);
                   return 0;
+                }
+                if (!countClicks) {
+                  return prev;
                 }
                 return prev + 1;
               });
