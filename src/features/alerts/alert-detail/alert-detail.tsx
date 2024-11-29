@@ -2,6 +2,17 @@
 import Link from "next/link";
 import React from "react";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -56,7 +67,9 @@ import { useEffect, useState } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { toast } from "sonner";
 import { getTechniques, updateAlert } from "../alert-actions";
+import { createMispEvent, createMispEventIOC } from "../misp-actions";
 import AddRelatedAssetDialog from "./add-related-asset-dialog";
 import IOCDialog from "./ioc-form";
 import ResponseActionForm from "./response-action-form";
@@ -71,7 +84,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
       ...alert.relatedIOCs.map((ioc) => ({
         id: ioc.id,
         type: "IOC_ADDED",
-        description: `IOC added: ${ioc.type.name} ${ioc.value}`,
+        description: `IOC added: ${ioc.type} ${ioc.value}`,
         timestamp: ioc.dateFirstObserved,
       })),
       ...alert.responseActions.map((action) => ({
@@ -139,7 +152,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
         ...alert.relatedIOCs.map((ioc) => ({
           id: ioc.id,
           type: "IOC_ADDED",
-          description: `IOC added: ${ioc.type.name} ${ioc.value}`,
+          description: `IOC added: ${ioc.type} ${ioc.value}`,
           timestamp: ioc.dateFirstObserved,
         })),
         ...alert.responseActions.map((action) => ({
@@ -234,22 +247,80 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
     setEditedAlert({ ...editedAlert, status: value as AlertStatus });
   };
 
+  const handleCreateMispEvent = async () => {
+    try {
+      await createMispEvent(editedAlert);
+      toast.success("MISP event created");
+    } catch (error) {
+      toast.error((error as Error).message);
+    }
+  };
+
   return (
     <div className="">
       <div className="mb-6 flex justify-between items-center">
         <h1 className="text-3xl font-bold">Alert Details</h1>
-        {isEditing ? (
-          <Button onClick={handleSave}>
-            <Save className="mr-2 h-4 w-4" /> Save Changes
-          </Button>
-        ) : (
-          <Button onClick={handleEdit}>
-            <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg hidden md:flex">
-              e
-            </kbd>
-            Edit
-          </Button>
-        )}
+        <div className="flex items-center gap-4">
+          {isEditing ? (
+            <div>
+              <Input
+                name="mispLink"
+                placeholder="Paste misp link!"
+                value={editedAlert.mispEntryLink || ""}
+                onChange={(e) =>
+                  setEditedAlert({
+                    ...editedAlert,
+                    mispEntryLink: e.target.value,
+                  })
+                }
+              />
+            </div>
+          ) : (
+            <>
+              {editedAlert.mispEntryLink ? (
+                <Button variant={"outline"} asChild>
+                  <Link href={editedAlert.mispEntryLink} target="_blank">
+                    <LinkIcon className="mr-2 h-4 w-4" />
+                    Link to MISP
+                  </Link>
+                </Button>
+              ) : (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline">Generate MISP Entry</Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Create MISP Event</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will create a new MISP event for this alert. Are
+                        you sure you want to continue?
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleCreateMispEvent}>
+                        Continue
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </>
+          )}
+          {isEditing ? (
+            <Button onClick={handleSave}>
+              <Save className="mr-2 h-4 w-4" /> Save Changes
+            </Button>
+          ) : (
+            <Button onClick={handleEdit}>
+              <kbd className="px-2 py-1 text-xs font-semibold text-gray-800 bg-gray-100 border border-gray-200 rounded-lg hidden md:flex">
+                e
+              </kbd>
+              Edit
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -457,38 +528,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                   </span>
                 )}
               </div>
-              <div className="flex flex-row gap-2 items-center">
-                {isEditing ? (
-                  <div>
-                    <Input
-                      name="mispLink"
-                      placeholder="Paste misp link!"
-                      value={editedAlert.mispEntryLink || ""}
-                      onChange={(e) =>
-                        setEditedAlert({
-                          ...editedAlert,
-                          mispEntryLink: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
-                ) : (
-                  <>
-                    {editedAlert.mispEntryLink ? (
-                      <Button variant={"outline"} asChild>
-                        <Link href={editedAlert.mispEntryLink} target="_blank">
-                          <LinkIcon className="mr-2 h-4 w-4" />
-                          Link to MISP
-                        </Link>
-                      </Button>
-                    ) : (
-                      <p className="text-muted-foreground text-sm">
-                        No MISP link
-                      </p>
-                    )}
-                  </>
-                )}
-              </div>
+              <div className="flex flex-row gap-2 items-center"></div>
             </div>
           </CardHeader>
           <CardContent>
@@ -652,8 +692,42 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                     <Card key={ioc.id}>
                       <CardHeader className="flex flex-row items-center justify-between">
                         <div className="flex flex-row items-center gap-2">
-                          <CardDescription>{ioc.type.name}</CardDescription>
+                          <CardDescription>{ioc.type}</CardDescription>
                           <Badge variant={"outline"}> {ioc.value}</Badge>
+                          {ioc.linkedToMisp ? (
+                            <Link
+                              href={
+                                editedAlert.mispEntryLink
+                                  ? editedAlert.mispEntryLink
+                                  : ""
+                              }
+                            >
+                              <Badge
+                                variant="secondary"
+                                className="bg-blue-100 text-blue-800"
+                              >
+                                Linked to MISP
+                              </Badge>
+                            </Link>
+                          ) : (
+                            <>
+                              {editedAlert.mispEventId && (
+                                <Button
+                                  variant="outline"
+                                  size={"sm"}
+                                  onClick={() => {
+                                    createMispEventIOC(
+                                      editedAlert.id,
+                                      editedAlert.mispEventId!,
+                                      ioc
+                                    );
+                                  }}
+                                >
+                                  Link to Misp
+                                </Button>
+                              )}
+                            </>
+                          )}
                         </div>
                         <p className="text-sm text-muted-foreground">
                           First observed:{" "}

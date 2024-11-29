@@ -6,8 +6,9 @@ export const POST = async (req: NextRequest) => {
   const body = await req.json();
 
   try {
+    console.log("body", body);
     if (Array.isArray(body)) {
-      if (body[0].id && body[0].up) {
+      if (body[0].id && body[0].up !== undefined) {
         for (const asset of body) {
           const lastUptimeRecord = await prisma.assetUptime.findFirst({
             where: { assetId: asset.id },

@@ -24,13 +24,11 @@ import {
   CheckCircle,
   Eye,
   EyeOff,
-  LayoutTemplate,
   Plus,
   RotateCw,
   Server,
   Shield,
   ShieldAlert,
-  Terminal,
   User,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -95,10 +93,10 @@ export default function AssetList({
       parseAsStringEnum(Object.values(AssetVisibility))
     ).withDefault([])
   );
-  const [osFilter, setOsFilter] = useQueryState(
-    "osFilter",
-    parseAsArrayOf(parseAsStringEnum(["WINDOWS", "LINUX"])).withDefault([])
-  );
+  // const [osFilter, setOsFilter] = useQueryState(
+  //   "osFilter",
+  //   parseAsArrayOf(parseAsStringEnum(["WINDOWS", "LINUX"])).withDefault([])
+  // );
 
   const reloadInterval = 15;
   const [reloadCounter, setReloadCounter] = useState(reloadInterval);
@@ -136,13 +134,11 @@ export default function AssetList({
       (criticalityFilter.length === 0 ||
         criticalityFilter.includes(asset.criticality)) &&
       (visibilityFilter.length === 0 ||
-        visibilityFilter.includes(asset.visibility)) &&
-      (osFilter.length === 0 ||
-        osFilter.some((os) =>
-          JSON.stringify(asset.metadata)
-            .toLowerCase()
-            .includes(os.toLowerCase())
-        )),
+        visibilityFilter.includes(asset.visibility)), //   osFilter.some((os) => // (osFilter.length === 0 ||
+    //     JSON.stringify(asset.metadata)
+    //       .toLowerCase()
+    //       .includes(os.toLowerCase())
+    //   )),
     [
       filterType,
       searchTerm,
@@ -151,7 +147,7 @@ export default function AssetList({
       onlyUnderAttack,
       criticalityFilter,
       visibilityFilter,
-      osFilter,
+      // osFilter,
     ]
   );
 
@@ -297,7 +293,7 @@ export default function AssetList({
             Full
           </ToggleGroupItem>
         </ToggleGroup>
-        <ToggleGroup
+        {/* <ToggleGroup
           type="multiple"
           value={osFilter}
           onValueChange={(value) => {
@@ -312,7 +308,7 @@ export default function AssetList({
             <Terminal className="mr-2 h-4 w-4" />
             Linux
           </ToggleGroupItem>
-        </ToggleGroup>
+        </ToggleGroup> */}
         <Button
           variant="outline"
           onClick={() => setReload((prev) => !prev)}

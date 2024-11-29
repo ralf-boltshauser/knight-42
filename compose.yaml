@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: mydb
     volumes:
       - db_data:/var/lib/postgresql/data
+      - ./backups:/backups
     ports:
       - "5432:5432"
     restart: always
@@ -20,38 +21,23 @@ services:
     networks:
       - knight-42-network
 
-  websocket:
-    build:
-      context: ./websocket
-      dockerfile: Dockerfile
-    container_name: websocket_server
-    working_dir: /app
-    volumes:
-      - ./websocket:/app
-      - /app/node_modules
-    ports:
-      - "8080:8080"
-    command: ["node", "server.js"]
+  pgbackups:
+    image: prodrigestivill/postgres-backup-local
     restart: always
-    healthcheck:
-      test: ["CMD-SHELL", "node server.js"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-    networks:
-      - knight-42-network
-
-  db_backup:
-    image: postgres:15-alpine
-    container_name: postgres_backup
+    volumes:
+      - ./backups:/backups
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    volumes:
-      - db_backup:/var/lib/postgresql/data
-    depends_on:
-      - db
-    restart: always
+      - POSTGRES_HOST=db
+      - POSTGRES_DB=mydb
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_EXTRA_OPTS=-Z1 --schema=public --blobs
+      - SCHEDULE=*/30 * * * * # Every 30 minutes
+      - BACKUP_KEEP_DAYS=7
+      - BACKUP_KEEP_WEEKS=4
+      - BACKUP_KEEP_MONTHS=12
+      - BACKUP_KEEP_MINS=20160 # 14 days of backups in the "last" folder
+      - HEALTHCHECK_PORT=8080
     networks:
       - knight-42-network
 

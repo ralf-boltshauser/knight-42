@@ -132,7 +132,7 @@ export default function AlertListItem({ alert }: { alert: PopulatedAlert }) {
                           onClick={() => handleCopy(ioc.value)}
                         >
                           <Badge variant="outline" className="mr-2">
-                            {ioc.type.name}
+                            {ioc.type}
                           </Badge>
                           <span className="text-sm font-medium truncate">
                             {ioc.value}

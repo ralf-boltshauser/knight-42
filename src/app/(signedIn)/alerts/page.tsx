@@ -19,11 +19,7 @@ export default async function AlertsPage() {
           assignedTeamMember: true,
         },
       },
-      relatedIOCs: {
-        include: {
-          type: true,
-        },
-      },
+      relatedIOCs: true,
     },
   });
 

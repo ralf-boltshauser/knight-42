@@ -130,7 +130,7 @@ export default function ThreatActorDetail({
                   onClick={() => handleCopy(ioc.value)}
                 >
                   <div className="flex gap-2 items-center">
-                    {ioc.type && <Badge>{ioc.type.name}</Badge>}
+                    {ioc.type && <Badge>{ioc.type}</Badge>}
                     <Badge>{ioc.value}</Badge>
                   </div>
                   <div className="flex gap-2 items-center">

@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { IOCType } from "@prisma/client";
 import { useState } from "react";
 import { toast } from "sonner";
 import { badgeImportIOCs, getThreatActor } from "../threat-actor-actions";
@@ -22,15 +23,18 @@ export default function CreateThreatActorIOCs({
     return null;
   }
   const handleImport = async () => {
-    await badgeImportIOCs(threatActor.id, domains, "Domain");
-    await badgeImportIOCs(threatActor.id, ipAddresses, "IP Address");
+    await badgeImportIOCs(threatActor.id, domains, IOCType.DOMAIN);
+    await badgeImportIOCs(threatActor.id, ipAddresses, [
+      IOCType.IP_SRC,
+      IOCType.IP_DST,
+    ]);
     toast.success("IOCs imported successfully");
     setDomains([]);
     setIpAddresses([]);
   };
 
   return (
-    <div>
+    <div className="space-y-2 mt-2">
       <div className="flex flex-col gap-2">
         <h2>Domains Badge Import</h2>
         <Textarea

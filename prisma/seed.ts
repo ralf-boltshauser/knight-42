@@ -23,25 +23,6 @@ async function main() {
     });
   }
 
-  const iocTypes = [
-    { name: "IP Address" },
-    { name: "Domain" },
-    { name: "File Hash" },
-    { name: "File Path" },
-    { name: "URL" },
-    { name: "Email Address" },
-    { name: "Registry Key" },
-    { name: "Process Name" },
-  ];
-
-  // check if ioc types count == 0
-  const iocTypesCount = await prisma.iOCType.count();
-  if (iocTypesCount === 0) {
-    await prisma.iOCType.createMany({
-      data: iocTypes,
-    });
-  }
-
   const existingTechniques = await prisma.technique.findMany();
 
   if (existingTechniques.length === 0) {

@@ -65,7 +65,6 @@ export default async function RecommendedThreatActors({
               attackChainId: attackChain.id,
             },
           },
-          type: true,
         },
       },
     },
@@ -104,7 +103,7 @@ export default async function RecommendedThreatActors({
                 <div key={ioc.id} className="border rounded p-3 bg-gray-50">
                   <div className="flex gap-2 items-center mb-2">
                     <span className="font-medium">Type:</span>
-                    <span>{ioc.type.name}</span>
+                    <span>{ioc.type}</span>
                   </div>
                   <div className="flex gap-2 items-center mb-2">
                     <span className="font-medium">Value:</span>

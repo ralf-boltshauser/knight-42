@@ -1,5 +1,6 @@
 "use server";
 import { prisma } from "@/lib/client";
+import { IOCType } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -25,7 +26,6 @@ export async function getThreatActor(threatActorId: string) {
       },
       iocs: {
         include: {
-          type: true,
           linkedAlerts: true,
         },
       },
@@ -105,23 +105,27 @@ export async function updateThreatActorNotes(
 export async function badgeImportIOCs(
   threatActorId: string,
   iocValue: string[],
-  iocType: string
+  iocType: IOCType[] | IOCType
 ) {
-  const iocTypeDb = await prisma.iOCType.findUnique({
-    where: { name: iocType },
-  });
-
-  if (!iocTypeDb) {
-    throw new Error("IOC type not found");
+  if (Array.isArray(iocType)) {
+    await prisma.iOC.createMany({
+      data: iocValue.flatMap((value) =>
+        iocType.map((type) => ({
+          value,
+          type,
+          threatActorId,
+        }))
+      ),
+    });
+  } else {
+    await prisma.iOC.createMany({
+      data: iocValue.map((value) => ({
+        value,
+        type: iocType,
+        threatActorId,
+      })),
+    });
   }
-
-  await prisma.iOC.createMany({
-    data: iocValue.map((value) => ({
-      value,
-      typeId: iocTypeDb.id,
-      threatActorId,
-    })),
-  });
 
   revalidatePath(`/threat-actors/${threatActorId}`);
 }

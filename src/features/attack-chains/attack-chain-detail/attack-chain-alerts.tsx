@@ -86,7 +86,7 @@ export default function AttackChainAlerts({
                           key={ioc.id}
                           className="px-2 py-1 bg-amber-100 text-amber-800 rounded text-sm"
                         >
-                          {ioc.type.name}: {ioc.value}
+                          {ioc.type}: {ioc.value}
                         </span>
                       ))}
                     </div>

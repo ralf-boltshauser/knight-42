@@ -19,11 +19,7 @@ export default async function AlertDetailPage({
           affectedAsset: true,
         },
       },
-      relatedIOCs: {
-        include: {
-          type: true,
-        },
-      },
+      relatedIOCs: true,
       events: true,
     },
   });

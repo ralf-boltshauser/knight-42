@@ -117,16 +117,24 @@ export async function updateAlert(alert: {
         alert.reportStatus == ReportStatus.REPORTED_INTERNATIONAL
           ? new Date()
           : undefined,
-      reportStatus:
-        alert.reportStatus !== undefined
-          ? alert.reportStatus
-          : Object.keys(alert).length > 1
-          ? ReportStatus.HAD_CHANGES
-          : undefined,
       description: alert.description,
       endDateTime: alert.endDateTime,
       mispEntryLink: alert.mispEntryLink,
       detectionSource: alert.detectionSource,
+    },
+  });
+
+  // update reportstatus
+  await prisma.alert.update({
+    where: { id: alert.id },
+    data: {
+      reportStatus:
+        alert.reportStatus !== undefined
+          ? alert.reportStatus
+          : Object.keys(alert).length > 1 &&
+            dbAlert.reportStatus != ReportStatus.NEW
+          ? ReportStatus.HAD_CHANGES
+          : undefined,
     },
   });
 
@@ -201,11 +209,6 @@ export async function updateAlert(alert: {
   revalidatePath(`/assets`);
 }
 
-export async function getIOCTypes() {
-  console.log("getIOCTypes");
-  return await prisma.iOCType.findMany();
-}
-
 export async function createIOC(
   ioc: z.infer<typeof IOCSchema>,
   alertId: string | undefined
@@ -215,6 +218,7 @@ export async function createIOC(
     data: {
       ...ioc,
       linkedAlerts: { connect: { id: alertId } },
+      type: ioc.type,
     },
   });
 

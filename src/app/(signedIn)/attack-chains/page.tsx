@@ -11,11 +11,7 @@ export default async function AttackChainPage() {
           category: true,
           assignedInvestigator: true,
           responseActions: true,
-          relatedIOCs: {
-            include: {
-              type: true,
-            },
-          },
+          relatedIOCs: true,
         },
       },
       analyst: true,

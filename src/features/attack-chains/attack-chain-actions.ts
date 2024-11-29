@@ -48,7 +48,6 @@ export async function getAttackChain(attackChainId: string) {
           },
           iocs: {
             include: {
-              type: true,
               linkedAlerts: true,
             },
           },
@@ -70,11 +69,7 @@ export async function getAttackChain(attackChainId: string) {
               affectedAsset: true,
             },
           },
-          relatedIOCs: {
-            include: {
-              type: true,
-            },
-          },
+          relatedIOCs: true,
           events: true,
         },
       },

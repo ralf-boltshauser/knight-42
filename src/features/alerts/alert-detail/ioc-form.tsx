@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -31,13 +32,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
@@ -45,16 +39,11 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Alert, IOCType } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronsUpDown, Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import {
-  createIOC,
-  getIOCs,
-  getIOCTypes,
-  linkIOCToAlert,
-} from "../alert-actions";
+import { createIOC, getIOCs, linkIOCToAlert } from "../alert-actions";
 import { IOCSchema } from "./ioc-schema";
 
 export default function IOCDialog({ alert }: { alert?: Alert }) {
@@ -67,31 +56,12 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
   const form = useForm<z.infer<typeof IOCSchema>>({
     resolver: zodResolver(IOCSchema),
     defaultValues: {
-      typeId: "",
+      type: IOCType.MD5,
       value: "",
       dateFirstObserved: new Date(),
       notes: "",
     },
   });
-
-  const {
-    data: iocTypes,
-    error,
-    isLoading: isLoadingIocTypes,
-    status,
-    refetch,
-  } = useQuery({
-    queryKey: ["iocTypes-form"],
-    queryFn: async () => {
-      return await getIOCTypes();
-    },
-    enabled: false,
-  });
-
-  useEffect(() => {
-    refetch();
-  }, [refetch, open]);
-  console.log("error loading iocstpyes", error, status);
 
   function onSubmit(values: z.infer<typeof IOCSchema>) {
     toast.success("IOC added successfully");
@@ -120,7 +90,7 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
                   <Button
                     variant="outline"
                     role="combobox"
-                    className="justify-between"
+                    className="justify-between w-full"
                   >
                     {linkIOCId
                       ? iocs?.find((ioc) => ioc.id === linkIOCId)?.value
@@ -128,7 +98,7 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="p-0 w-fit">
+                <PopoverContent className="p-0">
                   <Command>
                     <CommandInput placeholder="Search IOCs..." />
                     <CommandList>
@@ -137,20 +107,24 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
                         {iocs?.map((ioc) => (
                           <CommandItem
                             key={ioc.id}
-                            value={ioc.value}
+                            value={ioc.type + " " + ioc.value}
                             className="w-full"
                             onSelect={() => {
                               setLinkIOCId(ioc.id);
                             }}
                           >
-                            <Check
-                              className={cn(
-                                "mr-2 h-4 w-4",
-                                linkIOCId === ioc.id
-                                  ? "opacity-100"
-                                  : "opacity-0"
-                              )}
-                            />
+                            {linkIOCId === ioc.id ? (
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  linkIOCId === ioc.id
+                                    ? "opacity-100"
+                                    : "opacity-0"
+                                )}
+                              />
+                            ) : (
+                              <Badge variant="outline">{ioc.type}</Badge>
+                            )}
                             <span className="text-nowrap">{ioc.value}</span>
                           </CommandItem>
                         ))}
@@ -185,38 +159,54 @@ export default function IOCDialog({ alert }: { alert?: Alert }) {
               >
                 <FormField
                   control={form.control}
-                  name="typeId"
+                  name="type"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Type</FormLabel>
                       <FormControl>
-                        {!isLoadingIocTypes ? (
-                          <Select
-                            onValueChange={field.onChange}
-                            defaultValue={field.value}
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select IOC type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {iocTypes?.map((type: IOCType) => (
-                                <SelectItem key={type.id} value={type.id}>
-                                  {type.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        ) : (
-                          <p>Something went wrong please reload! </p>
-                          // <Button
-                          //   onClick={() => refetch()}
-                          //   type="button"
-                          //   className="block"
-                          //   variant={"outline"}
-                          // >
-                          //   Refetch IOC Types
-                          // </Button>
-                        )}
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant="outline"
+                              role="combobox"
+                              className="justify-between w-full"
+                            >
+                              {field.value || "Select IOC type"}
+                              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="p-0 w-fit">
+                            <Command>
+                              <CommandInput placeholder="Search IOC type..." />
+                              <CommandList>
+                                <CommandEmpty>No IOC type found.</CommandEmpty>
+                                <CommandGroup>
+                                  {Object.values(IOCType).map((type) => (
+                                    <CommandItem
+                                      key={type}
+                                      value={type}
+                                      onSelect={() => {
+                                        field.onChange(type);
+                                      }}
+                                    >
+                                      <Check
+                                        className={cn(
+                                          "mr-2 h-4 w-4",
+                                          field.value === type
+                                            ? "opacity-100"
+                                            : "opacity-0"
+                                        )}
+                                      />
+                                      <span className="text-nowrap">
+                                        {type}
+                                      </span>
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
