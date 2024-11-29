@@ -2,28 +2,17 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
-- [ ] setup readme 
-  - [ ] general infra
-  - [ ] app itself
-  - [ ] uptime checker
-  - [ ] misp api setup
 
 ## bugs
 
 ### Bigger Changes
 - [ ] wazuh integration
-- [ ] utc timeline
 
 ### UX
 - [ ] empty screens with smth like rough.js or smth react-rough-fiber
-- [ ] use proper prioritization everywhere everything should be mission critical etc we don't have time to do everything
-  - [ ] dashboard should show criticality
 
 ### Testing
-- [ ] try to implement a few use cases that could occur in a SOC environment
 - [ ] do some smart caching or smth
-- [ ] try to overload it and add a shitload of entries etc to see how it looks if you actually use it a lot
-- [ ] agents won't be working in exercise net
 
 ## Usage
 
@@ -69,6 +58,10 @@ npm install -g pnpm
 pnpm install
 ```
 
+Prepare the Env file
+- [ ] add the right MISP API URL
+- [ ] add MISP API Key
+
 Start the services
 ```bash
 bash start.sh
@@ -76,6 +69,22 @@ bash start.sh
 This will build the docker images and start the services.
 
 ## Agents
+### Uptime checker
+There is an uptime checker that will fetch all assets ping them and set their status in the API. To use it follow these steps: 
+
+```bash
+cd network-scan
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+Usage
+-s -> server IP address
+```bash
+python3 uptime-checker.py -s 192.168.0.113
+```
+
+
 ### Linux Agent
 Adjust the IP address in the command below to your server's IP address.
 ```bash
