@@ -41,6 +41,17 @@ services:
     networks:
       - knight-42-network
 
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: jaeger
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    ports:
+      - "16686:16686"
+      - "4318:4318"
+    networks:
+      - knight-42-network
+
 volumes:
   db_data:
   db_backup:

@@ -92,7 +92,7 @@ export function NetworkMapProvider({
       const intervalId = setInterval(() => {
         refetch();
         setDatetime(new Date());
-      }, 5000);
+      }, 15000);
       return () => clearInterval(intervalId);
     }
   }, [playbackType, refetch, setDatetime]);
