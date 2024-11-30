@@ -14,6 +14,8 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { useEasterEgg } from "@/features/easter-eggs/easter-egg-context";
+import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
@@ -59,6 +61,8 @@ export const navItems = [
 export function AppSidebar() {
   const { memeSoundsAllowed, setMemeSoundsAllowed } = useEasterEgg();
   const mySidebar = useSidebar();
+
+  const pathname = usePathname();
 
   const [clickCount, setClickCount] = useState(0);
   const [countClicks, setCountClicks] = useState(false);
@@ -141,23 +145,56 @@ export function AppSidebar() {
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {navItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <Link
-                      href={item.url}
-                      onClick={() => {
-                        if (item.title === "Network map") {
-                          mySidebar.setOpen(false);
-                        }
-                      }}
-                    >
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              <AnimatePresence mode="popLayout">
+                {navItems.map((item) => {
+                  const isActive =
+                    pathname.startsWith(item.url) &&
+                    (item.url !== "/" || pathname == "/");
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      {isActive && (
+                        <motion.div
+                          className="absolute -left-2 w-1 h-full bg-sidebar-primary rounded-r-sm"
+                          layoutId="sidebar-active-item"
+                          transition={{
+                            type: "spring",
+                            stiffness: 500,
+                            damping: 30,
+                          }}
+                        />
+                      )}
+                      <SidebarMenuButton asChild>
+                        <Link
+                          href={item.url}
+                          onClick={() => {
+                            if (item.title === "Network map") {
+                              mySidebar.setOpen(false);
+                            }
+                          }}
+                        >
+                          <motion.div
+                            animate={
+                              isActive
+                                ? {
+                                    rotate: [0, -10, 10, -5, 5, 0],
+                                  }
+                                : {}
+                            }
+                            transition={{
+                              duration: 0.5,
+                              ease: "easeInOut",
+                            }}
+                            className="flex flex-row items-center gap-2 w-5 h-5"
+                          >
+                            <item.icon />
+                          </motion.div>
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </AnimatePresence>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
