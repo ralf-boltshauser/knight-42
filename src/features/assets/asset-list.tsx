@@ -240,11 +240,11 @@ export default function AssetList({
           }}
         >
           <ToggleGroupItem value="mine">
-            <User className="mr-2 h-4 w-4" />
+            <User className="mr-1 h-4 w-4" />
             Mine
           </ToggleGroupItem>
           <ToggleGroupItem value="under-attack">
-            <Shield className="mr-2 h-4 w-4" />
+            <Shield className="mr-1 h-4 w-4" />
             Under Attack
           </ToggleGroupItem>
         </ToggleGroup>
@@ -256,19 +256,19 @@ export default function AssetList({
           }}
         >
           <ToggleGroupItem value={AssetCriticality.LOW}>
-            <CheckCircle className="mr-2 h-4 w-4" />
+            <CheckCircle className="mr-1 h-4 w-4" />
             Low
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetCriticality.MEDIUM}>
-            <AlertCircle className="mr-2 h-4 w-4" />
+            <AlertCircle className="mr-1 h-4 w-4" />
             Medium
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetCriticality.HIGH}>
-            <AlertCircle className="mr-2 h-4 w-4" />
+            <AlertCircle className="mr-1 h-4 w-4" />
             High
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetCriticality.CRITICAL}>
-            <ShieldAlert className="mr-2 h-4 w-4" />
+            <ShieldAlert className="mr-1 h-4 w-4" />
             Critical
           </ToggleGroupItem>
         </ToggleGroup>
@@ -281,15 +281,15 @@ export default function AssetList({
           }}
         >
           <ToggleGroupItem value={AssetVisibility.NONE}>
-            <EyeOff className="mr-2 h-4 w-4" />
+            <EyeOff className="mr-1 h-4 w-4" />
             None
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetVisibility.ALERTS}>
-            <Eye className="mr-2 h-4 w-4" />
+            <Eye className="mr-1 h-4 w-4" />
             Alerts
           </ToggleGroupItem>
           <ToggleGroupItem value={AssetVisibility.FULL}>
-            <Eye className="mr-2 h-4 w-4" />
+            <Eye className="mr-1 h-4 w-4" />
             Full
           </ToggleGroupItem>
         </ToggleGroup>
@@ -301,11 +301,11 @@ export default function AssetList({
           }}
         >
           <ToggleGroupItem value="WINDOWS">
-            <LayoutTemplate className="mr-2 h-4 w-4" />
+            <LayoutTemplate className="mr-1 h-4 w-4" />
             Windows
           </ToggleGroupItem>
           <ToggleGroupItem value="LINUX">
-            <Terminal className="mr-2 h-4 w-4" />
+            <Terminal className="mr-1 h-4 w-4" />
             Linux
           </ToggleGroupItem>
         </ToggleGroup> */}
@@ -314,7 +314,7 @@ export default function AssetList({
           onClick={() => setReload((prev) => !prev)}
           className="flex items-center"
         >
-          <RotateCw className="mr-2 h-4 w-4" />
+          <RotateCw className="mr-1 h-4 w-4" />
           {reload
             ? `Stop Reload (${reloadCounter}s)`
             : `Auto Reload (${reloadInterval}s)`}
