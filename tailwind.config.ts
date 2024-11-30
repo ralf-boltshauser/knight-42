@@ -12,6 +12,38 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      typography: {
+        DEFAULT: {
+          css: {
+            h3: {
+              marginTop: "0", // Adjusts the top margin of paragraphs
+              marginBottom: "0", // Adjusts the bottom margin of paragraphs
+            },
+            ul: {
+              margin: "0", // Removes left padding from all unordered lists
+            },
+            ol: {
+              margin: "0",
+            },
+            li: {
+              margin: "0",
+            },
+            "ul > li": {
+              listStylePosition: "inside", // Adjusts list item markers to be inside
+            },
+            p: {
+              marginTop: "0", // Adjusts the top margin of paragraphs
+              marginBottom: "0", // Adjusts the bottom margin of paragraphs
+            },
+            blockquote: {
+              margin: "0",
+            },
+            pre: {
+              margin: "1rem 0",
+            },
+          },
+        },
+      },
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

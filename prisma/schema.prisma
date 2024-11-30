@@ -138,7 +138,7 @@ enum ReportStatus {
 model Alert {
   id                     String           @id @default(cuid())
   name                   String
-  description            String           @default("")
+  description            String           @default("<h3><strong>Observation</strong></h3><ul><li></li></ul><h3><strong>Assumptions</strong></h3><ul><li></li></ul><h3><strong>Next Steps</strong></h3><ul><li></li></ul><h3><strong>Potential Consequences</strong></h3><ul><li></li></ul><p></p>")
   type                   AlertType // Alert or Incident
   startDateTime          DateTime         @default(now())
   endDateTime            DateTime?
