@@ -31,6 +31,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { quillToolbar } from "@/lib/quill-toolbar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -58,7 +59,8 @@ export function AlertForm() {
       detectionSource: "OTHER",
       categoryId: undefined,
       status: "INITIAL_INVESTIGATION",
-      description: "",
+      description:
+        "<h3><strong>Observation</strong></h3><ul><li></li></ul><h3><strong>Assumptions</strong></h3><ul><li></li></ul><h3><strong>Next Steps</strong></h3><ul><li></li></ul><h3><strong>Potential Consequences</strong></h3><ul><li></li></ul><p></p>",
       relatedIOCs: [],
       attackChainId: null,
       responseActions: [],
@@ -345,10 +347,7 @@ export function AlertForm() {
               <FormControl>
                 <ReactQuill
                   modules={{
-                    toolbar: [
-                      [{ list: "ordered" }, { list: "bullet" }],
-                      ["bold", "italic", "underline"],
-                    ],
+                    toolbar: quillToolbar,
                   }}
                   theme="snow"
                   value={field.value}

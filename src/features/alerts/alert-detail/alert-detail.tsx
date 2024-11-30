@@ -47,6 +47,7 @@ import {
 } from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getTeamMembers } from "@/features/team/team-actions";
+import { quillToolbar } from "@/lib/quill-toolbar";
 import { cn } from "@/lib/utils";
 import { PopulatedAlert } from "@/types/alert";
 import { AlertStatus, AlertType, ReportStatus, User } from "@prisma/client";
@@ -537,10 +538,7 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                 {isEditing ? (
                   <ReactQuill
                     modules={{
-                      toolbar: [
-                        [{ list: "ordered" }, { list: "bullet" }],
-                        ["bold", "italic", "underline"],
-                      ],
+                      toolbar: quillToolbar,
                     }}
                     value={editedAlert.description}
                     onChange={(value) =>

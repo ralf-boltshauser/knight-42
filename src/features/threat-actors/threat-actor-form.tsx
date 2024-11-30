@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Textarea } from "@/components/ui/textarea";
+import { quillToolbar } from "@/lib/quill-toolbar";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQuery } from "@tanstack/react-query";
@@ -111,10 +112,7 @@ export default function ThreatActorForm() {
               <FormControl>
                 <ReactQuill
                   modules={{
-                    toolbar: [
-                      [{ list: "ordered" }, { list: "bullet" }],
-                      ["bold", "italic", "underline"],
-                    ],
+                    toolbar: quillToolbar,
                   }}
                   theme="snow"
                   value={field.value}

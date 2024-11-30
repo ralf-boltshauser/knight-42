@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import MittreAttackFramework from "@/features/attack-chains/mittre-attack-framework";
+import { quillToolbar } from "@/lib/quill-toolbar";
 import { PopulatedTechnique } from "@/types/technique";
 import { Edit2, Save } from "lucide-react";
 import { useQueryState } from "nuqs";
@@ -84,9 +85,7 @@ export default function ThreatActorDetail({
             value={notes}
             onChange={(value) => setNotes(value)}
             modules={{
-              toolbar: [
-                ["bold", "italic", "underline", "strike", "blockquote"],
-              ],
+              toolbar: quillToolbar,
             }}
           />
         ) : (
