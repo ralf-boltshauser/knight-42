@@ -106,21 +106,26 @@ export function AssetForm({
 
   // if network changes overwrite ip
   useEffect(() => {
-    const metadata = JSON.parse(form.getValues("metadata"));
-    if (metadata.IP) {
-      return;
+    try {
+      const metadata = JSON.parse(form.getValues("metadata"));
+      if (metadata.IP) {
+        return;
+      }
+      const network = networks?.find(
+        (network) => network.id === form.getValues("networkId")
+      );
+      console.log("network", network);
+      console.log(metadata);
+      const newMeta = JSON.stringify({
+        ...metadata,
+        IP: network?.ipRange.split("/")[0],
+      });
+      console.log(newMeta);
+      form.setValue("metadata", newMeta);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      console.log(error);
     }
-    const network = networks?.find(
-      (network) => network.id === form.getValues("networkId")
-    );
-    console.log("network", network);
-    console.log(metadata);
-    const newMeta = JSON.stringify({
-      ...metadata,
-      IP: network?.ipRange.split("/")[0],
-    });
-    console.log(newMeta);
-    form.setValue("metadata", newMeta);
   }, [form, form.watch("networkId"), networks]);
 
   async function onSubmit(values: z.infer<typeof AssetSchema>) {
