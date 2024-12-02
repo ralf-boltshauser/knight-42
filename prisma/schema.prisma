@@ -123,6 +123,7 @@ model AlertCategory {
 }
 
 enum AlertStatus {
+  BACKLOG
   INITIAL_INVESTIGATION
   ESCALATED
   RESOLVED
@@ -152,7 +153,7 @@ model Alert {
   techniqueId            String?
   technique              Technique?       @relation(fields: [techniqueId], references: [id])
   category               AlertCategory    @relation(fields: [categoryId], references: [id])
-  status                 AlertStatus
+  status                 AlertStatus      @default(BACKLOG)
   relatedIOCs            IOC[]            @relation("AlertIOCs")
   attackChainId          String?
   attackChain            AttackChain?     @relation(fields: [attackChainId], references: [id])
