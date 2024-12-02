@@ -69,7 +69,7 @@ import { useHotkeys } from "react-hotkeys-hook";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { toast } from "sonner";
-import { getTechniques, updateAlert } from "../alert-actions";
+import { deleteIOC, getTechniques, updateAlert } from "../alert-actions";
 import { createMispEvent, createMispEventIOC } from "../misp-actions";
 import AddRelatedAssetDialog from "./add-related-asset-dialog";
 import IOCDialog from "./ioc-form";
@@ -709,13 +709,50 @@ export default function AlertDetail({ alert }: { alert: PopulatedAlert }) {
                             </>
                           )}
                         </div>
-                        <p className="text-sm text-muted-foreground">
-                          First observed:{" "}
-                          {format(
-                            new Date(ioc.dateFirstObserved),
-                            "MMM d, yyyy HH:mm"
-                          )}
-                        </p>
+                        <div className="flex items-center gap-4">
+                          <p className="text-sm text-muted-foreground">
+                            First observed:{" "}
+                            {format(
+                              new Date(ioc.dateFirstObserved),
+                              "MMM d, yyyy HH:mm"
+                            )}
+                          </p>
+                          {!ioc.linkedToMisp ? (
+                            <AlertDialog>
+                              <AlertDialogTrigger asChild>
+                                <Button
+                                  variant="ghost"
+                                  size="sm"
+                                  className="text-destructive"
+                                >
+                                  Delete
+                                </Button>
+                              </AlertDialogTrigger>
+                              <AlertDialogContent>
+                                <AlertDialogHeader>
+                                  <AlertDialogTitle>
+                                    Delete IOC
+                                  </AlertDialogTitle>
+                                  <AlertDialogDescription>
+                                    Are you sure you want to delete this IOC?
+                                    This action cannot be undone.
+                                  </AlertDialogDescription>
+                                </AlertDialogHeader>
+                                <AlertDialogFooter>
+                                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                  <AlertDialogAction
+                                    onClick={() => {
+                                      deleteIOC(ioc.id, editedAlert.id);
+                                      toast.success("IOC deleted successfully");
+                                    }}
+                                  >
+                                    Delete
+                                  </AlertDialogAction>
+                                </AlertDialogFooter>
+                              </AlertDialogContent>
+                            </AlertDialog>
+                          ) : null}
+                        </div>
                       </CardHeader>
                     </Card>
                   ))}
