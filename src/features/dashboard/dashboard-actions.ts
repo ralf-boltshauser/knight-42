@@ -13,6 +13,7 @@ import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 
 export async function updateAlertStatus(alertId: string, status: AlertStatus) {
+  const session = await getServerSession(authOptions);
   const alert = await prisma.alert.update({
     where: { id: alertId },
     data: {
@@ -31,6 +32,8 @@ export async function updateAlertStatus(alertId: string, status: AlertStatus) {
     },
   });
 
+  console.log("dbid", session?.user.dbId);
+
   if (alert.assets.length > 0) {
     for (const asset of alert.assets) {
       await prisma.event.create({
@@ -38,6 +41,10 @@ export async function updateAlertStatus(alertId: string, status: AlertStatus) {
           title: alert.name + " set to " + status,
           status: convertAlertStatusToEventStatus(status),
           assetId: asset.id,
+          responsibleId:
+            session?.user.dbId !== undefined
+              ? session.user.dbId
+              : alert.assignedInvestigatorId,
         },
       });
     }
@@ -50,6 +57,7 @@ export async function updateResponseActionStatus(
   responseActionId: string,
   status: ResponseActionStatus
 ) {
+  const session = await getServerSession(authOptions);
   const res = await prisma.responseAction.update({
     where: { id: responseActionId },
     data: { status },
@@ -60,6 +68,10 @@ export async function updateResponseActionStatus(
       title: res.name + " set to " + status,
       action: EventAction.ACTION,
       responseActionId: responseActionId,
+      responsibleId:
+        session?.user.dbId !== undefined
+          ? session.user.dbId
+          : res.assignedTeamMemberId,
     },
   });
 

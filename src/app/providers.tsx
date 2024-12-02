@@ -20,6 +20,9 @@ export default function Providers({
   session: Session | null;
   children: React.ReactNode;
 }) {
+  // if (!session) {
+  //   return <p>Please sign in!</p>;
+  // }
   return (
     <SessionProvider session={session}>
       <QueryClientProvider client={queryClient}>

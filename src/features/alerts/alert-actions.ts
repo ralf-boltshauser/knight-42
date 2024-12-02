@@ -262,6 +262,7 @@ export async function createResponseAction(
   affectedAssetId: string | undefined,
   assignedTeamMemberId: string | undefined
 ) {
+  console.log("responseAction created", responseAction);
   const res = await prisma.responseAction.create({
     data: {
       ...responseAction,
@@ -287,6 +288,7 @@ export async function updateResponseAction(
   id: string,
   responseAction: Partial<z.infer<typeof ResponseActionSchema>>
 ) {
+  const session = await getServerSession(authOptions);
   const res = await prisma.responseAction.update({
     where: { id },
     data: {
@@ -301,7 +303,10 @@ export async function updateResponseAction(
         action: EventAction.ACTION,
         responseActionId: id,
         alertId: res.relatedIncidentId,
-        responsibleId: res.assignedTeamMemberId,
+        responsibleId:
+          session?.user.dbId !== undefined
+            ? session.user.dbId
+            : res.assignedTeamMemberId,
       },
     });
   }
