@@ -55,14 +55,12 @@ export default function ResponseActionForm({
 
   function onSubmit(values: z.infer<typeof ResponseActionSchema>) {
     toast.success("Response action added successfully");
-    if (alert.assets.length > 0) {
-      createResponseAction(
-        values,
-        alert.id,
-        values.affectedAssetId || alert.assets[0].id,
-        alert.assignedInvestigator?.id
-      );
-    }
+    createResponseAction(
+      values,
+      alert.id,
+      values.affectedAssetId || alert.assets?.[0]?.id || undefined,
+      alert.assignedInvestigator?.id
+    );
     form.reset();
   }
 
