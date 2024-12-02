@@ -237,6 +237,26 @@ export async function createIOC(
   revalidatePath(`/alerts/${alertId}`);
 }
 
+export async function deleteIOC(iocId: string, alertId: string) {
+  const session = await getServerSession(authOptions);
+  await prisma.iOC.delete({
+    where: { id: iocId },
+  });
+
+  if (session?.user.dbId) {
+    await prisma.event.create({
+      data: {
+        title: "IOC Deleted",
+        action: EventAction.KNOWLEDGE,
+        alertId: alertId,
+        responsibleId: session.user.dbId,
+      },
+    });
+  }
+
+  revalidatePath(`/alerts/${alertId}`);
+}
+
 export async function linkIOCToAlert(iocId: string, alertId: string) {
   const session = await getServerSession(authOptions);
   await prisma.iOC.update({
