@@ -44,7 +44,7 @@ export default function AssetListItem({ asset }: { asset: PopulatedAsset }) {
               className="flex items-center gap-2 flex-row justify-between "
             >
               <div className="flex items-center gap-2">
-                <div className="bg-primary/10 w-16 h-16 p-2 rounded-full">
+                <div className="bg-primary/10 w-16 h-16 p-2 rounded-full flex items-center justify-center">
                   {AssetTypeToIcon(asset.type)}
                 </div>
                 <div>
