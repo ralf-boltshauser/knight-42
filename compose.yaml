@@ -1,5 +1,21 @@
 version: '3.9'
 services:
+  web:
+    image: knight
+    container_name: web
+    environment:
+      DATABASE_URL: "postgresql://postgres:postgres@db:5432/mydb?schema=public"
+      NEXTAUTH_SECRET: "2kFO6NT50BORJM5FwTcwFEdRA4Z9pDbh4t/99mMyy5I="
+      NEXTAUTH_URL: http://localhost:4200
+      MISP_API_KEY: QB1JXrjoa3y9z0ucQ3t3NgccppvY993UV6ZUT4Mu
+      MISP_API_URL: "https://10.10.10.5:4444"
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
+    restart: always
+    ports:
+      - "4200:4200"
+    networks:
+      - knight-42-network
+
   db:
     image: postgres:15-alpine
     container_name: postgres_db
