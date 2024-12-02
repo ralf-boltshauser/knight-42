@@ -12,6 +12,7 @@ export default async function SSHConfig() {
         identifier: asset.identifier,
         host: metadata.IP,
         user: metadata.username,
+        password: metadata.password ?? undefined,
         identityFile: "~/.ssh/common_identity_file",
       };
     })
@@ -20,6 +21,7 @@ export default async function SSHConfig() {
     host: string;
     user: string;
     identityFile: string;
+    password?: string;
   }[];
 
   return (
@@ -31,7 +33,7 @@ export default async function SSHConfig() {
             (c) => `Host ${c.identifier}
     HostName ${c.host}
     User ${c.user}
-    IdentityFile ${c.identityFile}`
+    ${c.password ? `Password ${c.password}` : `IdentityFile ${c.identityFile}`}`
           )
           .join("\n\n")}
       </pre>
