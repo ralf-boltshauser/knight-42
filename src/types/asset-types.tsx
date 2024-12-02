@@ -1,17 +1,10 @@
 import { Badge } from "@/components/ui/badge";
 import { AssetCriticality, AssetType, AssetVisibility } from "@prisma/client";
 import { Eye, EyeOff } from "lucide-react";
-import Image from "next/image";
 export function AssetTypeToIcon(type: AssetType) {
   function image(src: string, alt: string) {
     return (
-      <Image
-        src={src}
-        alt={alt}
-        className="w-full h-full"
-        width={64}
-        height={64}
-      />
+      <img src={src} alt={alt} className="w-8 h-8" width={64} height={64} />
     );
   }
   switch (type) {
