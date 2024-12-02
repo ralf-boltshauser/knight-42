@@ -66,15 +66,19 @@ export async function createAlert(alert: z.infer<typeof AlertSchema>) {
       detectionSource: alert.detectionSource,
       status: alert.status,
       categoryId: alert.categoryId,
-      assets: { connect: alert.assets?.map((asset) => ({ id: asset })) },
+      ...(alert.assets && alert.assets.length > 0
+        ? { assets: { connect: alert.assets.map((asset) => ({ id: asset })) } }
+        : {}),
       relatedIOCs: {
-        connect: alert.relatedIOCs?.map((ioc) => ({ id: ioc })),
+        connect: alert.relatedIOCs?.map((ioc) => ({ id: ioc })) ?? [],
       },
       assignedInvestigatorId: alert.assignedInvestigatorId,
       events: {
         create: {
           title: alert.name + " created",
-          asset: { connect: { id: alert.assets?.[0] } },
+          ...(alert.assets?.[0]
+            ? { asset: { connect: { id: alert.assets[0] } } }
+            : {}),
           action: EventAction.INVESTIGATION,
           status: EventStatus.WARNING,
           responsible: {

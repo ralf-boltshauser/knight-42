@@ -69,7 +69,9 @@ export default function Dashboard({
     (alert) =>
       alert.status !== AlertStatus.RESOLVED &&
       (alert.assignedInvestigator?.id === session?.user.dbId ||
-        !alert.assignedInvestigator)
+        !alert.assignedInvestigator) &&
+      alert.assets &&
+      alert.assets.length > 0
   );
   const activeResponseActions = myResponseActions.filter(
     (responseAction) =>
@@ -113,14 +115,23 @@ export default function Dashboard({
               title: status,
               color: getAlertStatusColor(status),
               cards: myAlerts
-                .filter((alert) => alert.status === status)
+                .filter(
+                  (alert) =>
+                    alert.status === status &&
+                    alert.assets &&
+                    alert.assets.length > 0
+                )
                 .map((alert) => ({
                   id: alert.id,
                   link: `/alerts/${alert.id}`,
                   color: getCriticalityColor(
-                    alert.assets.reduce((acc, asset) => {
-                      return acc.criticality > asset.criticality ? acc : asset;
-                    }).criticality
+                    alert.assets.length > 0
+                      ? alert.assets.reduce((acc, asset) => {
+                          return acc.criticality > asset.criticality
+                            ? acc
+                            : asset;
+                        }).criticality
+                      : AssetCriticality.LOW
                   ),
                   title: alert.name,
                   tailText: (
@@ -176,9 +187,13 @@ export default function Dashboard({
                   id: alert.id,
                   link: `/alerts/${alert.id}?tab=timeline`,
                   color: getCriticalityColor(
-                    alert.assets.reduce((acc, asset) => {
-                      return acc.criticality > asset.criticality ? acc : asset;
-                    }).criticality
+                    alert.assets.length > 0
+                      ? alert.assets.reduce((acc, asset) => {
+                          return acc.criticality > asset.criticality
+                            ? acc
+                            : asset;
+                        }).criticality
+                      : AssetCriticality.LOW
                   ),
                   title: alert.name,
                   tailText: `${alert.assignedInvestigator?.name ?? ""} ${

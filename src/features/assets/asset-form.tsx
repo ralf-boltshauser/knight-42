@@ -147,7 +147,10 @@ export function AssetForm({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className="space-y-4 grid grid-cols-2 gap-4"
+      >
         {/* Name */}
         <FormField
           control={form.control}
@@ -358,7 +361,7 @@ export function AssetForm({
           control={form.control}
           name="notes"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-2">
               <FormLabel>Notes</FormLabel>
               <FormControl>
                 <Textarea
@@ -376,7 +379,7 @@ export function AssetForm({
           control={form.control}
           name="metadata"
           render={({ field }) => (
-            <FormItem>
+            <FormItem className="col-span-2">
               <FormLabel>Metadata</FormLabel>
               <FormControl>
                 <JsonInput
