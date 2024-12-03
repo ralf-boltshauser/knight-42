@@ -184,7 +184,11 @@ export default function Dashboard({
               title: status,
               color: getReportStatusColor(status),
               cards: myAlerts
-                .filter((alert) => alert.reportStatus === status)
+                .filter(
+                  (alert) =>
+                    alert.reportStatus === status &&
+                    alert.status == AlertStatus.RESOLVED
+                )
                 .map((alert) => ({
                   id: alert.id,
                   link: `/alerts/${alert.id}?tab=timeline`,
