@@ -136,11 +136,13 @@ export default function Dashboard({
                   title: alert.name,
                   tailText: (
                     <div className="flex flex-row gap-2 items-center">
-                      {alert.assets.map((a) => (
-                        <Link key={a.id} href={`/assets/${a.id}`}>
-                          <Badge variant="outline">{a.name}</Badge>
-                        </Link>
-                      ))}
+                      <div className="flex flex-col gap-2">
+                        {alert.assets.map((a) => (
+                          <Link key={a.id} href={`/assets/${a.id}`}>
+                            <Badge variant="outline">{a.name}</Badge>
+                          </Link>
+                        ))}
+                      </div>
                       <span>{alert.assignedInvestigator?.name ?? ""}</span>
                     </div>
                   ),

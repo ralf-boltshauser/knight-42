@@ -126,6 +126,9 @@ export async function updateAlert(alert: {
       mispEntryLink: alert.mispEntryLink,
       detectionSource: alert.detectionSource,
     },
+    include: {
+      assets: true,
+    },
   });
 
   // update reportstatus
@@ -145,21 +148,42 @@ export async function updateAlert(alert: {
   console.log("alert updated", alert);
 
   if (alert.status) {
-    await prisma.event.create({
-      data: {
-        title:
-          dbAlert.name +
-          " " +
-          (dbAlert.status == AlertStatus.ESCALATED
-            ? "escalated"
-            : dbAlert.status == AlertStatus.RESOLVED
-            ? "resolved"
-            : "under investigation"),
-        status: convertAlertStatusToEventStatus(alert.status),
-        alertId: alert.id,
-        responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
-      },
-    });
+    if (dbAlert.assets.length > 0) {
+      for (const asset of dbAlert.assets) {
+        await prisma.event.create({
+          data: {
+            title:
+              dbAlert.name +
+              " " +
+              (alert.status == AlertStatus.ESCALATED
+                ? "escalated"
+                : alert.status == AlertStatus.RESOLVED
+                ? "resolved"
+                : "under investigation"),
+            status: convertAlertStatusToEventStatus(alert.status),
+            alertId: alert.id,
+            assetId: asset.id,
+            responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
+          },
+        });
+      }
+    } else {
+      await prisma.event.create({
+        data: {
+          title:
+            dbAlert.name +
+            " " +
+            (alert.status == AlertStatus.ESCALATED
+              ? "escalated"
+              : alert.status == AlertStatus.RESOLVED
+              ? "resolved"
+              : "under investigation"),
+          status: convertAlertStatusToEventStatus(alert.status),
+          alertId: alert.id,
+          responsibleId: dbAlert.assignedInvestigatorId ?? undefined,
+        },
+      });
+    }
   }
 
   if (alert.type) {

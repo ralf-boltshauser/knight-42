@@ -34,6 +34,8 @@ export const convertAlertStatusToEventStatus = (status: AlertStatus) => {
       return EventStatus.WARNING;
     case AlertStatus.ESCALATED:
       return EventStatus.DOWN;
+    case AlertStatus.RESOLVED:
+      return EventStatus.OKAY;
     default:
       return EventStatus.OKAY;
   }
