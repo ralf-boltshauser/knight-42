@@ -115,24 +115,22 @@ export default function Dashboard({
               title: status,
               color: getAlertStatusColor(status),
               cards: myAlerts
-                .filter(
-                  (alert) =>
-                    alert.status === status &&
-                    alert.assets &&
-                    alert.assets.length > 0
-                )
+                .filter((alert) => alert.status === status)
                 .map((alert) => ({
                   id: alert.id,
                   link: `/alerts/${alert.id}`,
-                  color: getCriticalityColor(
-                    alert.assets.length > 0
-                      ? alert.assets.reduce((acc, asset) => {
-                          return acc.criticality > asset.criticality
-                            ? acc
-                            : asset;
-                        }).criticality
-                      : AssetCriticality.LOW
-                  ),
+                  color:
+                    alert.assets && alert.assets.length > 0
+                      ? getCriticalityColor(
+                          alert.assets.length > 0
+                            ? alert.assets.reduce((acc, asset) => {
+                                return acc.criticality > asset.criticality
+                                  ? acc
+                                  : asset;
+                              }).criticality
+                            : AssetCriticality.LOW
+                        )
+                      : getCriticalityColor(AssetCriticality.LOW),
                   title: alert.name,
                   tailText: (
                     <div className="flex flex-row gap-2 items-center">
