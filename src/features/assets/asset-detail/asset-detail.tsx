@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
+  Copy,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -133,12 +134,35 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
     }
   };
 
+  let sshConnectionString = "";
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const metadata = asset.metadata as any;
+    if (metadata.username && metadata.IP && metadata.password) {
+      sshConnectionString = `sshpass -p "${metadata.password}" ssh -o StrictHostKeyChecking=no ${metadata.username}@${metadata.IP}`;
+    }
+  } catch (error) {
+    console.error(error);
+  }
+
   return (
     <div className="">
       <div className="flex items-center justify-between">
         <div>
-          <CardTitle className="text-2xl font-bold">
+          <CardTitle className="text-2xl font-bold flex items-center gap-2">
             {assetDetail.name}
+            {sshConnectionString && sshConnectionString.length > 0 && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() =>
+                  navigator.clipboard.writeText(sshConnectionString)
+                }
+                title="Copy SSH connection string"
+              >
+                <Copy className="h-4 w-4" />
+              </Button>
+            )}
           </CardTitle>
           <CardDescription>{assetDetail.identifier}</CardDescription>
         </div>
