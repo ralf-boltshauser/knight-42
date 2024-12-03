@@ -37,11 +37,11 @@ export default function AddRelatedAssetDialog({ alert }: { alert: Alert }) {
           <Plus className="mr-2 h-4 w-4" /> Add Related Asset
         </Button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="max-w-none w-fit">
         <DialogHeader>
           <DialogTitle>Add Related Asset</DialogTitle>
         </DialogHeader>
-        <div className="flex flex-col gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {assets?.map((asset) => (
             <div
               key={asset.id}
@@ -62,7 +62,7 @@ export default function AddRelatedAssetDialog({ alert }: { alert: Alert }) {
                 checked={selectedAssetIds.includes(asset.id)}
                 onChange={() => {}} // Handled by div onClick
               />
-              <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+              <label className="text-sm text-nowrap font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                 {asset.name}
               </label>
             </div>
