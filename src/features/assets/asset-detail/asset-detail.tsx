@@ -24,6 +24,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { toast } from "sonner";
+import { useCopyToClipboard } from "usehooks-ts";
 import { AssetForm } from "../asset-form";
 import AssetUptimeDisplay from "../asset-uptime-display";
 
@@ -60,6 +62,14 @@ type TimelineEvent = {
 
 export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
   const [activeTab, setActiveTab] = useState("timeline");
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [copy, copyText] = useCopyToClipboard();
+
+  const handleCopy = (text: string) => {
+    copyText(text);
+    toast.success("Copied to clipboard");
+  };
 
   const assetDetail: AssetDetailType = {
     id: asset.id,
@@ -155,9 +165,7 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() =>
-                  navigator.clipboard.writeText(sshConnectionString)
-                }
+                onClick={() => handleCopy(sshConnectionString)}
                 title="Copy SSH connection string"
               >
                 <Copy className="h-4 w-4" />
