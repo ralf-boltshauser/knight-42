@@ -469,6 +469,7 @@ model ResponseAction {
 enum EventStatus {
   OKAY
   WARNING
+  COMPROMISED
   DOWN
 }
 

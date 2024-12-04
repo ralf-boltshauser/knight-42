@@ -185,7 +185,8 @@ export default function Dashboard({
                 .filter(
                   (alert) =>
                     alert.reportStatus === status &&
-                    alert.status == AlertStatus.RESOLVED
+                    (alert.status == AlertStatus.RESOLVED ||
+                      alert.status == AlertStatus.ESCALATED)
                 )
                 .map((alert) => ({
                   id: alert.id,

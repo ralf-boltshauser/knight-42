@@ -12,6 +12,8 @@ export const getEventStatusColor = (status: EventStatus | null) => {
       return "gray";
     case EventStatus.WARNING:
       return "orange";
+    case EventStatus.COMPROMISED:
+      return "purple";
     case EventStatus.DOWN:
       return "red";
     default:
@@ -33,7 +35,7 @@ export const convertAlertStatusToEventStatus = (status: AlertStatus) => {
     case AlertStatus.INITIAL_INVESTIGATION:
       return EventStatus.WARNING;
     case AlertStatus.ESCALATED:
-      return EventStatus.DOWN;
+      return EventStatus.COMPROMISED;
     case AlertStatus.RESOLVED:
       return EventStatus.OKAY;
     default:
@@ -46,7 +48,7 @@ export const convertAlertTypeToEventStatus = (type: AlertType) => {
     case AlertType.ALERT:
       return EventStatus.WARNING;
     case AlertType.INCIDENT:
-      return EventStatus.DOWN;
+      return EventStatus.COMPROMISED;
     default:
       return EventStatus.OKAY;
   }
