@@ -47,7 +47,7 @@ export const getAlertStatusColor = (status: AlertStatus) => {
     case AlertStatus.INITIAL_INVESTIGATION:
       return "orange";
     case AlertStatus.ESCALATED:
-      return "red";
+      return "purple";
     case AlertStatus.RESOLVED:
       return "green";
     default:
