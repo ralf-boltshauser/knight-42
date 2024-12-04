@@ -19,7 +19,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   Clock,
-  Copy,
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -162,14 +161,13 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
           <CardTitle className="text-2xl font-bold flex items-center gap-2">
             {assetDetail.name}
             {sshConnectionString && sshConnectionString.length > 0 && (
-              <Button
-                variant="ghost"
-                size="sm"
+              <pre
+                className="cursor-pointer hover:bg-gray-100 rounded p-2 text-sm"
                 onClick={() => handleCopy(sshConnectionString)}
                 title="Copy SSH connection string"
               >
-                <Copy className="h-4 w-4" />
-              </Button>
+                {sshConnectionString}
+              </pre>
             )}
           </CardTitle>
           <CardDescription>{assetDetail.identifier}</CardDescription>
