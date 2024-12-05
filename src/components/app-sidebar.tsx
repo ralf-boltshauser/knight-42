@@ -113,7 +113,7 @@ export function AppSidebar() {
       <SidebarContent>
         <SidebarGroup>
           <div
-            className="text-lg px-2 py-1 font-bold cursor-pointer flex flex-row items-center justify-between gap-4"
+            className="text-lg px-2 pt-1 font-bold cursor-pointer flex flex-row items-center justify-between gap-4"
             onClick={() => {
               setClickCount((prev) => {
                 if (prev + 1 >= 5) {
@@ -142,6 +142,12 @@ export function AppSidebar() {
               ⌘ K
             </kbd>
           </div>
+          <Link
+            href={"https://www.linkedin.com/in/ralfboltshauser/"}
+            className="px-2 text-xs text-muted-foreground"
+          >
+            by <strong className="italic">Ralf Boltshauser</strong>
+          </Link>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
