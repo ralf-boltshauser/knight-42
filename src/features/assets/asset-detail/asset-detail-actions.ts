@@ -9,6 +9,14 @@ export async function getAssetById(assetId: string) {
     include: {
       assetUptimes: true,
       assignedTeamMember: true,
+      sshSessions: {
+        include: {
+          event: true,
+        },
+        orderBy: {
+          startedAt: "desc",
+        },
+      },
       alerts: {
         include: {
           category: true,

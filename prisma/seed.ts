@@ -4477,7 +4477,7 @@ async function main() {
             },
           },
         });
-      } catch (error) {
+      } catch {
         console.error(technique.ttpIdentifier);
       }
     }
@@ -4712,6 +4712,320 @@ async function main() {
   //     });
   //   }
   // }
+
+  // Seed Services and Components for Dependency Maps
+  const servicesCount = await prisma.service.count();
+  if (servicesCount === 0) {
+    // Create some sample assets first
+    const mailServer1 = await prisma.asset.create({
+      data: {
+        name: "Mail Server 01",
+        identifier: "mail-server-01",
+        type: "WINDOWS_SERVER",
+        criticality: "HIGH",
+        visibility: "FULL",
+      },
+    });
+
+    const mailServer2 = await prisma.asset.create({
+      data: {
+        name: "Mail Server 02",
+        identifier: "mail-server-02",
+        type: "WINDOWS_SERVER",
+        criticality: "HIGH",
+        visibility: "FULL",
+      },
+    });
+
+    const dnsServer = await prisma.asset.create({
+      data: {
+        name: "DNS Primary",
+        identifier: "dns-primary",
+        type: "LINUX_SERVER",
+        criticality: "HIGH",
+        visibility: "FULL",
+      },
+    });
+
+    const adController = await prisma.asset.create({
+      data: {
+        name: "AD Controller 01",
+        identifier: "ad-controller-01",
+        type: "WINDOWS_SERVER",
+        criticality: "CRITICAL",
+        visibility: "FULL",
+      },
+    });
+
+    const webServer1 = await prisma.asset.create({
+      data: {
+        name: "Web Server 01",
+        identifier: "web-server-01",
+        type: "LINUX_SERVER",
+        criticality: "MEDIUM",
+        visibility: "FULL",
+      },
+    });
+
+    const webServer2 = await prisma.asset.create({
+      data: {
+        name: "Web Server 02",
+        identifier: "web-server-02",
+        type: "LINUX_SERVER",
+        criticality: "MEDIUM",
+        visibility: "FULL",
+      },
+    });
+
+    // Create Components
+    const exchangeComponent1 = await prisma.component.create({
+      data: {
+        name: "Exchange Component 1",
+        description: "Primary Exchange mail component",
+        isUp: true,
+      },
+    });
+
+    const exchangeComponent2 = await prisma.component.create({
+      data: {
+        name: "Exchange Component 2",
+        description: "Secondary Exchange mail component",
+        isUp: true,
+      },
+    });
+
+    const dnsComponent = await prisma.component.create({
+      data: {
+        name: "DNS Component",
+        description: "Internal DNS resolver component",
+        isUp: true,
+      },
+    });
+
+    const adComponent = await prisma.component.create({
+      data: {
+        name: "Active Directory Component",
+        description: "Domain controller and authentication component",
+        isUp: false, // Let's make this down to test the logic
+      },
+    });
+
+    const webComponent1 = await prisma.component.create({
+      data: {
+        name: "Web Component 1",
+        description: "Primary web application component",
+        isUp: true,
+      },
+    });
+
+    const webComponent2 = await prisma.component.create({
+      data: {
+        name: "Web Component 2",
+        description: "Secondary web application component",
+        isUp: false, // Let's make this down to test OR logic
+      },
+    });
+
+    // Create Component Hosting relationships
+    await prisma.componentHosting.createMany({
+      data: [
+        {
+          componentId: exchangeComponent1.id,
+          assetId: mailServer1.id,
+          role: "Primary",
+        },
+        {
+          componentId: exchangeComponent2.id,
+          assetId: mailServer2.id,
+          role: "Secondary",
+        },
+        {
+          componentId: dnsComponent.id,
+          assetId: dnsServer.id,
+          role: "Primary",
+        },
+        {
+          componentId: adComponent.id,
+          assetId: adController.id,
+          role: "Primary",
+        },
+        {
+          componentId: webComponent1.id,
+          assetId: webServer1.id,
+          role: "Primary",
+        },
+        {
+          componentId: webComponent2.id,
+          assetId: webServer2.id,
+          role: "Secondary",
+        },
+      ],
+    });
+
+    // Create Services first (without rootGroup)
+    const mailService = await prisma.service.create({
+      data: {
+        name: "Mail Service",
+        description: "Corporate email communication system",
+        owner: "IT Operations",
+        missionCritical: true,
+      },
+    });
+
+    const webService = await prisma.service.create({
+      data: {
+        name: "Web Service",
+        description: "Internal web applications and intranet",
+        owner: "IT Operations",
+        missionCritical: false,
+      },
+    });
+
+    const authService = await prisma.service.create({
+      data: {
+        name: "Authentication Service",
+        description: "User authentication and directory services",
+        owner: "IT Security",
+        missionCritical: true,
+      },
+    });
+
+    // Create Root Dependency Groups for Services
+    const mailRootGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "Mail Service Root",
+        operator: "AND",
+        service: {
+          connect: { id: mailService.id },
+        },
+      },
+    });
+
+    const webRootGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "Web Service Root",
+        operator: "AND",
+        service: {
+          connect: { id: webService.id },
+        },
+      },
+    });
+
+    const authRootGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "Auth Service Root",
+        operator: "AND",
+        service: {
+          connect: { id: authService.id },
+        },
+      },
+    });
+
+    // Update services to link to their root groups
+    await prisma.service.update({
+      where: { id: mailService.id },
+      data: { rootGroupId: mailRootGroup.id },
+    });
+
+    await prisma.service.update({
+      where: { id: webService.id },
+      data: { rootGroupId: webRootGroup.id },
+    });
+
+    await prisma.service.update({
+      where: { id: authService.id },
+      data: { rootGroupId: authRootGroup.id },
+    });
+
+    // Create Nested Groups for Mail Service
+    const exchangeGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "Exchange Servers",
+        operator: "OR",
+        parentGroup: {
+          connect: { id: mailRootGroup.id },
+        },
+      },
+    });
+
+    const dnsGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "DNS Server",
+        operator: "AND",
+        parentGroup: {
+          connect: { id: mailRootGroup.id },
+        },
+      },
+    });
+
+    const adGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "Active Directory",
+        operator: "AND",
+        parentGroup: {
+          connect: { id: mailRootGroup.id },
+        },
+      },
+    });
+
+    // Create Nested Groups for Web Service
+    const webServersGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "Web Servers",
+        operator: "OR",
+        parentGroup: {
+          connect: { id: webRootGroup.id },
+        },
+      },
+    });
+
+    const webDnsGroup = await prisma.dependencyGroup.create({
+      data: {
+        name: "DNS Server",
+        operator: "AND",
+        parentGroup: {
+          connect: { id: webRootGroup.id },
+        },
+      },
+    });
+
+    // Create Dependency Items (Components in Groups)
+    await prisma.dependencyItem.createMany({
+      data: [
+        // Mail Service - Exchange Group
+        {
+          componentId: exchangeComponent1.id,
+          dependencyGroupId: exchangeGroup.id,
+        },
+        {
+          componentId: exchangeComponent2.id,
+          dependencyGroupId: exchangeGroup.id,
+        },
+
+        // Mail Service - DNS Group
+        { componentId: dnsComponent.id, dependencyGroupId: dnsGroup.id },
+
+        // Mail Service - AD Group
+        { componentId: adComponent.id, dependencyGroupId: adGroup.id },
+
+        // Web Service - Web Servers Group
+        {
+          componentId: webComponent1.id,
+          dependencyGroupId: webServersGroup.id,
+        },
+        {
+          componentId: webComponent2.id,
+          dependencyGroupId: webServersGroup.id,
+        },
+
+        // Web Service - DNS Group
+        { componentId: dnsComponent.id, dependencyGroupId: webDnsGroup.id },
+
+        // Auth Service - AD Group (reuse existing AD group)
+        { componentId: adComponent.id, dependencyGroupId: authRootGroup.id },
+      ],
+    });
+  }
 }
 
 main()

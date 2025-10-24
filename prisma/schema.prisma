@@ -97,6 +97,12 @@ model Asset {
   alerts          Alert[]          @relation("AssetAlerts")
   responseActions ResponseAction[]
 
+  // Dependency Maps relations
+  componentHosting ComponentHosting[]
+
+  // SSH Sessions
+  sshSessions SshSession[]
+
   createdAt    DateTime      @default(now())
   updatedAt    DateTime      @updatedAt
   events       Event[]
@@ -500,5 +506,118 @@ model Event {
   responsibleId String?
   responsible   User?   @relation(fields: [responsibleId], references: [id])
 
+  // SSH Session relationship (one-to-one via SshSession.eventId)
+  sshSession SshSession?
+
   createdAt DateTime @default(now())
+}
+
+// Dependency Maps Models
+model Service {
+  id              String  @id @default(cuid())
+  name            String
+  description     String?
+  owner           String? // Team or person responsible
+  missionCritical Boolean @default(false)
+
+  rootGroupId String?          @unique
+  rootGroup   DependencyGroup? @relation("RootGroup", fields: [rootGroupId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Component {
+  id          String  @id @default(cuid())
+  name        String
+  description String?
+  isUp        Boolean @default(true)
+
+  // Hosting - which assets this component runs on
+  hosting ComponentHosting[]
+
+  // What dependency groups include this component
+  dependencyItems DependencyItem[] @relation("ComponentItems")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum DependencyOperator {
+  AND
+  OR
+}
+
+model DependencyGroup {
+  id       String             @id @default(cuid())
+  name     String?
+  operator DependencyOperator @default(AND)
+
+  service Service? @relation("RootGroup")
+
+  parentGroupId String?
+  parentGroup   DependencyGroup?  @relation("GroupHierarchy", fields: [parentGroupId], references: [id])
+  childGroups   DependencyGroup[] @relation("GroupHierarchy")
+
+  // Items 
+  items DependencyItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DependencyItem {
+  id          String    @id @default(cuid())
+  componentId String
+  component   Component @relation("ComponentItems", fields: [componentId], references: [id], onDelete: Cascade)
+
+  createdAt         DateTime        @default(now())
+  dependencyGroup   DependencyGroup @relation(fields: [dependencyGroupId], references: [id], onDelete: Cascade)
+  dependencyGroupId String
+}
+
+model ComponentHosting {
+  id          String    @id @default(cuid())
+  componentId String
+  component   Component @relation(fields: [componentId], references: [id], onDelete: Cascade)
+  assetId     String
+  asset       Asset     @relation(fields: [assetId], references: [id])
+  role        String? // e.g., "Primary", "Secondary", "Load Balancer"
+  createdAt   DateTime  @default(now())
+
+  @@unique([componentId, assetId])
+}
+
+model SshSession {
+  id          String @id @default(cuid())
+  analystName String // Analyst name from .knight42 file
+  host        String // Hostname/IP from SSH command
+
+  // Asset relationship
+  assetId String? // Link to actual asset
+  asset   Asset?  @relation(fields: [assetId], references: [id])
+
+  // Event relationship
+  eventId String? @unique // Link to timeline event
+  event   Event?  @relation(fields: [eventId], references: [id])
+
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  duration  Int? // Duration in seconds
+
+  status SshSessionStatus @default(ACTIVE)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([analystName])
+  @@index([host])
+  @@index([assetId])
+  @@index([eventId])
+  @@index([status])
+}
+
+enum SshSessionStatus {
+  ACTIVE
+  COMPLETED
 }

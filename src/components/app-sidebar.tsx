@@ -1,5 +1,14 @@
 "use client";
-import { Bell, Box, Home, Map, Settings, Skull, Swords } from "lucide-react";
+import {
+  Bell,
+  Box,
+  Home,
+  Map,
+  Server,
+  Settings,
+  Skull,
+  Swords,
+} from "lucide-react";
 import Link from "next/link";
 
 import {
@@ -30,6 +39,11 @@ export const navItems = [
     title: "Assets",
     url: "/assets",
     icon: Box,
+  },
+  {
+    title: "Services",
+    url: "/services",
+    icon: Server,
   },
   {
     title: "Alerts",

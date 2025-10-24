@@ -27,6 +27,8 @@ import { toast } from "sonner";
 import { useCopyToClipboard } from "usehooks-ts";
 import { AssetForm } from "../asset-form";
 import AssetUptimeDisplay from "../asset-uptime-display";
+import { SshSessionsVisualization } from "../ssh-sessions-visualization";
+import { getAssetById } from "./asset-detail-actions";
 
 // Mock data based on the Prisma schema
 type AssetDetailType = {
@@ -61,9 +63,21 @@ type TimelineEvent = {
 
 export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
   const [activeTab, setActiveTab] = useState("timeline");
+  const [assetData, setAssetData] = useState(asset);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [copy, copyText] = useCopyToClipboard();
+
+  const handleRefresh = async () => {
+    try {
+      const refreshedAsset = await getAssetById(asset.id);
+      if (refreshedAsset) {
+        setAssetData(refreshedAsset as PopulatedAsset);
+      }
+    } catch (error) {
+      console.error("Failed to refresh asset data:", error);
+    }
+  };
 
   const handleCopy = (text: string) => {
     copyText(text);
@@ -71,22 +85,22 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
   };
 
   const assetDetail: AssetDetailType = {
-    id: asset.id,
-    name: asset.name,
-    identifier: asset.identifier,
-    type: asset.type,
-    criticality: asset.criticality,
-    visibility: asset.visibility,
+    id: assetData.id,
+    name: assetData.name,
+    identifier: assetData.identifier,
+    type: assetData.type,
+    criticality: assetData.criticality,
+    visibility: assetData.visibility,
     assignedTeamMember: {
-      name: asset.assignedTeamMember?.name ?? "Unknown",
-      email: asset.assignedTeamMember?.email ?? "Unknown",
+      name: assetData.assignedTeamMember?.name ?? "Unknown",
+      email: assetData.assignedTeamMember?.email ?? "Unknown",
     },
-    notes: asset.notes ?? "",
+    notes: assetData.notes ?? "",
   };
 
   // build timeline events based on alerts and response actions
   const timelineEvents: TimelineEvent[] = [
-    ...asset.alerts.map((alert) => ({
+    ...assetData.alerts.map((alert) => ({
       id: alert.id,
       type: "ALERT" as TimelineEventType,
       name: alert.name,
@@ -98,7 +112,7 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
         name: alert.assignedInvestigator?.name ?? "Unknown",
       },
     })),
-    ...asset.responseActions.map((action) => ({
+    ...assetData.responseActions.map((action) => ({
       id: action.id,
       type: "ACTION" as TimelineEventType,
       name: action.name,
@@ -146,7 +160,7 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
   let sshConnectionString = "";
   try {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const metadata = asset.metadata as any;
+    const metadata = assetData.metadata as any;
     if (metadata.username && metadata.IP && metadata.password) {
       sshConnectionString = `sshpass -p "${metadata.password}" ssh -o StrictHostKeyChecking=no ${metadata.username}@${metadata.IP}`;
     }
@@ -197,16 +211,17 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
         </div>
       </div>
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+        <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
           <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <TabsTrigger value="ssh-sessions">SSH Sessions</TabsTrigger>
           <TabsTrigger value="details">Details</TabsTrigger>
         </TabsList>
         <TabsContent value="timeline" className="mt-6">
-          {asset.assetUptimes && asset.assetUptimes.length > 0 ? (
+          {assetData.assetUptimes && assetData.assetUptimes.length > 0 ? (
             <div className="my-5">
               <h2 className="text-lg font-semibold">Uptime</h2>
               <AssetUptimeDisplay
-                assetUptimes={asset.assetUptimes}
+                assetUptimes={assetData.assetUptimes}
                 limit={50}
               />
             </div>
@@ -293,15 +308,24 @@ export default function AssetDetail({ asset }: { asset: PopulatedAsset }) {
             </div>
           </div>
           <Button asChild>
-            <Link href={`/alerts/create?assetId=${asset.id}`} className="mt-5">
+            <Link
+              href={`/alerts/create?assetId=${assetData.id}`}
+              className="mt-5"
+            >
               Add Alert
             </Link>
           </Button>
         </TabsContent>
+        <TabsContent value="ssh-sessions" className="mt-6">
+          <SshSessionsVisualization
+            asset={assetData}
+            onRefresh={handleRefresh}
+          />
+        </TabsContent>
         <TabsContent value="details">
           <AssetForm
             defaultValues={{
-              ...asset,
+              ...assetData,
               notes: assetDetail.notes ?? "",
             }}
           />

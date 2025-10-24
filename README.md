@@ -2,6 +2,9 @@
 Knowledge Network for Incident Gathering, Hosts, and Tracking
 
 ## Todos
+- finish the whole dependency mapping system
+- ssh wrapper to track who is on what machine at what time, tracking in and out, so we can reference this when doing investigations
+- ip not stored on creation asset
 
 ## bugs
 

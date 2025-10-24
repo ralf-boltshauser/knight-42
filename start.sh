@@ -10,7 +10,7 @@ else
 fi
 
 # Setup infra
-docker-compose up --build -d && sleep 60
+docker-compose up --build -d && sleep 10
 
 # Setup db
 pnpm prisma:generate
@@ -26,6 +26,9 @@ IP_ADDR=$(ip route get 1 | awk '{print $7;exit}' 2>/dev/null || ifconfig | grep 
 
 # Add new NEXTAUTH_URL with IP to .env
 echo "NEXTAUTH_URL=http://${IP_ADDR}:4200" >> .env
+
+# Add SSH API token for testing
+echo "SSH_API_TOKEN=knight42-test-token-123" >> .env
 
 
 # Display live URL
