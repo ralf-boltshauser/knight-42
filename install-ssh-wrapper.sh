@@ -48,10 +48,22 @@ if [[ -f "$INSTALL_DIR/$WRAPPER_NAME" ]]; then
     cp "$INSTALL_DIR/$WRAPPER_NAME" "$BACKUP_DIR/ssh.backup"
 fi
 
-# Download the SSH wrapper
+# Download the SSH wrapper to temp file first
 echo -e "${BLUE}📥 Downloading SSH wrapper...${NC}"
-if curl -sSL "$SSH_WRAPPER_URL" -o "$INSTALL_DIR/$WRAPPER_NAME"; then
+TEMP_FILE="/tmp/ssh-wrapper-$(date +%s)"
+if curl -sSL "$SSH_WRAPPER_URL" -o "$TEMP_FILE"; then
     echo -e "${GREEN}✅ SSH wrapper downloaded successfully${NC}"
+    
+    # Move to final location
+    echo -e "${BLUE}🔧 Installing SSH wrapper...${NC}"
+    if mv "$TEMP_FILE" "$INSTALL_DIR/$WRAPPER_NAME"; then
+        echo -e "${GREEN}✅ SSH wrapper installed successfully${NC}"
+    else
+        echo -e "${RED}❌ Failed to install SSH wrapper (permission denied)${NC}"
+        echo "Try running with sudo: sudo curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | sudo bash"
+        rm -f "$TEMP_FILE"
+        exit 1
+    fi
 else
     echo -e "${RED}❌ Failed to download SSH wrapper${NC}"
     echo "Please check your internet connection and try again."
