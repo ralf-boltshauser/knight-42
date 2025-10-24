@@ -17,9 +17,9 @@ pnpm prisma:generate
 pnpm prisma:push
 pnpm prisma:seed
 
-# Remove existing NEXTAUTH_URL from .env if it exists
+# Remove existing NEXTAUTH_URL and SSH_API_TOKEN from .env if they exist
 sed -i '' '/^NEXTAUTH_URL=/d' .env
-
+sed -i '' '/^SSH_API_TOKEN=/d' .env
 
 # Get IP address (works on Linux, macOS)
 IP_ADDR=$(ip route get 1 | awk '{print $7;exit}' 2>/dev/null || ifconfig | grep 'inet ' | grep -v '127.0.0.1' | awk '{print $2}' | head -n1)
