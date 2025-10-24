@@ -93,6 +93,45 @@ export async function handleSshStartEvent(
     // Find the asset by host
     const asset = await findAssetByHost(data.host);
 
+    // Close any existing active sessions for this analyst
+    const existingSessions = await prisma.sshSession.findMany({
+      where: {
+        analystName: data.analystName,
+        status: SshSessionStatus.ACTIVE,
+      },
+      include: {
+        event: true,
+      },
+    });
+
+    // Close each existing session
+    for (const existingSession of existingSessions) {
+      const endTime = new Date(data.timestamp);
+      const duration = Math.floor(
+        (endTime.getTime() - existingSession.startedAt.getTime()) / 1000
+      );
+
+      // Update the existing session to completed
+      await prisma.sshSession.update({
+        where: { id: existingSession.id },
+        data: {
+          status: SshSessionStatus.COMPLETED,
+          endedAt: endTime,
+          duration: duration,
+        },
+      });
+
+      // Update the associated event
+      if (existingSession.event) {
+        await prisma.event.update({
+          where: { id: existingSession.event.id },
+          data: {
+            title: `SSH Session Completed - ${data.analystName} (${duration}s)`,
+          },
+        });
+      }
+    }
+
     // Create event for timeline
     const event = await prisma.event.create({
       data: {
