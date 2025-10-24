@@ -22,7 +22,7 @@ export KNIGHT42_API_TOKEN="your-api-token"
 ### 3. Add to Shell Profile (Optional)
 ```bash
 echo 'export KNIGHT42_API_URL="http://your-server:4200/api/ssh-events"' >> ~/.bashrc
-echo 'export KNIGHT42_API_TOKEN="your-api-token"' >> ~/.bashrc
+echo 'export KNIGHT42_API_TOKEN="knight-42-api-token"' >> ~/.bashrc
 ```
 
 ## 🎯 Usage
@@ -41,7 +41,7 @@ ssh -v root@192.168.1.10
 |----------|-------------|---------|
 | `KNIGHT42_API_URL` | API endpoint URL | `http://localhost:3000/api/ssh-events` |
 | `KNIGHT42_API_TOKEN` | Authentication token | `your-api-token-here` |
-| `KNIGHT42_LOG_ONLY_ROOT` | Track only root users | `true` |
+| `KNIGHT42_LOG_ONLY_ROOT` | Track only root users | `false` |
 
 ## 🛠️ Recovery
 
