@@ -3,8 +3,10 @@
 ## 🚀 One-Click Installation
 
 ```bash
-curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | bash
+sudo curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | sudo bash
 ```
+
+**Note**: Requires sudo permissions to install to `/usr/local/bin/ssh`
 
 ## ⚙️ Configuration
 
@@ -48,6 +50,11 @@ ssh -v root@192.168.1.10
 To restore original SSH command:
 ```bash
 sudo rm /usr/local/bin/ssh
+```
+
+To reinstall the wrapper:
+```bash
+sudo curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | sudo bash
 ```
 
 ---
