@@ -97,7 +97,6 @@ export function SshSessionsVisualization({
       endedAt: session.endedAt,
       duration: session.duration,
       status: session.status,
-      event: session.event,
     }));
   }, [asset.sshSessions]);
 
@@ -135,7 +134,6 @@ export function SshSessionsVisualization({
   const filteredSessions = useMemo(() => {
     return sessionsData.filter((session) => {
       const sessionStart = session.startedAt;
-      const sessionEnd = session.endedAt || new Date();
 
       const isInTimeRange = isWithinInterval(sessionStart, {
         start: timeRangeData.start,
@@ -150,43 +148,43 @@ export function SshSessionsVisualization({
   }, [sessionsData, timeRangeData, selectedAnalyst]);
 
   // Detect suspicious activity
-  const detectSuspiciousActivity = (
-    session: SshSessionData
-  ): { isSuspicious: boolean; reasons: string[] } => {
-    const reasons: string[] = [];
+  // const detectSuspiciousActivity = (
+  //   session: SshSessionData
+  // ): { isSuspicious: boolean; reasons: string[] } => {
+  //   const reasons: string[] = [];
 
-    // TODO: Re-enable suspicious activity detection when needed
-    // Currently commented out since we know these are legitimate sessions
+  //   // TODO: Re-enable suspicious activity detection when needed
+  //   // Currently commented out since we know these are legitimate sessions
 
-    // // Check for odd hours (outside 8 AM - 6 PM)
-    // const hour = session.startedAt.getHours();
-    // if (hour < 8 || hour > 18) {
-    //   reasons.push(`Session at odd hour (${hour}:00)`);
-    // }
+  //   // // Check for odd hours (outside 8 AM - 6 PM)
+  //   // const hour = session.startedAt.getHours();
+  //   // if (hour < 8 || hour > 18) {
+  //   //   reasons.push(`Session at odd hour (${hour}:00)`);
+  //   // }
 
-    // // Check for very long sessions (> 2 hours)
-    // const duration = session.duration || 0;
-    // if (duration > 7200) {
-    //   // 2 hours in seconds
-    //   reasons.push(`Long session (${Math.round(duration / 60)} minutes)`);
-    // }
+  //   // // Check for very long sessions (> 2 hours)
+  //   // const duration = session.duration || 0;
+  //   // if (duration > 7200) {
+  //   //   // 2 hours in seconds
+  //   //   reasons.push(`Long session (${Math.round(duration / 60)} minutes)`);
+  //   // }
 
-    // // Check for multiple sessions in short time
-    // const recentSessions = sessionsData.filter(
-    //   (s) =>
-    //     s.analystName === session.analystName &&
-    //     s.id !== session.id &&
-    //     Math.abs(s.startedAt.getTime() - session.startedAt.getTime()) < 3600000 // 1 hour
-    // );
-    // if (recentSessions.length > 2) {
-    //   reasons.push(`Multiple sessions in short time`);
-    // }
+  //   // // Check for multiple sessions in short time
+  //   // const recentSessions = sessionsData.filter(
+  //   //   (s) =>
+  //   //     s.analystName === session.analystName &&
+  //   //     s.id !== session.id &&
+  //   //     Math.abs(s.startedAt.getTime() - session.startedAt.getTime()) < 3600000 // 1 hour
+  //   // );
+  //   // if (recentSessions.length > 2) {
+  //   //   reasons.push(`Multiple sessions in short time`);
+  //   // }
 
-    return {
-      isSuspicious: reasons.length > 0,
-      reasons,
-    };
-  };
+  //   return {
+  //     isSuspicious: reasons.length > 0,
+  //     reasons,
+  //   };
+  // };
 
   // Generate session bars for visualization
   const sessionBars: SessionBar[] = useMemo(() => {
@@ -228,7 +226,11 @@ export function SshSessionsVisualization({
     });
 
     sortedSessions.forEach((session) => {
-      const suspicious = detectSuspiciousActivity(session);
+      // const suspicious = detectSuspiciousActivity(session);
+      const suspicious = {
+        isSuspicious: false,
+        reasons: [],
+      };
 
       // For active sessions, extend to current time
       const sessionEnd =
@@ -266,16 +268,14 @@ export function SshSessionsVisualization({
 
   // Get unique analysts for filter
   const analysts = useMemo(() => {
-    const unique = [...new Set(sessionsData.map((s) => s.analystName))];
+    const unique = Array.from(new Set(sessionsData.map((s) => s.analystName)));
     return unique.sort();
   }, [sessionsData]);
 
   // Calculate statistics
   const stats = useMemo(() => {
     const totalSessions = filteredSessions.length;
-    const suspiciousSessions = filteredSessions.filter(
-      (s) => detectSuspiciousActivity(s).isSuspicious
-    ).length;
+    const suspiciousSessions = filteredSessions.filter(() => false).length;
     const totalDuration = filteredSessions.reduce(
       (sum, s) => sum + (s.duration || 0),
       0

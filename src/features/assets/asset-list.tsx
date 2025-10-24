@@ -59,7 +59,7 @@ export default function AssetList({
   const [play] = useSound(getSound(Sound.NOTIFICATION_1));
 
   const {
-    data: updatedAssets,
+    data: updatedAssets = [],
     refetch,
     isSuccess,
   } = useQuery({
@@ -156,12 +156,12 @@ export default function AssetList({
       // check if it the updated assets are different from the current assets
       if (
         JSON.stringify(
-          (updatedAssets as PopulatedAsset[]).filter(assetFilter)
+          (updatedAssets as unknown as PopulatedAsset[]).filter(assetFilter)
         ) !== JSON.stringify(assets.filter(assetFilter))
       ) {
         console.log("updated assets", updatedAssets);
         play();
-        setAssets(updatedAssets as PopulatedAsset[]);
+        setAssets(updatedAssets as unknown as PopulatedAsset[]);
       }
     }
   }, [updatedAssets, isSuccess, assets, play, assetFilter]);
