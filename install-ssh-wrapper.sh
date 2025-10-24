@@ -38,7 +38,23 @@ if ! command -v curl &> /dev/null; then
     exit 1
 fi
 
-# Create backup directory
+# Create install directory and backup directory
+echo -e "${BLUE}🔧 Creating directories...${NC}"
+mkdir -p "$INSTALL_DIR" 2>/dev/null || {
+    echo -e "${RED}❌ Failed to create $INSTALL_DIR${NC}"
+    echo "This directory may not exist on your system."
+    echo "Trying alternative location: ~/bin"
+    INSTALL_DIR="$HOME/bin"
+    mkdir -p "$INSTALL_DIR" || {
+        echo -e "${RED}❌ Failed to create $INSTALL_DIR${NC}"
+        echo "Please create the directory manually or run with sudo"
+        exit 1
+    }
+    echo -e "${YELLOW}⚠️  Using $INSTALL_DIR instead${NC}"
+    echo -e "${YELLOW}   You may need to add this to your PATH:${NC}"
+    echo -e "${YELLOW}   echo 'export PATH=\"\$HOME/bin:\$PATH\"' >> ~/.bashrc${NC}"
+    echo ""
+}
 mkdir -p "$BACKUP_DIR"
 
 # Check if SSH wrapper already exists
@@ -60,7 +76,11 @@ if curl -sSL "$SSH_WRAPPER_URL" -o "$TEMP_FILE"; then
         echo -e "${GREEN}✅ SSH wrapper installed successfully${NC}"
     else
         echo -e "${RED}❌ Failed to install SSH wrapper (permission denied)${NC}"
-        echo "Try running with sudo: sudo curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | sudo bash"
+        echo ""
+        echo -e "${YELLOW}💡 Solutions:${NC}"
+        echo "1. Run with sudo: sudo curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | sudo bash"
+        echo "2. Install to user directory: INSTALL_DIR=~/bin curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | bash"
+        echo "3. Manual install: sudo mv $TEMP_FILE $INSTALL_DIR/$WRAPPER_NAME && sudo chmod +x $INSTALL_DIR/$WRAPPER_NAME"
         rm -f "$TEMP_FILE"
         exit 1
     fi

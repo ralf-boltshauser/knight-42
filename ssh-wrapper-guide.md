@@ -2,11 +2,19 @@
 
 ## 🚀 One-Click Installation
 
+### Option 1: System-wide (Recommended)
 ```bash
 sudo curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | sudo bash
 ```
 
-**Note**: Requires sudo permissions to install to `/usr/local/bin/ssh`
+### Option 2: User-only (No sudo required)
+```bash
+INSTALL_DIR=~/bin curl -sSL https://raw.githubusercontent.com/ralf-boltshauser/knight-42/refs/heads/main/install-ssh-wrapper.sh | bash
+echo 'export PATH="$HOME/bin:$PATH"' >> ~/.bashrc
+source ~/.bashrc
+```
+
+**Note**: Option 1 requires sudo permissions. Option 2 installs to user directory.
 
 ## ⚙️ Configuration
 
