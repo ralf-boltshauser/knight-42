@@ -59,3 +59,6 @@ volumes:
 networks:
   knight-42-network:
     external: true
+# Environment variables for local development
+# The start.sh script automatically adds SSH_API_TOKEN to .env
+# For Docker-based deployment, add environment variables to services

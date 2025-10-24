@@ -16,13 +16,13 @@ echo "Your Name" > ~/.knight42
 ### 2. Set Environment Variables
 ```bash
 export KNIGHT42_API_URL="http://your-server:4200/api/ssh-events"
-export KNIGHT42_API_TOKEN="your-api-token"
+export KNIGHT42_API_TOKEN="knight42-test-token-123"
 ```
 
 ### 3. Add to Shell Profile (Optional)
 ```bash
 echo 'export KNIGHT42_API_URL="http://your-server:4200/api/ssh-events"' >> ~/.bashrc
-echo 'export KNIGHT42_API_TOKEN="knight-42-api-token"' >> ~/.bashrc
+echo 'export KNIGHT42_API_TOKEN="knight42-test-token-123"' >> ~/.bashrc
 ```
 
 ## 🎯 Usage
@@ -40,7 +40,7 @@ ssh -v root@192.168.1.10
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `KNIGHT42_API_URL` | API endpoint URL | `http://localhost:3000/api/ssh-events` |
-| `KNIGHT42_API_TOKEN` | Authentication token | `your-api-token-here` |
+| `KNIGHT42_API_TOKEN` | Authentication token | `knight42-test-token-123` |
 | `KNIGHT42_LOG_ONLY_ROOT` | Track only root users | `false` |
 
 ## 🛠️ Recovery

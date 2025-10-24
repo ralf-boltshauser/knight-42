@@ -4,7 +4,7 @@
 
 # --- Configuration ---
 API_URL="${KNIGHT42_API_URL:-http://localhost:3000/api/ssh-events}"
-API_TOKEN="${KNIGHT42_API_TOKEN:-your-api-token-here}"
+API_TOKEN="${KNIGHT42_API_TOKEN:-knight42-test-token-123}"
 REAL_SSH="/usr/bin/ssh"
 CONFIG_FILE="$HOME/.knight42"
 LOG_ONLY_ROOT="${KNIGHT42_LOG_ONLY_ROOT:-false}"
